@@ -1,0 +1,117 @@
+\title{Configuration and Controller Verification for SMORES modular robot}
+\date{\today}
+
+\documentclass[12pt]{article}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Key points:
+\begin{itemize}
+\item Build complex configurations and controllers from a library of basic configurations and controllers by arranging them in (nested) parallel and series structures
+\item Both script and graphical user interface methods are implemented to build configurations and controllers
+\item Verify that there is no self collision in composed configurations and during the execution  of controllers without simulation in Gazebo
+\item Define ``unexpected behaviors'' due to instability of the configuration under a controller, and verify that there is no ``unexpected behaviors'' during the execution of controllers without simulation in Gazebo
+\item Human asistant configuration and controller design (synthesis).
+\item Show experiment in simulator. (Maybe with realy robot)
+\end{itemize}
+\end{abstract}
+
+\section{Action Items}
+\begin{itemize}
+\item Check literatures about quasi stability - Tarik
+\item Define unexpected behaviors - Jim
+\item Get final draft at the beginning of Januray - All
+\item Think about how meta-module is related with this paper - Tarik
+\item Motion planner for modular robot - Jim
+\item Come up with set of configurations and controllers - Shangyi
+\end{itemize}
+
+\section{Introduction}
+\begin{itemize}
+\item Introduce existing designs on modular robots.
+\item Introduce existing works on modular robot controller design
+\item Introduce SMORES modular robot and advantages
+\item Introduce the contribution of this paper
+\item Why fully automomous approach does not work well so far
+\end{itemize}
+
+
+\section{Preliminary}
+
+\paragraph{SMORES robot module}
+Define the ability of motion and connectivity of a SMORES robot module. Position and velocity of each Dof. Can be connected to four other modules at the same time. Representation of properties of a SMORES module, e.g. joint angels, global positions, connection information
+
+\paragraph{Configuration}
+Define the representation of a configuration as a set of SMORES robot modules connected in a certain way. Define topology graph.
+
+
+\paragraph{Controller}
+Define controller as a basic feedback controller for each Dof of each SMORES module. The reference input of the controller is a gait table. Define how the gait table is executed. Mention that controller in this paper refers to the input gait table.
+
+
+\paragraph{Collision}
+Define a collision between SMORES modules.
+
+\paragraph{Controller conflict}
+Define a conflict between controllers, i.e. giving opposite commands to the same Dof of a module at the same time.
+
+\paragraph{Unexpected behavior}
+Define the unexpected behavior of a configuration due to instability during a controller execution.
+
+\section{Approach and Algorithm}
+\paragraph{Configuration composition}
+Define the composition of a set of configurations to a single configuration.
+
+\subsection{Configuration Composition}
+\paragraph{Input}
+A set of configurations. A topology graph representing the connectivity among those configurations. A base module (for position transformation).
+\paragraph{Output}
+A composed configuration if it is safe.
+\paragraph{Procedure}
+\begin{itemize}
+\item Start from the configurations that connects to the configuration with base module, transform their positions based on the position of the base configuration and topology graph.
+\item Check if there is any collisions among the modules and report such collision.
+\item \textbf{Check if the final configuration is stable. If not, find the plane that will make the configuration stable and transform the configuration.}
+\item Show the expected behavior in simulator.
+\end{itemize}
+
+\paragraph{Controller composition}
+Define the composition of a set of controllers to a single controller. Define the difference between a parallel composition and a series composition. Define the control composition graph.
+
+\subsection{Controller Composition}
+\paragraph{Input}
+A configurations. A set of controllers. A control composition graph.
+\paragraph{Output}
+A composed controller if it is safe.
+\paragraph{Procedure}
+\begin{itemize}
+\item Compose the set of controllers based on the given control composition graph. Explain how the parallel composition and series composition are handled.
+\item\textbf{Check there is no controller conflict in the composition.}
+\item Execute the composed controller in user defined incremental time interval. At each time step, update each module position and check collision.
+\item \textbf{At each time step, check if the configuration will not have any unexpected behavior.}
+\end{itemize}
+
+\subsection{Complexity}
+Discuss the complexity of the algorithm with respect to the number of modules and size of gait tables.
+
+\section{Example and Experiment}
+With simulation in Gazebo:
+\begin{itemize}
+\item Show a configuration composed from a set of basic configurations.
+\item Show a composed controller that results in a collision in the configuration.
+\item Show an updated controller that resolves the collision
+\item Show a composed controller that results in an unexpected behavior.
+\item Show an updated controller that eliminates the unexpected behavior.
+\end{itemize}
+
+\section{Conclusions}
+We worked hard, and had fun.
+
+\section{Future}
+\begin{itemize}
+\item How to represent different attribute/ability of the configurations
+\end{itemize}
+
+\end{document}
