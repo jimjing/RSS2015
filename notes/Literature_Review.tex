@@ -1,0 +1,25 @@
+\documentclass[12pt]{article}
+%\usepackage[numbers]{natbib}
+
+\title{Literature Review for SMORES Verification}
+\author{Tarik Tosun}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+In this paper, we present a system that verifies the correctness of modular robot designs and behaviors.  The system provides warnings while behaviors are being developed, allowing the user to quickly identify common problems before performing an expensive dynamic simulation. The problems the system can identify are self-collision, loss of quasi-static stability, and the presence of unexpected behaviors.
+
+\subsection*{Verification in Modular Robotics}
+\subsubsection*{ Distributed Watchpoints: Debugging Large Multi-Robot Systems \cite{de2008distributed} }
+Focuses on debugging a distributed system
+
+\subsection*{ A Self-Reconfigurable Modular Robot: Reconfiguration Planning and Experiments \cite{yoshida2002self} }
+Presents a layered motion planner for modular robot cluster flow. Cube-shaped metamodules move from the rear of a cluster to the front. At the lowest layer, individual module movements are verified by checking for self-collision and cluster connectivity.
+
+\subsection*{  } 
+
+\bibliographystyle{plain}
+\bibliography{../references}
+
+\end{document}
