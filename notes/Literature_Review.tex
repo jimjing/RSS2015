@@ -1,3 +1,4 @@
+%
 \documentclass[12pt]{article}
 %\usepackage[numbers]{natbib}
 
@@ -6,19 +7,77 @@
 \date{\today}
 
 \begin{document}
+
 \maketitle
 
 In this paper, we present a system that verifies the correctness of modular robot designs and behaviors.  The system provides warnings while behaviors are being developed, allowing the user to quickly identify common problems before performing an expensive dynamic simulation. The problems the system can identify are self-collision, loss of quasi-static stability, and the presence of unexpected behaviors.
 
-\subsection*{Verification in Modular Robotics}
-\subsubsection*{ Distributed Watchpoints: Debugging Large Multi-Robot Systems \cite{de2008distributed} }
+\section*{Composition and Verification in Modular Robotics}
+\subsubsection*{Distributed Watchpoints: Debugging Large Multi-Robot Systems \cite{de2008distributed} }
 Focuses on debugging a distributed system
 
-\subsection*{ A Self-Reconfigurable Modular Robot: Reconfiguration Planning and Experiments \cite{yoshida2002self} }
+\subsubsection*{A Self-Reconfigurable Modular Robot: Reconfiguration Planning and Experiments \cite{yoshida2002self} }
 Presents a layered motion planner for modular robot cluster flow. Cube-shaped metamodules move from the rear of a cluster to the front. At the lowest layer, individual module movements are verified by checking for self-collision and cluster connectivity.
 
-\subsection*{  } 
+\subsubsection*{Reconfiguration Planning for Modular Self-reconfigurable Robots \cite{casal2002}}
+This is the Ph.D thesis of Arancha Casal, who Mark worked with at PARC.  Unfortunately I have not
+been able to find a copy of it yet, but Mark told me it covers self-collision and
+quasi-static stability detection for modular robots, so it is very relevant to our
+paper.  I have emailed her old advisor (Jean-Claude Latombe, who also advised Mark)
+asking for a copy.
+ 
+\section*{Composition and Verification in Robotics }
+The PPR (Printable Programmable Robots) project is a collaboration between MIT, Penn,
+and Harvard.  I did some work as a part of PPR (see \cite{mantzouratos2014embeddability}).
+The project aims to develop new manufacturing, design, and programming techniques that will allow
+novice users to easily create robots in homes and schools.  Many of the design techniques
+developed focus on composing new robots from modular elements in a library. Verification
+is not stressed. 
 
+\subsubsection*{A Design Environment for the Rapid Specification and Fabrication
+of Printable Robots \cite{mehta2014design} }
+
+Presents a design environment to allow casual users to quickly and easily create
+custom robots.  New robots are built by composing mechanical, electrical, and software
+subsystems.  Supporting software is automatically co-generated when the user composes
+functional elements (such as legs and a body).
+
+Verification of new designs and behaviors is not stressed.  Elements are connected
+at prescribed parametric interfaces. Composition focuses on structure (e.g. combine motors, propellers, and microprocessors to make
+a quadrotor) rather than task-facing functionality (e.g. build me a robot that maintains
+quasi-static stability while walking, and can get up onto a table).   
+
+While the system has modular components, the robots are not ``modular robots'' in
+our sense of the word.  Robots in this paper are manufactured  by cutting and folding
+plastic and paper sheet material. However, the design environment is not specifically
+limited to these design techniques.
+
+
+\subsubsection*{Demo abstract: ROSLab - A modular programming environment for robotic
+applications \cite{bezzo2014demo} }
+This brief abstract introduces ROSLab, the block-based modular programming language
+developed for PPR and referenced in the above paper.
+
+\subsubsection*{On Embeddability of Modular Robot Designs \cite{mantzouratos2014embeddability}}
+This is my paper (to appear in ICRA 2015 (hopefully)).  We formalize the notion of
+design embeddability, and present an algorithm to efficiently detect it.  If a group of modules capable of a kinematic
+task (for example, a planar arm) can be realized in a larger group of modules configured for a different kinematic
+task, we say that the larger group \textit{embeds} the smaller.
+If one design embeds another, it is guaranteed to replicate the kinematics of the
+other design.  However, workspace constraints (self-collision) and dynamics/forces
+are not considered.
+
+\section*{Techniques and Algorithms}
+The two conditions we check (self-collision and quasi-static stability)
+both fall under the category of collision detection problems.
+
+\subsubsection*{FCL: A General Purpose Library for Collision and Proximity Detection
+\cite{pan2012fcl}}
+The Flexible Collision Library (FCL) is used by the ROS MoveIt package, and seems
+to be one of the best freely available packages for collision detection. The paper
+provides a nice overview of state-of-the-art collision detection techniques, many
+of which are provided by FCL.
+ 
 \bibliographystyle{plain}
 \bibliography{../references}
 
