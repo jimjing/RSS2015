@@ -1,23 +1,30 @@
 %
 \documentclass[12pt]{article}
 %\usepackage[numbers]{natbib}
+\usepackage{cite}
 
 \title{Literature Review for SMORES Verification}
 \author{Tarik Tosun}
 \date{\today}
+\usepackage[normalem]{ulem}
 
 \begin{document}
 
 \maketitle
 
-In this paper, we present a system that verifies the correctness of modular robot designs and behaviors.  The system provides warnings while behaviors are being developed, allowing the user to quickly identify common problems before performing an expensive dynamic simulation. The problems the system can identify are self-collision, loss of quasi-static stability, and the presence of unexpected behaviors.
+In this paper, we present a system that allows users to construct modular robot behaviors by composing existing
+ones.  The system verifies new behaviors while they are being developed, providing
+warnings that allowing the user to quickly identify common problems before performing an expensive dynamic simulation. The problems the system can identify are self-collision, loss of quasi-static stability, and the presence of unexpected behaviors.
 
 \section*{Composition and Verification in Modular Robotics}
 \subsubsection*{Distributed Watchpoints: Debugging Large Multi-Robot Systems \cite{de2008distributed} }
-Focuses on debugging a distributed system
-
+Presents a message-passing scheme that implements watchpoints (conditional breakpoints)
+on a distributed system of modular robots. Watchpoints are specified in a description
+language based on LTL. Focuses on detecting errors during execution of a program
+on a distributed system.  
 \subsubsection*{A Self-Reconfigurable Modular Robot: Reconfiguration Planning and Experiments \cite{yoshida2002self} }
-Presents a layered motion planner for modular robot cluster flow. Cube-shaped metamodules move from the rear of a cluster to the front. At the lowest layer, individual module movements are verified by checking for self-collision and cluster connectivity.
+Presents a layered motion planner for modular robot cluster flow (``cluster flow'' is a mode
+of locomotion). Cube-shaped metamodules move from the rear of a cluster to the front. At the lowest layer, individual module movements are verified by checking for self-collision and cluster connectivity.
 
 \subsubsection*{Reconfiguration Planning for Modular Self-reconfigurable Robots \cite{casal2002}}
 This is the Ph.D thesis of Arancha Casal, who Mark worked with at PARC.  Unfortunately I have not
@@ -27,11 +34,9 @@ paper.  I have emailed her old advisor (Jean-Claude Latombe, who also advised Ma
 asking for a copy.
  
 \section*{Composition and Verification in Robotics }
-The PPR (Printable Programmable Robots) project is a collaboration between MIT, Penn,
-and Harvard.  I did some work as a part of PPR (see \cite{mantzouratos2014embeddability}).
-The project aims to develop new manufacturing, design, and programming techniques that will allow
-novice users to easily create robots in homes and schools.  Many of the design techniques
-developed focus on composing new robots from modular elements in a library. Verification
+\subsection*{PPR}
+The PPR (Printable Programmable Robots) project   is developing manufacturing, design, and programming techniques to allow
+novice users to easily create robots.  Design techniques focus on composing new robots from modular elements in a library. Verification
 is not stressed. 
 
 \subsubsection*{A Design Environment for the Rapid Specification and Fabrication
@@ -67,9 +72,9 @@ If one design embeds another, it is guaranteed to replicate the kinematics of th
 other design.  However, workspace constraints (self-collision) and dynamics/forces
 are not considered.
 
+
+
 \section*{Techniques and Algorithms}
-The two conditions we check (self-collision and quasi-static stability)
-both fall under the category of collision detection problems.
 
 \subsubsection*{FCL: A General Purpose Library for Collision and Proximity Detection
 \cite{pan2012fcl}}
