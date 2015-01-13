@@ -5,14 +5,12 @@
 \usepackage[numbers]{natbib}
 \usepackage{multicol}
 \usepackage[bookmarks=true]{hyperref}
+\usepackage{color}
+\usepackage{graphicx}
 
-\pdfinfo{
-   /Author (Homer Simpson)
-   /Title  (Robots: Our new overlords)
-   /CreationDate (D:20101201120000)
-   /Subject (Robots)
-   /Keywords (Robots;Overlords)
-}
+%% Tarik's Shortcuts
+% For marking TODOs in an obvious way
+\newcommand{\TODO}[1]{ {\bf \textcolor{red}{TODO:} #1 }}
 
 \begin{document}
 
@@ -30,42 +28,50 @@ In this paper, we present a scalable software framework for the design of modula
 \end{abstract}
 
 \section{Introduction}
-\begin{itemize}
-\item Introduce existing designs on modular robots.
-\item Introduce existing works on modular robot controller design
-\item Introduce SMORES modular robot and advantages
-\item Introduce the contribution of this paper
-\item Why fully automomous approach does not work well so far
-\end{itemize}
+\TODO{ Tarik writes} \\
+
+Modular reconfigurable robot systems have been studied extensively for several decades \TODO{citations}.  These systems distinguish themselves in their ability to transform into different shapes to address a wide variety of tasks. This flexibility places an additional burden on the user, who must design and program many configurations for different tasks.  In this paper, we introduce a software system to allow a user to easily build complex modular robot configurations by composing elemental units from a library, and program those designs by composing elemental controllers in a nested series/parallel fashion.  The system assists the user in verifying the correctness of designs and behaviors in a dynamic simulator by identifying self-collision and loss of quasi-static stability.
+
+The primary contribution of this paper is a software framework that allows modular robot configurations and behaviors to be built hierarchically, and a simulation environment that helps the user verify intended behavior.  Together, these tools help manage the complexity of a modular robot system, significantly reducing the time and effort required to accomplish tasks.
+
+We have developed our system for the SMORES modular robot, developed at the University of Pennsylvania \cite{Davey2012}. Each SMORES modules has four DoF (DoF) - three continuously rotating faces we call {\em turntables} and one central hinge with a $180^o$ range of motion (Figure~\ref{fig:SmoresRobot}). The DoF marked 1, 2, and 4 have rotational axes that are parallel and coincident. SMORES modules may connect to one another via magnets on each of their four faces, and are capable of  self-reconfiguration.
+
+Note that while we demonstrate our software with SMORES, it is not limited to the SMORES robot - it could be applied to any modular robot which may be simulated using Gazebo.
+
+\TODO{Related work here}
 
 
-\section{Preliminary}
+\begin{figure}[tb]
+    \begin{center}
+        \includegraphics[width=\columnwidth]{images/smores_robot.png}
+    \end{center}
+    \caption{SMORES robot}
+    \label{fig:SmoresRobot}
+\end{figure}
 
-\paragraph{SMORES robot module}
-Define the ability of motion and connectivity of a SMORES robot module. Position and velocity of each Dof. Can be connected to four other modules at the same time. Representation of properties of a SMORES module, e.g. joint angels, global positions, connection information
+\section{Preliminaries}
+\TODO{Tarik writes}\\
+Here we present preliminaries and define terms we will use later on in the paper.
 
-\paragraph{Configuration}
-Define the representation of a configuration as a set of SMORES robot modules connected in a certain way. Define topology graph.
+A modular robot \textit{configuration} is a contigous set of connected modules.  A configuration is defined by its connective structure, represented by a topology graph. \TODO{Define the graph}.
 
+A \textit{behavior} for a modular robot is a programmed sequence of movements intended to produce a desired effect (such as walking). In this work, we represent open-loop kinematic behaviors using a \textit{gait table} data structure, which contain a time series of joint-angles for a specific configuration \cite{yim1994locomotion}.  In this paper, we consider only behaviors that can be represented using gait tables. \TODO{This is the typical definition of gait tables.  Ours are actually more complicated.  We need to come up with a careful definition for them.}
 
-\paragraph{Controller}
-Define controller as a basic feedback controller for each Dof of each SMORES module. The reference input of the controller is a gait table. Define how the gait table is executed. Mention that controller in this paper refers to the input gait table.
+A \textit{controller} is a position and velocity servo for one DoF of a modular robot.  A controller takes as input a desired position or angular velocity, and drives the error between the desired and actual state of the DoF it controls to zero over time.
 
+When writing a behavior, it is possible to mistakenly command one controller to simultaneously hold more than one desired position; this is known as a \textit{controller conflict}.  Behaviors with controller conflicts are impossible to execute.
 
-\paragraph{Collision}
-Define a collision between SMORES modules.
+During execution of a behavior, a \textit{self-collision} can occur when two different parts of configuration are commanded to occupy the same location in space.  Self-collisions can damage the robot, and are usually unwanted.
 
-\paragraph{Controller conflict}
-Define a conflict between controllers, i.e. giving opposite commands to the same Dof of a module at the same time.
-
-\paragraph{Unexpected behavior}
-Define the unexpected behavior of a configuration due to instability during a controller execution.
+In many cases, it is desirable to maintain \textit{quasi-static stability} during execution of a behavior \TODO{define}.
 
 \section{Approach and Algorithm}
+\TODO{Tarik and Jim write (see subsections)}
 \paragraph{Configuration composition}
 Define the composition of a set of configurations to a single configuration.
 
 \subsection{Configuration Composition}
+\TODO{Jim writes}
 \paragraph{Input}
 A set of configurations. A topology graph representing the connectivity among those configurations. A base module (for position transformation).
 \paragraph{Output}
@@ -82,6 +88,7 @@ A composed configuration if it is safe.
 Define the composition of a set of controllers to a single controller. Define the difference between a parallel composition and a series composition. Define the control composition graph.
 
 \subsection{Controller Composition}
+\TODO{Tarik and Jim write}
 \paragraph{Input}
 A configurations. A set of controllers. A control composition graph.
 \paragraph{Output}
@@ -98,6 +105,7 @@ A composed controller if it is safe.
 Discuss the complexity of the algorithm with respect to the number of modules and size of gait tables.
 
 \section{Example and Experiment}
+\TODO{Jim writes}\\
 With simulation in Gazebo:
 \begin{itemize}
 \item Show a configuration composed from a set of basic configurations.
