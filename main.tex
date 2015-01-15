@@ -29,8 +29,6 @@ In this paper, we present a scalable software framework for the design of modula
 \end{abstract}
 
 \section{Introduction}
-\TODO{ Tarik writes} \\
-
 Modular reconfigurable robot systems have been studied extensively for several decades \TODO{citations}.  These systems distinguish themselves in their ability to transform into different shapes to address a wide variety of tasks.
 
 This additional flexibility places an additional burden on the user, because solving problems with modular robots involves not only designing  (software),
@@ -85,9 +83,9 @@ environment that helps the user verify intended behavior.  Together, these tools
 help manage the complexity of a modular robot system, significantly reducing the
 time and effort required to accomplish tasks with modular robots.
 
-The software we developed is open-source and freely available at [Link].  Our
+The software we developed is open-source and freely available at\TODO{Link}.  Our
 code is built for SMORES,  a modular robot developed at the University of
-Pennsylvania (see sec \ref{SMORES}), but could easily be adapted for use with
+Pennsylvania (see sec \ref{fig:SmoresRobot}), but could easily be adapted for use with
 other modular robot systems.
 
 The remainder of this paper provides a comprehensive description of the
@@ -95,11 +93,11 @@ structure and algorithmic components of our software system.  In Section \ref{se
 we discuss relevant background material.
 In Section \ref{sec:preliminaries} we introduce terminology and  concepts used elsewhere in the
 paper. 
-In Section \ref{sec:Approach_and_Algorithm}, we describe the algorithmic basis
+In Section \ref{sec:approach}, we describe the algorithmic basis
 for the three major components of our framework - design composition, behavior
 composition, and behavior verification.  In Section
-\ref{sec:Implementation-and-experiments}, we discuss the open-source software
-tools used to implement our system, and provide examples demonstrating a user¿s
+\ref{sec:example}, we discuss the open-source software
+tools used to implement our system, and provide examples demonstrating a user'¿s
 workflow when using this system.  We demonstrate that our framework saves the
 user time and effort, and allows him or her to easily develop complex and
 capable designs.
@@ -107,31 +105,47 @@ capable designs.
 
 \section{Related Work}
 \label{sec:related-work}
-\TODO{This is a work in progress.}
-\begin{itemize}
-\item Our effort is similar to what PPR/ROSLab is doing, but is specific to modular
-robots. The design flow of our system is intended to be \textbf{faster} than that of
-ppr, because our robots are modular. We only worry about connectivity,
-not things like what motor to use.
-\item The difficulty of programming new modular robot designs has been acknowledged
-in the literature.  Quote from ``Modular Reconfigurable Robots, An Approach to Urban
-Search and Rescue": `...the cost of programming systems is often more than the cost of hardware, thus reducing
-the value of the flexible nature of hardware. \textbf{The extreme versatility of
-n-modular systems requires a new paradigm in programming}
-\item I have not seen any modular robotics papers that specifically address the difficulty
-of (re)programming flexible hardware.
-\item Many people focus on fully autonomous control and configuration selection algorithms.
-\item Fully autonomous algorithms do not yet perform well enough to do useful things
-with modular robots.  Therefore, we need a way for human beings to quickly and easily
-create complex designs and behaviors. This paper presents a way to do that.
+In some respect, our work parallels the efforts of Mehta \cite{mehta2014design}
+and Bezzo \cite{bezzo2014demo}, who aim to create and program printable robots from
+design specification by a novice user.  Users create new designs by composing
+existing elements from a design library, and appropriate circuitry and
+control software are automatically generated as physical designs are assembled. The framework we present is
+intended specifically for modular robots, and consequently the workflow and design considerations are fundamentally different
+from that presented by Mehta and Bezzo.  In
+traditional robot design (or printable robot design), hardware and software are somewhat
+decoupled - hardware is
+designed and built once, and then programmed many times.  In the case of a MRS, the system can be reconfigured to meet new tasks,
+so hardware configuration and behavior programming go hand in hand.  We intend
+our system to be fast enough that the user could conceivably develop and program
+a new design for every new task - designs are built once, and programmed once.  Where Mehta et al provide many facilities to generate and verify
+low-level behaviors (i.e. motor drivers appropriate for motors, we do so for
+high-level behaviors.
 
+A significant amount of work has been done in developing behaviors and software
+for modular robots.  Much of this work focused on automatically
+generating  designs and behaviors using artificial intelligence systems.   Genetic
+algorithms have been applied for the automated generation of designs
+and behaviors \cite{hornby2003generative}.  Other work has
+focused on emergent behavior from distributed algorithms \TODO{cite papers}.
 
+While significant progress has been made in the automated generation of modular robot behaviors,
+automated systems are not yet capable of making modular robots truly useful in practice
+\cite{yim2007modular}.  The need for new programming techniques to manage the complexity
+of modular robot systems has been acknowledged in the literature \cite{yim2000modular}.
+Historically, gait tables have been a commonly used format in which open-loop kinematic
+behaviors can be easily encoded \cite{yim1994locomotion}. Phased automata have also
+been presented as a way to easily create scalable gaits for large numbers of modular
+robots \cite{zhang2003phase}. In this paper, we present a method to easily create
+complex automata-based programs for modular robots.
 
- \end{itemize}
-
+Our framework assists users in verifying design validity by identifying self-collision
+and loss of gravitational stability. Identification of these conditions is common
+in modular robot reconfiguration planning \cite{casal2001reconfiguration} and motion
+planning \cite{yoshida2002self}.
 
 \section{Preliminaries}
 \label{sec:preliminaries}
+\TODO{Tarik writes}
 
 \subsection{SMORES robot}
 We have developed our system for the SMORES modular robot, developed at the
@@ -167,6 +181,7 @@ During execution of a behavior, a \textit{self-collision} can occur when two dif
 In many cases, it is desirable to maintain \textit{quasi-static stability} during execution of a behavior \TODO{define}.
 
 \section{Approach and Algorithm}
+\label{sec:approach}
 \TODO{Tarik and Jim write (see subsections)}
 \paragraph{Configuration composition}
 Define the composition of a set of configurations to a single configuration.
@@ -206,6 +221,7 @@ A composed controller if it is safe.
 Discuss the complexity of the algorithm with respect to the number of modules and size of gait tables.
 
 \section{Example and Experiment}
+\label{sec:example}
 \TODO{Jim writes}\\
 With simulation in Gazebo:
 \begin{itemize}
@@ -233,6 +249,8 @@ We worked hard, and had fun.
 \bibliography{references}
 
 \end{document}
+
+
 
 
 
