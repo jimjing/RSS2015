@@ -168,17 +168,44 @@ Note that while we demonstrate our software with SMORES, it is not limited to th
 \end{figure}
 
 \subsection{Concepts and terms}
-A modular robot \textit{configuration} is a contiguous set of connected modules.  A configuration is defined by its connective structure, represented by a topology graph. \TODO{Define the graph}.
 
-A \textit{behavior} for a modular robot is a programmed sequence of movements intended to produce a desired effect (such as walking). In this work, we represent open-loop kinematic behaviors using a \textit{gait table} data structure, which contain a time series of joint-angles for a specific configuration \cite{yim1994locomotion}.  In this paper, we consider only behaviors that can be represented using gait tables. \TODO{This is the typical definition of gait tables.  Ours are actually more complicated.  We need to come up with a precise, concise definition for them.}
+A \textit{configuration} is a contiguous set of connected modules which we treat as a
+single robot.  Configurations are defined by their connective structure, and
+are represented by graphs with nodes representing modules and edges
+representing connections between modules.  Edges are labeled to indicate which
+faces are connected as well as any angular offset, so that all information
+about the connective topology of the modules is captured.  Individual modules
+are considered interchangeable (as long as they are of the same kind), so any
+two identically connected sets of modules are considered instances of the same
+configuration.
 
-A \textit{controller} is a position and velocity servo for one DoF of a modular robot.  A controller takes as input a desired position or angular velocity, and drives the error between the desired and actual state of the DoF it controls to zero over time.
+A \textit{behavior} is a programmed sequence of movements for a specific configuration
+intended to produce a desired effect.  A gait for walking is one example.  In
+this paper, we consider open-loop kinematic behaviors represented as
+series-parallel action graphs, described in detail in section
+\ref{sec:behavior-representation}.
 
-When writing a behavior, it is possible to mistakenly command one controller to simultaneously hold more than one desired position; this is known as a \textit{controller conflict}.  Behaviors with controller conflicts are impossible to execute.
+A \textit{controller} is a position and velocity servo for one DoF of a modular
+robot.  A controller takes as input a desired position or angular velocity, and
+drives the error between the desired and actual state of the DoF it controls to
+zero over time.
 
-During execution of a behavior, a \textit{self-collision} can occur when two different parts of configuration are commanded to occupy the same location in space.  Self-collisions can damage the robot, and are usually unwanted.
+When writing a behavior, it is possible to command one controller to
+simultaneously hold more than one desired position; this is known as a
+\textit{controller conflict}.  Behaviors with controller conflicts are
+impossible to execute.
 
-In many cases, it is desirable to maintain \textit{quasi-static stability} during execution of a behavior \TODO{define}.
+During execution of a behavior, a \textit{self-collision} can occur when two
+different parts of configuration are commanded to occupy the same location in
+space.  Self-collisions can damage the robot, and are usually unwanted.
+
+While executing many behaviors, it is desirable to maintain \textit{gravitational
+stability} (also called quasi-static stability).  Informally speaking, a
+robot is gravitationally stable when it is balanced, and gravity does not
+create any net moment on it.  Mathematically, the robot is gravitationally stable
+if the Z-projection of its center of
+mass lies within the convex hull of its load-supporting contact points in the
+ground plane.  
 
 \section{Approach and Algorithm}
 \label{sec:approach}
@@ -202,6 +229,24 @@ A composed configuration if it is safe.
 
 \paragraph{Controller composition}
 Define the composition of a set of controllers to a single controller. Define the difference between a parallel composition and a series composition. Define the control composition graph.
+
+\subsection{Behavior Representation}
+\label{sec:behavior-representation}
+\TODO{Tarik writes} \\
+\TODO{Still a work in progress.}\\
+Behaviors in our framework are represented by parallel-series action graphs,
+which can be thought of as an extension of gait tables with enhanced
+expressivity.  Each node in the graph is an action, which consists of a joint
+motion command and completion event.  The motion command is one of {set
+position, set speed, go slack}, and the completion event is one of {joint
+reaches specified  position, time reaches specified value}.  There is also one
+more action, {do nothing}, which may only be paired with the time trigger and
+which is not associated with any joint.  Actions graphs of any size (with a
+single action being the smallest action graph) may be connected in series or in
+parallel.  When graphs are connected in parallel, the child graph upon which
+all chains converge will not activate until all of its parent chains run to
+completion.
+
 
 \subsection{Controller Composition}
 \TODO{Tarik and Jim write}
@@ -249,6 +294,9 @@ We worked hard, and had fun.
 \bibliography{references}
 
 \end{document}
+
+
+
 
 
 
