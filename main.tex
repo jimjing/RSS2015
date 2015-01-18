@@ -12,6 +12,7 @@
 %% Tarik's Shortcuts
 % For marking TODOs in an obvious way
 \newcommand{\TODO}[1]{ {\bf \textcolor{red}{TODO:} #1 }}
+\usepackage{amsbsy}
 
 \begin{document}
 
@@ -233,6 +234,51 @@ Define the composition of a set of controllers to a single controller. Define th
 \subsection{Behavior Representation}
 \label{sec:behavior-representation}
 \TODO{Tarik writes} \\
+
+We present a novel motion description language for modular robots.  The
+language aims to balance simplicity and expressiveness, and is compositional in
+nature, designed to manage the complexity of developing complicated behaviors
+for large clusters of modular robots through abstraction and modularity.
+
+The fundamental atoms of the language are called actions.  An action is a tuple \(
+(J, X, \xi, T)\), where \(J\) identifies a single DoF of a configuration, X is a
+controller setpoint for that degree of freedom, \(\xi\) specifies an interrupt
+condition, and T specifies a timeout.  Basically, an action defines a setpoint
+(position or velocity) that the controller will maintain until either the
+interrupt condition is met or time runs out, whichever comes first.  The
+interrupt condition can be set to FALSE (so that only the timeout has effect),
+and T can be set to infinity (so that only the interrupt has effect).  This is
+similar to typical atomic elements of MDLe's \cite{mlePaper}, except that our
+atoms specify controller setpoints for a single DoF, rather than the entire
+robot.  This is because our language includes two fundamental composition operators,
+\(P_c\) (parallel) and \(S_c\) (series), to build behaviors by composing sub-behaviors.
+
+We define a \textit{behavior} as a directed acyclic graph where nodes are actions and
+edges are transitions between actions.  A behavior \(B\) always has two
+special nodes \(S\) and \(T\), which are the \textit{Start} and \textit{Termination} nodes, respectively.
+The smallest behavior consists of \(S\), \(T\), and a single action, as shown in figure
+\ref{fig}.  Behavior execution follows three simple rules:
+
+\begin{enumerate}
+\item Execution begins at \(S\).  \(S\) completes immediately.
+\item Each action begins execution upon completion of \textit{all} is parent actions.
+\item All sequences of execution end at \(T\).
+\end{enumerate}
+
+Because execution begins at \(S\) and ends at \(T\), there must be a
+(directed) path from every \(S\) to every node in \(B\), and also from every node in \(B\)
+to \(T\).  \(B\) is therefore a \textit{directed series-parallel graph} (SPG). SPG's
+can always be formed recursively by parallel and series composition operations \cite{SPG}. The
+parallel composition \(P\) of two behaviors \(B_1\), \(B_2\), \(P = Pc(B_1, B_2)\)
+is the disjoint
+union of their nodes (actions), merging \(S_1\) with \(S_2\) and \(T_1\) with \(T_2\). The series
+composition of \(B_1\), \(B_2\), \(S = Sc(B_1, B_2)\) is created from their disjoint union by
+merging \(T_1\) and \(S_2\), so that \(B_1\) and \(B_2\) execute sequentially\footnote{Since
+the merged node is not an action, we can freely omit it and instead draw edges
+from each of its parent nodes to each of its child nodes.}.  Note that if \(B_1\) was
+itself created through parallel composition, \(B_2\) will not begin until all chains
+of execution of \(B_1\) are completed.
+
 \TODO{Still a work in progress.}\\
 Behaviors in our framework are represented by parallel-series action graphs,
 which can be thought of as an extension of gait tables with enhanced
@@ -294,6 +340,9 @@ We worked hard, and had fun.
 \bibliography{references}
 
 \end{document}
+
+
+
 
 
 
