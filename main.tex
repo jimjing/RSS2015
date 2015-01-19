@@ -8,6 +8,7 @@
 \usepackage[bookmarks=true]{hyperref}
 \usepackage{color}
 \usepackage{graphicx}
+\usepackage{amsmath}
 
 %% Tarik's Shortcuts
 % For marking TODOs in an obvious way
@@ -32,7 +33,7 @@ In this paper, we present a scalable software framework for the design of modula
 \section{Introduction}
 Modular reconfigurable robot systems have been studied extensively for several decades \TODO{citations}.  These systems distinguish themselves in their ability to transform into different shapes to address a wide variety of tasks.
 
-This additional flexibility places an additional burden on the user, because solving problems with modular robots involves not only designing  (software),
+This additional flexibility places an additional burden on the user, because solving problems with modular robots involves not only designing  software,
 but also the best physical form for the task at hand. We argue that if this
 complexity is not appropriately managed, it can make the system
 impractical.  If the user is free to create any new design  he/she pleases to
@@ -41,7 +42,7 @@ new designs will be a huge amount of effort, and the advantage of flexible modul
 hardware will be defeated.
 
 Software modularity is a well-established practice for developing large
-maintainable systems and avoiding duplication of effort.  In robotics, software
+maintainable systems and avoiding duplication of effort \TODO{cite}.  In robotics, software
 behaviors are inextricably linked to the hardware they control, resulting in
 additional challenges to modularity.  Significant progress has been made in
 sharing robotics software between researchers
@@ -56,12 +57,12 @@ such as ROS, in which fundamental software libraries are almost totally decouple
 specific hardware.  In modular robotics, the emphasis needs to be on speed of
 design, because the major advantage of a modular robot system is that new
 designs can be made for each task.  We need to  very quickly develop simple kinematic
-behaviors (take a step with a leg) with new morphologies that share some of the
+behaviors (\textit{i.e.} take a step with a leg) with new morphologies that share some of the
 structure of old morphologies.
 
-Our solution to this problem is to let the modularity of our hardware drive the
+Our solution to this problem is to let the modularity of our hardware determine the
 modularity of our software.  We create new modular robot designs by combining existing sub-designs,
-for example combining four leg designs with a body to create a walking robot.
+for example combining four legs with a body to create a walking robot.
  We provide a GUI tool that allows users to do this easily.  Designs have
 associated libraries of software behaviors, so that when new designs  are created
 by composing existing sub-designs,  new behaviors for that design can be quickly
@@ -78,7 +79,7 @@ verification tools that detect common problems.
 
 \section{Contribution and Paper Structure}
 
-The primary contribution of this paper is a software system that allows modular
+The primary contribution of this paper is a software framework that allows modular
 robot configurations and behaviors to be built hierarchically, and a simulation
 environment that helps the user verify intended behavior.  Together, these tools
 help manage the complexity of a modular robot system, significantly reducing the
@@ -136,8 +137,8 @@ of modular robot systems has been acknowledged in the literature \cite{yim2000mo
 Historically, gait tables have been a commonly used format in which open-loop kinematic
 behaviors can be easily encoded \cite{yim1994locomotion}. Phased automata have also
 been presented as a way to easily create scalable gaits for large numbers of modular
-robots \cite{zhang2003phase}. In this paper, we present a method to easily create
-complex automata-based programs for modular robots.
+robots \cite{zhang2003phase}. In this paper, we present a novel scripting language
+to quickly create complex behaviors for modular robots.
 
 Our framework assists users in verifying design validity by identifying self-collision
 and loss of gravitational stability. Identification of these conditions is common
@@ -146,8 +147,6 @@ planning \cite{yoshida2002self}.
 
 \section{Preliminaries}
 \label{sec:preliminaries}
-\TODO{Tarik writes}
-
 \subsection{SMORES robot}
 We have developed our system for the SMORES modular robot, developed at the
 University of Pennsylvania \cite{Davey2012}. Each SMORES modules has four DoF
@@ -231,24 +230,22 @@ A composed configuration if it is safe.
 \paragraph{Controller composition}
 Define the composition of a set of controllers to a single controller. Define the difference between a parallel composition and a series composition. Define the control composition graph.
 
-\subsection{Behavior Representation}
+\subsection{Behavior Representation: Series-Parallel Action Graphs}
 \label{sec:behavior-representation}
-\TODO{Tarik writes} \\
-
 We present a novel motion description language for modular robots.  The
 language aims to balance simplicity and expressiveness, and is compositional in
 nature, designed to manage the complexity of developing complicated behaviors
 for large clusters of modular robots through abstraction and modularity.
 
-The fundamental atoms of the language are called actions.  An action is a tuple \(
+The fundamental atoms of the language are called actions.  An \textit{action} is a tuple \(
 (J, X, \xi, T)\), where \(J\) identifies a single DoF of a configuration, X is a
 controller setpoint for that degree of freedom, \(\xi\) specifies an interrupt
 condition, and T specifies a timeout.  Basically, an action defines a setpoint
 (position or velocity) that the controller will maintain until either the
 interrupt condition is met or time runs out, whichever comes first.  The
-interrupt condition can be set to FALSE (so that only the timeout has effect),
-and T can be set to infinity (so that only the interrupt has effect).  This is
-similar to typical atomic elements of MDLe's \cite{mlePaper}, except that our
+interrupt condition can be set to \(FALSE\) (so that only the timeout has effect),
+and \(T\) can be set to infinity (so that only the interrupt has effect).  This is
+similar to typical atomic elements of an MDLe (see \cite{hristu2003motion}) except that our
 atoms specify controller setpoints for a single DoF, rather than the entire
 robot.  This is because our language includes two fundamental composition operators,
 \(P_c\) (parallel) and \(S_c\) (series), to build behaviors by composing sub-behaviors.
@@ -256,8 +253,7 @@ robot.  This is because our language includes two fundamental composition operat
 We define a \textit{behavior} as a directed acyclic graph where nodes are actions and
 edges are transitions between actions.  A behavior \(B\) always has two
 special nodes \(S\) and \(T\), which are the \textit{Start} and \textit{Termination} nodes, respectively.
-The smallest behavior consists of \(S\), \(T\), and a single action, as shown in figure
-\ref{fig}.  Behavior execution follows three simple rules:
+The smallest behavior consists of \(S\), \(T\), and a single action.  Behavior execution follows three simple rules:
 
 \begin{enumerate}
 \item Execution begins at \(S\).  \(S\) completes immediately.
@@ -279,21 +275,68 @@ from each of its parent nodes to each of its child nodes.}.  Note that if \(B_1\
 itself created through parallel composition, \(B_2\) will not begin until all chains
 of execution of \(B_1\) are completed.
 
-\TODO{Still a work in progress.}\\
-Behaviors in our framework are represented by parallel-series action graphs,
-which can be thought of as an extension of gait tables with enhanced
-expressivity.  Each node in the graph is an action, which consists of a joint
-motion command and completion event.  The motion command is one of {set
-position, set speed, go slack}, and the completion event is one of {joint
-reaches specified  position, time reaches specified value}.  There is also one
-more action, {do nothing}, which may only be paired with the time trigger and
-which is not associated with any joint.  Actions graphs of any size (with a
-single action being the smallest action graph) may be connected in series or in
-parallel.  When graphs are connected in parallel, the child graph upon which
-all chains converge will not activate until all of its parent chains run to
-completion.
+\begin{figure}
+\begin{center}
+\includegraphics[height=0.8in]{images/tikz/series.pdf}
+\includegraphics[height=0.8in]{images/tikz/parallel.pdf} \vspace{0.in}
+\includegraphics[height=0.8in]{images/tikz/parallel-and-series.pdf}
+\end{center}
+\caption{Series and parallel composition of behaviors }
+\label{fig:graph-composition}
+\end{figure}
 
+\subsubsection*{Example}
+Let's say we have the
+car design shown in Figure X.  This design is composed of four wheel modules
+and  a central steering element, which rotates to bend the front wheels to the
+left or right relative the back, causing the car to turn.  The wheel elements
+expose a function which turns the two side turntables in sync in order to drive
+forward.  The steering element exposes a steering function.  We
+show these behavior  definitions below:
+\begin{align*}
+%
+\mathrm{DRV}(v,t) =~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\
+Pc \left( \begin{array}{cccc}
+(~lWheel, & \dot\theta=v, & \xi:0, & T:t~), \\
+(~rWheel, & \dot\theta=v, & \xi:0, & T:t~) \\
+\end{array} \right)\\
+%
+\mathrm{ST R}(x) = ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\ 
+Pc \left( \begin{array}{cccc}
+(~tTable1 & \theta=x, & \xi:[\theta=x], & T=\infty~), \\
+(~tTable2 & \theta=-x, & \xi: [\theta=-x], & T=\infty~) \\
+\end{array} \right)
+%
+\end{align*}
 
+After composing these sub-configurations into the car, we build higher-level
+behaviors by composing the behaviors of the sub-configurations.  We define functions
+to go-straight (GST) and turn (TRN):
+\begin{align*}
+\mathrm{GST}(v,t) &= Pc (~\mathrm{STR}(0),~ \mathrm{DRV}(v,t)~)\\
+\mathrm{TRN}(v,t,x) &= Pc (~\mathrm{STR}(x),~\mathrm{DRV}(v,t)~)
+\end{align*}
+
+We can now easily define trajectories by sequencing go-straight and turn commands
+in series. Figure \ref{fig:zigzag} shows the path generated by the zig-zag behavior defined
+below:
+
+\begin{align*}
+ZGZ = ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\\
+Sc(~\mathrm{GST}(10,5),~\mathrm{TRN}(10,5,30),~\mathrm{GST}(10,5),\\
+~\mathrm{TRN}(10,10,-30),~\mathrm{GST}(10,20), \\
+\mathrm{TRN}(10,10,30), \mathrm{GST}(10,5), \mathrm{TRN}(10,10, -30 )~)
+\end{align*}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.7\columnwidth]{images/zigzag.png}
+\end{center}
+\caption{Zig-zag trajectory \TODO{This is hand-drawn, sorry about that... I will
+make a more professional-looking replacement}}
+\label{fig:zigzag}
+\end{figure}
+ 
 \subsection{Controller Composition}
 \TODO{Tarik and Jim write}
 \paragraph{Input}
@@ -308,12 +351,15 @@ A composed controller if it is safe.
 \item \textbf{At each time step, check if the configuration will not have any unexpected behavior.}
 \end{itemize}
 
+\subsection{Simulation and Verification}
+\TODO{Jim writes}
+
 \subsection{Complexity}
 Discuss the complexity of the algorithm with respect to the number of modules and size of gait tables.
 
 \section{Example and Experiment}
 \label{sec:example}
-\TODO{Jim writes}\\
+\TODO{Tarik and Jim write}\\
 With simulation in Gazebo:
 \begin{itemize}
 \item Show a configuration composed from a set of basic configurations.
@@ -322,6 +368,10 @@ With simulation in Gazebo:
 \item Show a composed controller that results in an unexpected behavior.
 \item Show an updated controller that eliminates the unexpected behavior.
 \end{itemize}
+\subsection{Comparison to Existing Methods}
+\TODO{Tarik writes}\\
+In the past, designing configurations and behaviors to address new tasks has required
+time on the order of one day \cite{sastra2011using}. \TODO{compare to our results.}
 
 \section{Conclusions}
 We worked hard, and had fun.
@@ -340,6 +390,10 @@ We worked hard, and had fun.
 \bibliography{references}
 
 \end{document}
+
+
+
+
 
 
 
