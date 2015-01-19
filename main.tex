@@ -11,6 +11,7 @@
 \usepackage{textcomp}
 \usepackage{amsthm}
 \usepackage{amsfonts}
+\usepackage{subcaption}
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
@@ -224,7 +225,25 @@ We define a single module  as $\mathcal{M}=(P_{/\mathcal{R}}, O_{/\mathcal{R}}, 
 \item $V=\{v_1, v_2, ..., v_m\}$ is the set of joint values. Each joint value corresponds to each degree of freedom of the module.
 \item $N=\{n_1, n_2, ..., n_k\}$ is the set of nodes where the module can connect to other modules.
 \end{itemize}
-For a single SMORES module, there are four degree of freedom as shown in Figure~\ref{fig:SmoresRobot}, and there are four nodes to connect to other modules, i.e. $N=\{$front, left, right, back$\}$.
+For a single SMORES module, there are four degree of freedom as shown in Figure~\ref{fig:SmoresRobot}, and there are four nodes to connect to other modules, i.e. $N=\{$front, left, right, back$\}$ as shown in Figure~\ref{fig:smores}.
+
+\begin{figure}
+\begin{center}
+	\begin{subfigure}[b]{0.4\columnwidth}
+		\includegraphics[width=\textwidth]{images/smores.JPG}
+		\caption{A SMORES module}
+		\label{fig:smores_photo}
+           \end{subfigure}
+           ~
+	\begin{subfigure}[b]{0.4\columnwidth}
+           	\includegraphics[width=\textwidth]{images/tikz/smores.pdf}
+           	\caption{The graphical representation}
+           	\label{fig:smores_graph}
+	\end{subfigure}
+\end{center}
+\caption{A photo of a SMROES module and its graphical representation}
+\label{fig:smores}
+\end{figure}
 \end{definition}
 
 \begin{definition}[Configuration] 
@@ -233,9 +252,29 @@ We define a configuration as $\mathcal{C}=(M, \mathcal{M}_b, E, \delta)$, where
 \item $M$ is a set of modules, $M=\{\mathcal{M}_1, \mathcal{M}_2, ..., \mathcal{M}_q\}$.
 \item $\mathcal{M}_b$ is single module that will be treated as a base module.
 \item $E$ is a set of connections between modules. $(\mathcal{M}_i, n_i, \mathcal{M}_j, n_j)\in E$, where $\mathcal{M}_{i,j} \in M, \mathcal{M}_i \neq \mathcal{M}_j$, and $n_{i,j}\in N$.
-\item $\delta: E \rightarrow \mathbb{R}$ is a labeling function over a connection. Given a connection, $\delta$ returns the angle offset between the two connected nodes.
+\item $\delta: E \rightarrow \mathbb{R}$ is a labeling function over a connection. Given a connection, $\delta$ returns the angle offset in degree between the two connected nodes.
 \end{itemize}
+Figure~\ref{fig:smores_conf_graph} shows a photo of a configuration and its graphical representation. Blue zigzag lines represent connections between modules, and the label of each connection shows the angle offset of that connection.
 \end{definition}
+
+\begin{figure}
+\begin{center}
+	\begin{subfigure}[b]{0.4\columnwidth}
+		\includegraphics[width=\textwidth]{images/smores_conf.JPG}
+		\caption{A configuration}
+		\label{fig:smores_conf_photo}
+           \end{subfigure}
+           ~
+	\begin{subfigure}[b]{0.4\columnwidth}
+           	\includegraphics[width=\textwidth]{images/tikz/smores_conf.pdf}
+           	\caption{The graphical representation}
+           	\label{fig:smores_conf_graph}
+	\end{subfigure}
+\end{center}
+\caption{A photo of a configuration with SMORES modules and its graphical representation}
+\label{fig:smores_conf}
+\end{figure}
+
 
 \paragraph{Configuration composition}
 Define the composition of a set of configurations to a single configuration.
