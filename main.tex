@@ -8,10 +8,17 @@
 \usepackage[bookmarks=true]{hyperref}
 \usepackage{color}
 \usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
 
 %% Tarik's Shortcuts
 % For marking TODOs in an obvious way
 \newcommand{\TODO}[1]{ {\bf \textcolor{red}{TODO:} #1 }}
+\newcommand{\changedByJim}[1]{\textcolor{blue}{#1}}
 \usepackage{amsbsy}
 
 \begin{document}
@@ -35,44 +42,44 @@ Modular reconfigurable robot systems have been studied extensively for several d
 This additional flexibility places an additional burden on the user, because solving problems with modular robots involves not only designing  (software),
 but also the best physical form for the task at hand. We argue that if this
 complexity is not appropriately managed, it can make the system
-impractical.  If the user is free to create any new design  he/she pleases to
+impractical. ï¿½If the user is free to create any new design ï¿½he/she pleases to
 solve a new task, but must program the design from scratch every time, creating
 new designs will be a huge amount of effort, and the advantage of flexible modular
 hardware will be defeated.
 
 Software modularity is a well-established practice for developing large
-maintainable systems and avoiding duplication of effort.  In robotics, software
+maintainable systems and avoiding duplication of effort. ï¿½In robotics, software
 behaviors are inextricably linked to the hardware they control, resulting in
-additional challenges to modularity.  Significant progress has been made in
+additional challenges to modularity. ï¿½Significant progress has been made in
 sharing robotics software between researchers
- and hardware platforms, most notably
- ROS which provides IPC and standard libraries for common robot tasks. 
+ï¿½and hardware platforms, most notably
+ï¿½ROS which provides IPC and standard libraries for common robot tasks. 
 
 The challenges of software design are different in modular robotics than
 in typical robotics, because the hardware itself is modular. Porting software
 from one robot platform to a completely different robot platform takes a
 considerable amount of time, and needs to be facilitated by a large framework
 such as ROS, in which fundamental software libraries are almost totally decoupled from
-specific hardware.  In modular robotics, the emphasis needs to be on speed of
+specific hardware. ï¿½In modular robotics, the emphasis needs to be on speed of
 design, because the major advantage of a modular robot system is that new
-designs can be made for each task.  We need to  very quickly develop simple kinematic
+designs can be made for each task. ï¿½We need to  very quickly develop simple kinematic
 behaviors (take a step with a leg) with new morphologies that share some of the
 structure of old morphologies.
 
 Our solution to this problem is to let the modularity of our hardware drive the
-modularity of our software.  We create new modular robot designs by combining existing sub-designs,
+modularity of our software. ï¿½We create new modular robot designs by combining existing sub-designs,
 for example combining four leg designs with a body to create a walking robot.
- We provide a GUI tool that allows users to do this easily.  Designs have
-associated libraries of software behaviors, so that when new designs  are created
-by composing existing sub-designs,  new behaviors for that design can be quickly
+ï¿½We provide a GUI tool that allows users to do this easily. ï¿½Designs have
+associated libraries of software behaviors, so that when new designs ï¿½are created
+by composing existing sub-designs, ï¿½new behaviors for that design can be quickly
 and easily created by composing the behaviors associate with its component
-sub-designs.  We introduce new scripting language with a series-parallel
+sub-designs. ï¿½We introduce new scripting language with a series-parallel
 execution structure that allows old behaviors to be easily and clearly combined
 into new behaviors.
 
 Since combining old things in new ways can lead to unexpected problems, we also
 need to verify that our new designs and behaviors perform the way we expect them
-to.  This is done in a dynamic simulation in Gazebo, and through
+to. ï¿½This is done in a dynamic simulation in Gazebo, and through
 verification tools that detect common problems.
 
 
@@ -98,7 +105,7 @@ In Section \ref{sec:approach}, we describe the algorithmic basis
 for the three major components of our framework - design composition, behavior
 composition, and behavior verification.  In Section
 \ref{sec:example}, we discuss the open-source software
-tools used to implement our system, and provide examples demonstrating a user'¿s
+tools used to implement our system, and provide examples demonstrating a user'ï¿½s
 workflow when using this system.  We demonstrate that our framework saves the
 user time and effort, and allows him or her to easily develop complex and
 capable designs.
@@ -123,10 +130,10 @@ low-level behaviors (i.e. motor drivers appropriate for motors, we do so for
 high-level behaviors.
 
 A significant amount of work has been done in developing behaviors and software
-for modular robots.  Much of this work focused on automatically
-generating  designs and behaviors using artificial intelligence systems.   Genetic
+for modular robots. ï¿½Much of this work focused on automatically
+generating ï¿½designs and behaviors using artificial intelligence systems. ï¿½ï¿½Genetic
 algorithms have been applied for the automated generation of designs
-and behaviors \cite{hornby2003generative}.  Other work has
+and behaviors \cite{hornby2003generative}. ï¿½Other work has
 focused on emergent behavior from distributed algorithms \TODO{cite papers}.
 
 While significant progress has been made in the automated generation of modular robot behaviors,
@@ -152,8 +159,8 @@ planning \cite{yoshida2002self}.
 We have developed our system for the SMORES modular robot, developed at the
 University of Pennsylvania \cite{Davey2012}. Each SMORES modules has four DoF
 (DoF) - three continuously rotating faces we call {\em turntables} and one
-central hinge with a $180^o$ range of motion (Figure~\ref{fig:SmoresRobot}). The
-DoF marked 1, 2, and 4 have rotational axes that are parallel and coincident.
+central hinge with a 180\textdegree\ range of motion (Figure~\ref{fig:SmoresRobot}). The
+DoF marked 1, 2, and 4 have rotational axes that are parallel and coincident. \changedByJim{Each SMORES module can drive around as a two-wheel differential drive robot.}
 SMORES modules may connect to one another via magnets on each of their four
 faces, and are capable of  self-reconfiguration.
 
@@ -169,7 +176,6 @@ Note that while we demonstrate our software with SMORES, it is not limited to th
 \end{figure}
 
 \subsection{Concepts and terms}
-
 A \textit{configuration} is a contiguous set of connected modules which we treat as a
 single robot.  Configurations are defined by their connective structure, and
 are represented by graphs with nodes representing modules and edges
@@ -211,6 +217,27 @@ ground plane.
 \section{Approach and Algorithm}
 \label{sec:approach}
 \TODO{Tarik and Jim write (see subsections)}
+\begin{definition}[Module] 
+We define a single module  as $\mathcal{M}=(P_{/\mathcal{R}}, O_{/\mathcal{R}}, V, N)$, where
+\begin{itemize}
+\item $P_{/\mathcal{R}}=(p_x,p_y,p_z)$ is the position of the module in the global reference frame $\mathcal{R}$. We consider the position the center of the module as the position of the module.
+\item $O_{/\mathcal{R}}=(o_w, o_x, o_y, o_z)$ is the orientation of the module represented by quaternion in the global reference frame $\mathcal{R}$.
+\item $V=\{v_1, v_2, ..., v_m\}$ is the set of joint values. Each joint value corresponds to each degree of freedom of the module.
+\item $N=\{n_1, n_2, ..., n_k\}$ is the set of nodes where the module can connect to other modules.
+\end{itemize}
+For a single SMORES module, there are four degree of freedom as shown in Figure~\ref{fig:SmoresRobot}, and there are four nodes to connect to other modules, i.e. $N=\{$front, left, right, back$\}$.
+\end{definition}
+
+\begin{definition}[Configuration] 
+We define a configuration as $\mathcal{C}=(M, \mathcal{M}_b, E, \delta)$, where
+\begin{itemize}
+\item $M$ is a set of modules, $M=\{\mathcal{M}_1, \mathcal{M}_2, ..., \mathcal{M}_q\}$.
+\item $\mathcal{M}_b$ is single module that will be treated as a base module.
+\item $E$ is a set of connections between modules. $(\mathcal{M}_i, n_i, \mathcal{M}_j, n_j)\in E$, where $\mathcal{M}_{i,j} \in M, \mathcal{M}_i \neq \mathcal{M}_j$, and $n_{i,j}\in N$.
+\item $\delta: E \rightarrow \mathbb{R}$ is a labeling function over a connection. Given a connection, $\delta$ returns the angle offset between the two connected nodes.
+\end{itemize}
+\end{definition}
+
 \paragraph{Configuration composition}
 Define the composition of a set of configurations to a single configuration.
 
@@ -282,14 +309,14 @@ of execution of \(B_1\) are completed.
 \TODO{Still a work in progress.}\\
 Behaviors in our framework are represented by parallel-series action graphs,
 which can be thought of as an extension of gait tables with enhanced
-expressivity.  Each node in the graph is an action, which consists of a joint
-motion command and completion event.  The motion command is one of {set
+expressivity. ï¿½Each node in the graph is an action, which consists of a joint
+motion command and completion event. ï¿½The motion command is one of {set
 position, set speed, go slack}, and the completion event is one of {joint
-reaches specified  position, time reaches specified value}.  There is also one
+reaches specified ï¿½position, time reaches specified value}. ï¿½There is also one
 more action, {do nothing}, which may only be paired with the time trigger and
-which is not associated with any joint.  Actions graphs of any size (with a
+which is not associated with any joint. ï¿½Actions graphs of any size (with a
 single action being the smallest action graph) may be connected in series or in
-parallel.  When graphs are connected in parallel, the child graph upon which
+parallel. ï¿½When graphs are connected in parallel, the child graph upon which
 all chains converge will not activate until all of its parent chains run to
 completion.
 
