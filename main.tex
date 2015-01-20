@@ -260,7 +260,7 @@ For a single SMORES module, there are four degree of freedom as shown in Figure~
 \end{figure}
 \end{definition}
 
-\begin{definition}[Configuration] 
+\begin{definition}[Configuration] \label{def:configuration}
 We define a configuration as $\mathcal{C}=(M, \mathcal{M}_b, E, \delta)$, where
 \begin{itemize}
 \item $M$ is a set of modules, $M=\{\mathcal{M}_1, \mathcal{M}_2, ..., \mathcal{M}_q\}$.
@@ -297,10 +297,33 @@ connection.
 \end{figure}
 
 
+\subsection{Configuration Composition} \label{sec:conf_composition}
+In order to demonstrate our algorithm on configuration composition, we need to first extend the definition on configuration to allow make a configuration by composing multiple configurations.
+\begin{definition}[Extended Configuration] 
+We extend the definition of a configuration as $\mathcal{C}_\alpha=(C_\alpha, \gamma, M, \mathcal{M}_b, E, \delta)$, where
+\begin{itemize}
+\item $C_\alpha$ is a set of configurations, $C_\alpha=\{\mathcal{C}_{\alpha1}, \mathcal{C}_{\alpha2}, ..., \mathcal{C}_{\alpha q}\}$.
+\item $\gamma: C_\alpha \rightarrow M$ is a function that, when given a configuration, returns all modules of that configuration.
+\item $M$ is the set of modules. If this configuration contains no other configurations, i.e. $C_\alpha = \emptyset$, $M$ is just the set of all modules of this configuration as defined in Definition~\ref{def:configuration}. If this configuration is composed by other configurations, i.e. $C_\alpha=\{\mathcal{C}_{\alpha1}, \mathcal{C}_{\alpha2}, ..., \mathcal{C}_{\alpha q}\}$, we define $M=\bigcup_{\mathcal{C}_{\alpha}\in C_{\alpha}}{\gamma(\mathcal{C}_{\alpha})}$.
+\item $\mathcal{M}_b\in M$ is a single module that will be treated as a base module.
+\item $E$ is a set of connections between modules. $(\mathcal{M}_i, n_i, \mathcal{M}_j, n_j)\in E$, where $\mathcal{M}_{i,j} \in M, \mathcal{M}_i \neq \mathcal{M}_j$, and $n_{i,j}\in N$.
+\item $\delta: E \rightarrow \mathbb{R}$ is a labeling function over a connection. Given a connection, $\delta$ returns the angle offset in degree between the two connected nodes.
+\end{itemize}
+\end{definition}
+The extended configuration can represent a complex structure with nested configurations with arbitrary depth. For the rest of the paper, we will omit the subscript $\alpha$, and use $\mathcal{C}$, $C$ to stand for ``one extended configuration'' and ``a set of extended configurations'' respectively.
+
+\begin{definition}[Configuration Composition] 
+Given a set of configurations $C$, a base configuration $\mathcal{C}_b\in C$, and a set of connections $E_C$ that encodes the connections between configurations in $C$, configuration composition combines all configuration in $C$ to a single configuration $\mathcal{C}^*$ that has the following guarantees: i) $\mathcal{C}^*$ includes all modules and connections from $C$ and $E_C$ (section~\ref{sec:update_connection}); ii) the positions of all modules in $\mathcal{C}^*$ are adjusted based on the connections to preserve structures of original configurations in $C$ (section~\ref{sec:update_position}); iii) $\mathcal{C}^*$ is a safe configuration as defined in section~\ref{sec:safe_conf}. 
+\end{definition}
+
+\subsubsection{Update Modules and Connections} \label{sec:update_connection}
+Before presenting the procedure to update modules and configurations in $\mathcal{C}^*$, we will first discuss some assumptions about the set of connections $E_C$.
+
+The set of connections $E_C$ between configurations in $C$ is defined as $(\mathcal{C}_i, \mathcal{M}_i, n_i, \mathcal{C}_j, \mathcal{M}_j, n_j) \in E_C$, where $\mathcal{C}_{i,j}\in C$, $\mathcal{M}_i \in \gamma(\mathcal{C}_i), \mathcal{M}_j \in \gamma(\mathcal{C}_j)$, and $n_{i,j} \in N$. In addition, we assume the connections in $E_C$ form a tree structure with the configurations in $C$. That means, if we form an undirected graph by treating configurations in $C$ as nodes and connections in $E_C$ as edges, the graph should not have any simple cycle (\TODO: cite).
+
 \paragraph{Configuration composition}
 Define the composition of a set of configurations to a single configuration.
 
-\subsection{Configuration Composition}
 \TODO{Jim writes}
 \paragraph{Input}
 A set of configurations. A topology graph representing the connectivity among those configurations. A base module (for position transformation).
