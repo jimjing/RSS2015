@@ -12,10 +12,15 @@
 \usepackage{amsthm}
 \usepackage{amsfonts}
 \usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
 \usepackage{amsmath}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
 
 %% Tarik's Shortcuts
 % For marking TODOs in an obvious way
@@ -299,6 +304,7 @@ connection.
 
 \subsection{Configuration Composition} \label{sec:conf_composition}
 In order to demonstrate our algorithm on configuration composition, we need to first extend the definition on configuration to allow make a configuration by composing multiple configurations.
+
 \begin{definition}[Extended Configuration] 
 We extend the definition of a configuration as $\mathcal{C}_\alpha=(C_\alpha, \gamma, M, \mathcal{M}_b, E, \delta)$, where
 \begin{itemize}
@@ -319,7 +325,39 @@ Given a set of configurations $C$, a base configuration $\mathcal{C}_b\in C$, an
 \subsubsection{Update Modules and Connections} \label{sec:update_connection}
 Before presenting the procedure to update modules and configurations in $\mathcal{C}^*$, we will first discuss some assumptions about the set of connections $E_C$.
 
-The set of connections $E_C$ between configurations in $C$ is defined as $(\mathcal{C}_i, \mathcal{M}_i, n_i, \mathcal{C}_j, \mathcal{M}_j, n_j) \in E_C$, where $\mathcal{C}_{i,j}\in C$, $\mathcal{M}_i \in \gamma(\mathcal{C}_i), \mathcal{M}_j \in \gamma(\mathcal{C}_j)$, and $n_{i,j} \in N$. In addition, we assume the connections in $E_C$ form a tree structure with the configurations in $C$. That means, if we form an undirected graph by treating configurations in $C$ as nodes and connections in $E_C$ as edges, the graph should not have any simple cycle (\TODO: cite).
+The set of connections $E_C$ between configurations in $C$ is defined as $(\mathcal{C}_i, \mathcal{M}_i, n_i, \mathcal{C}_j, \mathcal{M}_j, n_j) \in E_C$, where $\mathcal{C}_{i,j}\in C$, $\mathcal{M}_i \in \gamma(\mathcal{C}_i), \mathcal{M}_j \in \gamma(\mathcal{C}_j)$, and $n_{i,j} \in N$. In addition, we assume the connections in $E_C$ form a tree structure with the configurations in $C$. That means, if we form an undirected graph by treating configurations in $C$ as nodes and connections in $E_C$ as edges, the graph should not have any simple cycle (\TODO{cite, diagram?}).
+
+Given a set of configurations $C$, a base configuration $\mathcal{C}_b\in C$, and a set of connections $E_C$, we define the composed configurations to be $\mathcal{C}^*=(C^*, \gamma, M, \mathcal{M}_b, E, \delta)$, where
+\begin{itemize}
+\item $C^*=C$
+\item $M=\bigcup_{\mathcal{C}\in C^*}{\gamma(\mathcal{C})}$.
+\item $\mathcal{M}_b\in M$ is the base module of the base configuration $\mathcal{C}_b$.
+\item $E= (\bigcup_{(\mathcal{C}_i, \mathcal{M}_i, n_i, \mathcal{C}_j, \mathcal{M}_j, n_j)\in E_C}{\{(\mathcal{M}_i, n_i, \mathcal{M}_j, n_j)}\})$ $\cup$ $(\bigcup_{\mathcal{C} \in C^*}{E}$ of $\mathcal{C})$
+\end{itemize}
+The definitions of $\gamma$ and $\delta$ are the same as the ones in Definition~\ref{def:configuration}.
+
+\subsubsection{Update Positions of all Modules} \label{sec:update_position}
+As multiple configurations are combined, positions and orientations of some modules in them need to be changed to preserve the relative positioning between modules as in the original configurations.
+
+\begin{algorithm}
+\caption{Update Module Position}\label{alg:update_position}
+\begin{algorithmic}[1]
+\Require
+\Statex A parent module $\mathcal{M}_p$
+\Statex A child module $\mathcal{M}_c$
+\Statex A connection $(\mathcal{M}_p, n_p, \mathcal{M}_c, n_c)$ and labeling function $\delta$
+\Ensure
+\Statex The child module $\mathcal{M}_c$ with position and orientation updated
+\Statex
+\State c\_wrt\_p $\gets$ get\_transform($V_p$, $V_c$, $n_p$, $n_c$)
+\State p\_wrt\_world $\gets$ get\_matrix($P_p$, $O_p$)
+\State c\_wrt\_world $\gets$ p\_wrt\_world $\cdot$ c\_wrt\_p
+\State $P_c \gets$ get\_position(c\_wrt\_world)
+\State $O_c \gets$ get\_orientation(c\_wrt\_world)
+\State Update $\mathcal{M}_c$ with $P_c$ and $O_c$
+\end{algorithmic}
+\end{algorithm}
+
 
 \paragraph{Configuration composition}
 Define the composition of a set of configurations to a single configuration.
