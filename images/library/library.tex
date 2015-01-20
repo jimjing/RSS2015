@@ -1,0 +1,36 @@
+%&pdflatex
+%\documentclass{standalone}
+\documentclass[a4paper, landscape]{article}
+\usepackage{graphicx}
+\usepackage{pbox}
+
+\newcommand{\picHeight}{1in}
+\begin{document}
+
+        \begin{tabular}{| c | c | c | c | c | c |}
+            \hline
+            \pbox{20cm}{Config-\\uration} &
+            \includegraphics[height=\picHeight]{robot-character.jpg} &
+            \includegraphics[height=\picHeight]{robot-character.jpg} &
+            \includegraphics[height=\picHeight]{robot-character.jpg} &
+            \includegraphics[height=\picHeight]{robot-character.jpg} &
+            \includegraphics[height=\picHeight]{robot-character.jpg} 
+             \\ 
+            ~ & DRIVER1 & LEG3 & BODY3 & STEER3 & SNAKE3 \\ \hline
+            Behaviors &
+            \pbox{20cm}{\(Drive(v,t)\) \\ \(TiltMiddleUp()\)} &
+            \pbox{20cm}{\(Step()\)} &
+            \pbox{20cm}{\(HoldRigid()\)} &
+            \pbox{20cm}{\(Steer(\theta)\) \\ \(DriveSideWheels(v,t)\)} &
+            \pbox{20cm}{\(Wiggle()\) \\ \(AntiWiggle()\)} 
+            \\ \hline
+        \end{tabular}
+\end{document}
+
+
+
+
+
+
+
+
