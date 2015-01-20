@@ -34,54 +34,64 @@
 \maketitle
 
 \begin{abstract}
-In this paper, we present a scalable software framework for the design of modular robot configurations and behaviors. Designs are constructed hierarchically by composing elements from a library, allowing users to easily create complex designs.  Likewise, complex behaviors are constructed by composing controllers from a library in a nested series/parallel structure. The system is integrated with a full dynamic simulator, and provides tools to identify common problems with behaviors, specifically self-collision and loss of quasi-static stability.
+In this paper, we present a scalable software framework for the design of
+modular robot configurations and behaviors. Designs are constructed
+hierarchically by composing elements from a library, allowing users to easily
+create complex designs.  Likewise, complex behaviors are constructed by
+composing controllers from a library in a nested series/parallel structure. The
+system is integrated with a full dynamic simulator, and provides tools to
+identify common problems with behaviors, specifically self-collision and loss
+of quasi-static stability.
 
 \end{abstract}
 
 \section{Introduction}
-Modular reconfigurable robot systems have been studied extensively for several decades \TODO{citations}.  These systems distinguish themselves in their ability to transform into different shapes to address a wide variety of tasks.
+Modular reconfigurable robot systems have been studied extensively for several
+decades \TODO{citations}.  These systems distinguish themselves in their
+ability to transform into different shapes to address a wide variety of tasks.
 
-This additional flexibility places an additional burden on the user, because solving problems with modular robots involves not only designing  software,
+This additional flexibility places an additional burden on the user, because
+solving problems with modular robots involves not only designing  software,
 but also the best physical form for the task at hand. We argue that if this
 complexity is not appropriately managed, it can make the system
-impractical. �If the user is free to create any new design �he/she pleases to
+impractical. If the user is free to create any new design he/she pleases to
 solve a new task, but must program the design from scratch every time, creating
 new designs will be a huge amount of effort, and the advantage of flexible modular
 hardware will be defeated.
 
 Software modularity is a well-established practice for developing large
-maintainable systems and avoiding duplication of effort \TODO{cite}. �In robotics, software
+maintainable systems and avoiding duplication of effort \TODO{cite}. In robotics, software
 behaviors are inextricably linked to the hardware they control, resulting in
-additional challenges to modularity. �Significant progress has been made in
+additional challenges to modularity. Significant progress has been made in
 sharing robotics software between researchers
-�and hardware platforms, most notably
-�ROS which provides IPC and standard libraries for common robot tasks. 
+and hardware platforms, most notably
+ROS which provides IPC and standard libraries for common robot tasks. 
 
 The challenges of software design are different in modular robotics than
 in typical robotics, because the hardware itself is modular. Porting software
 from one robot platform to a completely different robot platform takes a
 considerable amount of time, and needs to be facilitated by a large framework
 such as ROS, in which fundamental software libraries are almost totally decoupled from
-specific hardware. �In modular robotics, the emphasis needs to be on speed of
+specific hardware. In modular robotics, the emphasis needs to be on speed of
 design, because the major advantage of a modular robot system is that new
-designs can be made for each task. �We need to  very quickly develop simple kinematic
+designs can be made for each task. We need to  very quickly develop simple kinematic
 behaviors (\textit{i.e.} take a step with a leg) with new morphologies that share some of the
 structure of old morphologies.
 
 Our solution to this problem is to let the modularity of our hardware determine the
-modularity of our software. �We create new modular robot designs by combining existing sub-designs,
+modularity of our software. We create new modular robot designs by combining existing sub-designs,
 for example combining four legs with a body to create a walking robot.
-�We provide a GUI tool that allows users to do this easily. �Designs have
-associated libraries of software behaviors, so that when new designs �are created
-by composing existing sub-designs, �new behaviors for that design can be quickly
+We provide a GUI tool that allows users to do this easily. Designs have
+associated libraries of software behaviors, so that when new designs are created
+by composing existing sub-designs, new behaviors for that design can be quickly
 and easily created by composing the behaviors associate with its component
-sub-designs. �We introduce new scripting language with a series-parallel
+sub-designs. We introduce new scripting language with a series-parallel
 execution structure that allows old behaviors to be easily and clearly combined
 into new behaviors.
 
 Since combining old things in new ways can lead to unexpected problems, we also
 need to verify that our new designs and behaviors perform the way we expect them
-to. �This is done in a dynamic simulation in Gazebo, and through
+to. This is done in a dynamic simulation in Gazebo, and through
 verification tools that detect common problems.
 
 
@@ -107,7 +117,7 @@ In Section \ref{sec:approach}, we describe the algorithmic basis
 for the three major components of our framework - design composition, behavior
 composition, and behavior verification.  In Section
 \ref{sec:example}, we discuss the open-source software
-tools used to implement our system, and provide examples demonstrating a user'�s
+tools used to implement our system, and provide examples demonstrating a user's
 workflow when using this system.  We demonstrate that our framework saves the
 user time and effort, and allows him or her to easily develop complex and
 capable designs.
@@ -132,10 +142,10 @@ low-level behaviors (i.e. motor drivers appropriate for motors, we do so for
 high-level behaviors.
 
 A significant amount of work has been done in developing behaviors and software
-for modular robots. �Much of this work focused on automatically
-generating �designs and behaviors using artificial intelligence systems. ��Genetic
+for modular robots. Much of this work focused on automatically
+generating designs and behaviors using artificial intelligence systems. Genetic
 algorithms have been applied for the automated generation of designs
-and behaviors \cite{hornby2003generative}. �Other work has
+and behaviors \cite{hornby2003generative}. Other work has
 focused on emergent behavior from distributed algorithms \TODO{cite papers}.
 
 While significant progress has been made in the automated generation of modular robot behaviors,
@@ -160,11 +170,15 @@ We have developed our system for the SMORES modular robot, developed at the
 University of Pennsylvania \cite{Davey2012}. Each SMORES modules has four DoF
 (DoF) - three continuously rotating faces we call {\em turntables} and one
 central hinge with a 180\textdegree\ range of motion (Figure~\ref{fig:SmoresRobot}). The
-DoF marked 1, 2, and 4 have rotational axes that are parallel and coincident. \changedByJim{Each SMORES module can drive around as a two-wheel differential drive robot.}
+DoF marked 1, 2, and 4 have rotational axes that are parallel and coincident.
+\changedByJim{Each SMORES module can drive around as a two-wheel differential
+drive robot.}
 SMORES modules may connect to one another via magnets on each of their four
 faces, and are capable of  self-reconfiguration.
 
-Note that while we demonstrate our software with SMORES, it is not limited to the SMORES robot - it could be applied to any modular robot which may be simulated using Gazebo.
+Note that while we demonstrate our software with SMORES, it is not limited to
+the SMORES robot - it could be applied to any modular robot which may be
+simulated using Gazebo.
 
 
 \begin{figure}[tb]
@@ -229,19 +243,19 @@ For a single SMORES module, there are four degree of freedom as shown in Figure~
 
 \begin{figure}
 \begin{center}
-	\begin{subfigure}[b]{0.4\columnwidth}
-		\includegraphics[width=\textwidth]{images/smores.JPG}
-		\caption{A SMORES module}
-		\label{fig:smores_photo}
+        \begin{subfigure}[b]{0.4\columnwidth}
+                \includegraphics[width=\textwidth]{images/smores.JPG}
+                \caption{A SMORES module}
+                \label{fig:smores_photo}
            \end{subfigure}
            ~
-	\begin{subfigure}[b]{0.4\columnwidth}
-           	\includegraphics[width=\textwidth]{images/tikz/smores.pdf}
-           	\caption{The graphical representation}
-           	\label{fig:smores_graph}
-	\end{subfigure}
+        \begin{subfigure}[b]{0.4\columnwidth}
+                \includegraphics[width=\textwidth]{images/tikz/smores.pdf}
+                \caption{The graphical representation}
+                \label{fig:smores_graph}
+        \end{subfigure}
 \end{center}
-\caption{A photo of a SMROES module and its graphical representation}
+\caption{A photo of a SMORES module and its graphical representation}
 \label{fig:smores}
 \end{figure}
 \end{definition}
@@ -249,29 +263,34 @@ For a single SMORES module, there are four degree of freedom as shown in Figure~
 \begin{definition}[Configuration] \label{def:configuration}
 We define a configuration as $\mathcal{C}=(M, \mathcal{M}_b, E, \delta)$, where
 \begin{itemize}
-\item $M$  is the set of all modules of this configuration, $M=\{\mathcal{M}_1, \mathcal{M}_2, ..., \mathcal{M}_q\}$.
-\item $\mathcal{M}_b \in M$ is a single module that will be treated as a base module.
-\item $E$ is a set of connections between modules. $(\mathcal{M}_i, n_i, \mathcal{M}_j, n_j)\in E$, where $\mathcal{M}_{i,j} \in M, \mathcal{M}_i \neq \mathcal{M}_j$, and $n_{i,j}\in N$.
-\item $\delta: E \rightarrow \mathbb{R}$ is a labeling function over a connection. Given a connection, $\delta$ returns the angle offset in degree between the two connected nodes.
+\item $M$ is a set of modules, $M=\{\mathcal{M}_1, \mathcal{M}_2, ..., \mathcal{M}_q\}$.
+\item $\mathcal{M}_b$ is single module that will be treated as a base module.
+\item $E$ is a set of connections between modules. $(\mathcal{M}_i, n_i,
+\mathcal{M}_j, n_j)\in E$, where $\mathcal{M}_{i,j} \in M, \mathcal{M}_i \neq
+\mathcal{M}_j$, and $n_{i,j}\in N$.
+\item $\delta: E \rightarrow \mathbb{R}$ is a labeling function over a
+connection. Given a connection, $\delta$ returns the angle offset in degree
+between the two connected nodes.
 \end{itemize}
-Figure~\ref{fig:smores_conf_graph} shows a photo of a configuration and its graphical representation. Blue zigzag lines represent connections between modules, and the label of each connection shows the angle offset of that connection.
-
-Although a configuration is used to define the connection between a set of single modules, it can also be extended to represent the structure formed by connecting a set of configurations, as explained in section~\ref{sec:conf_composition}.
+Figure~\ref{fig:smores_conf_graph} shows a photo of a configuration and its
+graphical representation. Blue zigzag lines represent connections between
+modules, and the label of each connection shows the angle offset of that
+connection.
 \end{definition}
 
 \begin{figure}
 \begin{center}
-	\begin{subfigure}[b]{0.4\columnwidth}
-		\includegraphics[width=\textwidth]{images/smores_conf.JPG}
-		\caption{A configuration}
-		\label{fig:smores_conf_photo}
+        \begin{subfigure}[b]{0.4\columnwidth}
+                \includegraphics[width=\textwidth]{images/smores_conf.JPG}
+                \caption{A configuration}
+                \label{fig:smores_conf_photo}
            \end{subfigure}
            ~
-	\begin{subfigure}[b]{0.4\columnwidth}
-           	\includegraphics[width=\textwidth]{images/tikz/smores_conf.pdf}
-           	\caption{The graphical representation}
-           	\label{fig:smores_conf_graph}
-	\end{subfigure}
+        \begin{subfigure}[b]{0.4\columnwidth}
+                \includegraphics[width=\textwidth]{images/tikz/smores_conf.pdf}
+                \caption{The graphical representation}
+                \label{fig:smores_conf_graph}
+        \end{subfigure}
 \end{center}
 \caption{A photo of a configuration with SMORES modules and its graphical representation}
 \label{fig:smores_conf}
@@ -326,45 +345,51 @@ Define the composition of a set of controllers to a single controller. Define th
 We present a novel motion description language for modular robots.  The
 language aims to balance simplicity and expressiveness, and is compositional in
 nature, designed to manage the complexity of developing complicated behaviors
-for large clusters of modular robots through abstraction and modularity.
-
+for large clusters of modular robots through abstraction and modularity. The language
+is in some ways similar to typical extended motion description languages (see \cite{hristu2003motion}),
+but was specifically designed to facilitate  composition.
+ 
 The fundamental atoms of the language are called actions.  An \textit{action} is a tuple \(
-(J, X, \xi, T)\), where \(J\) identifies a single DoF of a configuration, X is a
+(J, X, \xi, T)\), where \(J\) identifies a single DoF of a configuration, \(X\) is a
 controller setpoint for that degree of freedom, \(\xi\) specifies an interrupt
-condition, and T specifies a timeout.  Basically, an action defines a setpoint
-(position or velocity) that the controller will maintain until either the
-interrupt condition is met or time runs out, whichever comes first.  The
-interrupt condition can be set to \(FALSE\) (so that only the timeout has effect),
-and \(T\) can be set to infinity (so that only the interrupt has effect).  This is
-similar to typical atomic elements of an MDLe (see \cite{hristu2003motion}) except that our
-atoms specify controller setpoints for a single DoF, rather than the entire
-robot.  This is because our language includes two fundamental composition operators,
-\(P_c\) (parallel) and \(S_c\) (series), to build behaviors by composing sub-behaviors.
+condition, and T specifies a timeout. When an action executes, the controller
+setpoint (position or velocity) for the specified DoF is changed to the specified
+value. The controller maintains this setpoint until receiving a new one from another
+action. 
 
-We define a \textit{behavior} as a directed acyclic graph where nodes are actions and
-edges are transitions between actions.  A behavior \(B\) always has two
-special nodes \(S\) and \(T\), which are the \textit{Start} and \textit{Termination} nodes, respectively.
-The smallest behavior consists of \(S\), \(T\), and a single action.  Behavior execution follows three simple rules:
+The interrupt condition is a boolean function of the (sensed) state of the DoF \(J\).
+When either the interrupt condition is met or time runs out (whichever comes
+first), the action is considered complete, and the next action  begins. The
+interrupt condition can be set to \(false\) (so that only the timeout has effect),
+and \(T\) can be set to infinity (so that only the interrupt has effect).
+
+Actions are composed to form behaviors. We define a \textit{behavior} as a directed acyclic graph where nodes are
+actions and edges are transitions between actions.  A behavior \(B\) always has
+two special nodes \(S\) and \(T\), which are the \textit{Start} and
+\textit{Termination} nodes, respectively.  The smallest behavior consists of
+\(S\), \(T\), and a single action.  Behavior execution follows three simple
+rules:
 
 \begin{enumerate}
 \item Execution begins at \(S\).  \(S\) completes immediately.
-\item Each action begins execution upon completion of \textit{all} is parent actions.
+\item Each action begins execution upon completion of \textit{all} its parent actions.
 \item All sequences of execution end at \(T\).
 \end{enumerate}
 
-Because execution begins at \(S\) and ends at \(T\), there must be a
-(directed) path from every \(S\) to every node in \(B\), and also from every node in \(B\)
-to \(T\).  \(B\) is therefore a \textit{directed series-parallel graph} (SPG). SPG's
-can always be formed recursively by parallel and series composition operations \cite{SPG}. The
-parallel composition \(P\) of two behaviors \(B_1\), \(B_2\), \(P = Pc(B_1, B_2)\)
-is the disjoint
-union of their nodes (actions), merging \(S_1\) with \(S_2\) and \(T_1\) with \(T_2\). The series
-composition of \(B_1\), \(B_2\), \(S = Sc(B_1, B_2)\) is created from their disjoint union by
-merging \(T_1\) and \(S_2\), so that \(B_1\) and \(B_2\) execute sequentially\footnote{Since
-the merged node is not an action, we can freely omit it and instead draw edges
-from each of its parent nodes to each of its child nodes.}.  Note that if \(B_1\) was
-itself created through parallel composition, \(B_2\) will not begin until all chains
-of execution of \(B_1\) are completed.
+Because execution begins at \(S\) and ends at \(T\), there must be a (directed)
+path from every \(S\) to every node in \(B\), and also from every node in \(B\)
+to \(T\). Since \(B\) is acyclic, it is therefore a \textit{directed series-parallel graph} (SPG).
+SPG's can always be formed recursively by parallel and series composition
+operations \cite{valdes1979recognition}. The parallel composition \(P\) of two behaviors \(B_1\),
+\(B_2\), \(P = Pc(B_1, B_2)\) is the disjoint union of their nodes (actions),
+merging \(S_1\) with \(S_2\) and \(T_1\) with \(T_2\). The series composition
+of \(B_1\), \(B_2\), \(S = Sc(B_1, B_2)\) is created from their disjoint union
+by merging \(T_1\) and \(S_2\), so that \(B_1\) and \(B_2\) execute
+sequentially\footnote{Since the merged node is not an action, we can freely
+omit it and instead draw edges from each of its parent nodes to each of its
+child nodes.}.  Note that if \(B_1\) was itself created through parallel
+composition, \(B_2\) will not begin until all chains of execution of \(B_1\)
+are completed. Figure \ref{fig:graph-composition} provides a visual companion.
 
 \begin{figure}
 \begin{center}
@@ -377,56 +402,87 @@ of execution of \(B_1\) are completed.
 \end{figure}
 
 \subsubsection*{Example}
-Let's say we have the
-car design shown in Figure X. �This design is composed of four wheel modules
-and �a central steering element, which rotates to bend the front wheels to the
-left or right relative the back, causing the car to turn. �The wheel elements
-expose a function which turns the two side turntables in sync in order to drive
-forward. �The steering element exposes a steering function. �We
-show these behavior  definitions below:
-\begin{align*}
-%
-\mathrm{DRV}(v,t) =~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\
+A single SMORES module can use its left and right wheels to drive like a car. To
+drive forward, we might define a DRIVE behavior composing actions for  the left and right wheels
+in parallel:\begin{align*}
+\mathrm{DRIVE} =~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\
 Pc \left( \begin{array}{cccc}
-(~lWheel, & \dot\theta=v, & \xi:0, & T:t~), \\
-(~rWheel, & \dot\theta=v, & \xi:0, & T:t~) \\
+(~L, & \dot\theta_{set}=6, & \xi:false, & T:5), \\
+(~R, & \dot\theta_{set}=6, & \xi:false, & T:5) \\
 \end{array} \right)\\
-%
-\mathrm{ST R}(x) = ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\ 
+\end{align*}
+The wheels are set to turn at 6 radians per second, and the action will complete
+in 5 seconds.  We might also define a TURN behavior, commanding the wheels to rotate \(\pi\) radians
+in opposite directions:
+\begin{align*}
+\mathrm{TURN} =~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\
 Pc \left( \begin{array}{cccc}
-(~tTable1 & \theta=x, & \xi:[\theta=x], & T=\infty~), \\
-(~tTable2 & \theta=-x, & \xi: [\theta=-x], & T=\infty~) \\
-\end{array} \right)
-%
+(~L, & \theta_{set}=\theta_0+\pi, & \xi:\theta==\theta_0+\pi, & T:\infty), \\
+(~R, & \theta_{set}=\theta_0-\pi, & \xi:\theta==\theta_0-\pi, & T:\infty) \\
+\end{array} \right)\\
 \end{align*}
 
-After composing these sub-configurations into the car, we build higher-level
-behaviors by composing the behaviors of the sub-configurations. �We define functions
-to go-straight (GST) and turn (TRN):
-\begin{align*}
-\mathrm{GST}(v,t) &= Pc (~\mathrm{STR}(0),~ \mathrm{DRV}(v,t)~)\\
-\mathrm{TRN}(v,t,x) &= Pc (~\mathrm{STR}(x),~\mathrm{DRV}(v,t)~)
-\end{align*}
-
-We can now easily define trajectories by sequencing go-straight and turn commands
-in series. Figure \ref{fig:zigzag} shows the path generated by the zig-zag behavior defined
-below:
+Here, \(\theta_0\) denotes the currently-sensed value of theta at the beginning of
+the TURN behavior.
+The action completes when both wheels actually reach their commanded angles of \(\theta_0\pm\pi\). To drive in a square, we compose DRIVE and TURN behaviors in series:
 
 \begin{align*}
-ZGZ = ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\\
-Sc(~\mathrm{GST}(10,5),~\mathrm{TRN}(10,5,30),~\mathrm{GST}(10,5),\\
-~\mathrm{TRN}(10,10,-30),~\mathrm{GST}(10,20), \\
-\mathrm{TRN}(10,10,30), \mathrm{GST}(10,5), \mathrm{TRN}(10,10, -30 )~)
+\mathrm{SQUARE} = Sc (~\mathrm{DRIVE},~\mathrm{TURN},~\mathrm{DRIVE},~\mathrm{TURN},\\
+~\mathrm{DRIVE},~\mathrm{TURN},~\mathrm{DRIVE},~\mathrm{TURN} )
 \end{align*}
 
-\begin{figure}
-\begin{center}
-\includegraphics[width=0.7\columnwidth]{images/zigzag.png}
-\end{center}
-\caption{Zig-zag trajectory \TODO{This is hand-drawn, sorry about that... I will
-make a more professional-looking replacement}}
-\label{fig:zigzag}
-\end{figure}
+% Consider the
+% car design shown in Figure X. This design is composed of four wheel modules
+% and a central steering element, which rotates to bend the front wheels to the
+% left or right relative the back, causing the car to turn. The wheel elements
+% expose a function which turns the two side turntables in sync in order to drive
+% forward (DRV). The steering element exposes a steering function (STR). We
+% show these behavior  definitions below:
+% \begin{align*}
+% %
+% \mathrm{DRV}(v,t) =~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\
+% Pc \left( \begin{array}{cccc}
+% (~lWheel, & \dot\theta=v, & \xi:0, & T:t~), \\
+% (~rWheel, & \dot\theta=v, & \xi:0, & T:t~) \\
+% \end{array} \right)\\
+% %
+% \mathrm{ST R}(x) = ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\ 
+% Pc \left( \begin{array}{cccc}
+% (~tTable1 & \theta=x, & \xi:[\theta=x], & T=\infty~), \\
+% (~tTable2 & \theta=-x, & \xi: [\theta=-x], & T=\infty~) \\
+% \end{array} \right)
+% %
+% \end{align*}
+% 
+% The DRV behavior sets an angular velocity \(v\) for the left and right 
+% 
+% After composing these sub-configurations into the car, we build higher-level
+% behaviors by composing the behaviors of the sub-configurations. We define functions
+% to go-straight (GST) and turn (TRN):
+% \begin{align*}
+% \mathrm{GST}(v,t) &= Pc (~\mathrm{STR}(0),~ \mathrm{DRV}(v,t)~)\\
+% \mathrm{TRN}(v,t,x) &= Pc (~\mathrm{STR}(x),~\mathrm{DRV}(v,t)~)
+% \end{align*}
+% 
+% We can now easily define trajectories by sequencing go-straight and turn
+% commands in series. Figure \ref{fig:zigzag} shows the path generated by the
+% zig-zag behavior defined below:
+% 
+% \begin{align*}
+% ZGZ = ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\\
+% Sc(~\mathrm{GST}(10,5),~\mathrm{TRN}(10,5,30),~\mathrm{GST}(10,5),\\
+% ~\mathrm{TRN}(10,10,-30),~\mathrm{GST}(10,20), \\
+% \mathrm{TRN}(10,10,30), \mathrm{GST}(10,5), \mathrm{TRN}(10,10, -30 )~)
+% \end{align*}
+% 
+% \begin{figure}
+% \begin{center}
+% \includegraphics[width=0.7\columnwidth]{images/zigzag.png}
+% \end{center}
+% \caption{Zig-zag trajectory \TODO{This is hand-drawn, sorry about that... I will
+% make a more professional-looking replacement}}
+% \label{fig:zigzag}
+% \end{figure}
  
 \subsection{Controller Composition}
 \TODO{Tarik and Jim write}
@@ -481,17 +537,6 @@ We worked hard, and had fun.
 \bibliography{references}
 
 \end{document}
-
-
-
-
-
-
-
-
-
-
-
 
 
 
