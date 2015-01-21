@@ -39,7 +39,7 @@
 \maketitle
 
 \begin{abstract}
-In this paper, we present a scalable software framework for the design of
+In this paper, we present a software framework for the compositional design of
 modular robot configurations and behaviors. Designs are constructed
 hierarchically by composing elements from a library, allowing users to easily
 create complex designs.  Likewise, complex behaviors are constructed by
@@ -235,7 +235,9 @@ ground plane.
 
 \section{Approach and Algorithm}
 \label{sec:approach}
-\TODO{Tarik and Jim write (see subsections)}
+The three major components of our framework are configuration composition, behavior
+composition, and verification of configurations and behaviors.  We begin with some definitions, and then
+address each of these three components.
 \begin{definition}[Module] 
 We define a single module  as $\mathcal{M}=(P_{/\mathcal{R}}, O_{/\mathcal{R}}, V, N)$, where
 \begin{itemize}
@@ -378,7 +380,7 @@ A composed configuration if it is safe.
 \paragraph{Controller composition}
 Define the composition of a set of controllers to a single controller. Define the difference between a parallel composition and a series composition. Define the control composition graph.
 
-\subsection{Behavior Representation: Series-Parallel Action Graphs}
+\subsection{Behavior Composition: Series-Parallel Action Graphs}
 \label{sec:behavior-representation}
 We present a novel motion description language for modular robots.  The
 language aims to balance simplicity and expressiveness, and is compositional in
@@ -522,27 +524,27 @@ The action completes when both wheels actually reach their commanded angles of \
 % \label{fig:zigzag}
 % \end{figure}
  
-\subsection{Controller Composition}
-\TODO{Tarik and Jim write}
-\paragraph{Input}
-A configurations. A set of controllers. A control composition graph.
-\paragraph{Output}
-A composed controller if it is safe.
-\paragraph{Procedure}
-\begin{itemize}
-\item Compose the set of controllers based on the given control composition graph. Explain how the parallel composition and series composition are handled.
-\item\textbf{Check there is no controller conflict in the composition.}
-\item Execute the composed controller in user defined incremental time interval. At each time step, update each module position and check collision.
-\item \textbf{At each time step, check if the configuration will not have any unexpected behavior.}
-\end{itemize}
+% \subsection{Controller Composition}
+% \TODO{Tarik and Jim write}
+% \paragraph{Input}
+% A configurations. A set of controllers. A control composition graph.
+% \paragraph{Output}
+% A composed controller if it is safe.
+% \paragraph{Procedure}
+% \begin{itemize}
+% \item Compose the set of controllers based on the given control composition graph. Explain how the parallel composition and series composition are handled.
+% \item\textbf{Check there is no controller conflict in the composition.}
+% \item Execute the composed controller in user defined incremental time interval. At each time step, update each module position and check collision.
+% \item \textbf{At each time step, check if the configuration will not have any unexpected behavior.}
+% \end{itemize}
 
-\subsection{Simulation and Verification}
+\subsection{ Verification of Configurations and Designs}
 \TODO{Jim writes}
 
 \subsection{Complexity}
 Discuss the complexity of the algorithm with respect to the number of modules and size of gait tables.
 
-\section{Example and Experiment}
+\section{Implementation }
 \label{sec:example}
 \TODO{Tarik and Jim write}\\
 With simulation in Gazebo:
@@ -554,25 +556,79 @@ With simulation in Gazebo:
 \item Show an updated controller that eliminates the unexpected behavior.
 \end{itemize}
 
-\subsection{Library of configurations}
-Here we present a small library of configurations.
+\section{Examples}
+Here we present some examples to illustrate important features of our framework.
+\subsection{Toward a Standard Library}
+Our eventual intention is to develop a large library of configurations and associated
+behaviors which are available to all users of our framework, analogous to the standard
+libraries of major programming languages.  The compositional nature of our framework
+will allow users to rely heavily on the library when approaching new tasks, allowing
+them to create sophisticated robots very quickly.
+
+As a first step toward a standard library, we present a small library of configurations
+and associated behaviors in Tables \ref{Order-1-configurations} and \ref{Order-2-configurations}.
+Configurations in the library are organized by \textit{order}, defined recursively
+as follows: a single module is an order-zero configuration, and the order of all
+other configurations is one greater than the largest order of the sub-configurations
+from which it is composed. Associated with each configuration is a set of behaviors. \TODO{Behaviors are grouped
+by functionality?}.
+
+For the library to be most effective, the set of configurations and behaviors available
+ at each level (and especially at the lowest levels) should provide a rich set of
+ functionalities without presenting the user with an overwhelming number of options. 
+ Considering the small library in Tables \ref{Order-1-configurations} and \ref{Order-2-configurations},
+ it is interested to note that a large  and diverse set of second- and third-order configurations can
+be constructed from only three first-order configurations. Developing metrics to
+evaluate the quality of such a library is an interesting opportunity for future work. 
+
 \begin{table*}
     \begin{center}
-        \includegraphics{images/library/tier1.pdf}
+        \includegraphics[width=\textwidth]{images/library/tier1.pdf}
         \caption{Tier-1 configurations (basic configurations)}
+        \label{Order-1-configurations}
     \end{center}
 \end{table*}
 \begin{table*}
     \begin{center}
-        \includegraphics{images/library/tier2.pdf}
+        \includegraphics[width=\textwidth]{images/library/tier2.pdf}
         \caption{Tier-2 configurations (composed of basic configurations)}
+        \label{Order-2-configurations}
     \end{center}
 \end{table*}
 
-\subsection{Comparison to Existing Methods}
-\TODO{Tarik writes}\\
+\subsection{The User Perspective}
+We present the start-to-end user perspective in designing a complicated configuration,
+called Walkbot. \TODO{Jim, can you write this section?}
+
+\subsection{Easy scale-up through composition}
+Our framework allows users to quickly create and program large configurations. The
+first order CHAIN3 configuration (Figure \ref{fig:chain3}) can use a \(sineGait\)
+behavior to locomote like a snake. Defining \(sineGait\)  as the series composition
+of two half-waves will allow us to re-use the gait with larger snakes:
+\begin{displaymath}
+sineGait = Sc(~halfSine1,~halfSine2~)
+\end{displaymath}
+Arbitrarily long snake configurations can be created
+by composing CHAIN3's end-to-end; Figure \ref{fig:snake18} shows one with 18 modules.
+A gait for an arbitrarily long snake is created by composing sine wave
+gaits for each component in parallel, but with alternating phase:
+\begin{align*}
+nSnakeSineGait = ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\\
+Pc \left(~Sc\begin{pmatrix} halfSine1 \\ halfSine2 \end{pmatrix},
+~Sc\begin{pmatrix} halfSine2 \\ halfSine1 \end{pmatrix},\ldots ~\right)
+\end{align*}
+\subsection{Verification}
+The need for verification becomes more important as design complexity increases.
+ Consider the Backhoe design, composed of the 2nd-order car and PUMA arm configurations.
+ It is easy for this design to become gravitationally unstable.  Our verification
+ system warns the user when this happens.
+
+\section{Results}
 In the past, designing configurations and behaviors to address new tasks has required
-time on the order of one day \cite{sastra2011using}. \TODO{compare to our results.}
+time on the order of one day \cite{sastra2011using}. Using our framework and library,
+complex designs (such as the Walkbot or 18-module snake) can be created and programmed
+in under an hour. \TODO{Mark, what is the best
+way to present this comparison?} 
 
 \section{Conclusions}
 We worked hard, and had fun.
@@ -591,5 +647,6 @@ We worked hard, and had fun.
 \bibliography{references}
 
 \end{document}
+
 
 
