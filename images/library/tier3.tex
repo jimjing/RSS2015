@@ -1,0 +1,27 @@
+%&pdflatex
+\documentclass{standalone}
+%\documentclass[a4paper, landscape]{article}
+\usepackage{graphicx}
+\usepackage{pbox}
+
+\newcommand{\picHeight}{1in}
+\begin{document}
+
+        \begin{tabular}{| c | c |}
+            \hline
+            \pbox{20cm}{Config-\\uration} &
+            \includegraphics[height=\picHeight]{robot-character.jpg} \\
+            ~ & BACKHOE \\ \hline
+            Components & \pbox{20cm}{PUMA \\ CAR}\\ \hline
+            Behaviors &
+            \pbox{20cm}{\(Drive(v,t)\) \\ \(PickUp()\)} \\ \hline
+        \end{tabular}
+\end{document}
+
+
+
+
+
+
+
+
