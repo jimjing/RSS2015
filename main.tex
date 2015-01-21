@@ -266,21 +266,19 @@ For a single SMORES module, there are four degree of freedom as shown in Figure~
 \end{definition}
 
 \begin{definition}[Configuration] \label{def:configuration}
-We define a configuration as $\mathcal{C}=(M, \mathcal{M}_b, E, \delta)$, where
+We define a configuration as $\mathcal{C}=(C_, \gamma, M, \mathcal{M}_b, E, \delta)$, where
 \begin{itemize}
-\item $M$ is a set of modules, $M=\{\mathcal{M}_1, \mathcal{M}_2, ..., \mathcal{M}_q\}$.
-\item $\mathcal{M}_b$ is single module that will be treated as a base module.
-\item $E$ is a set of connections between modules. $(\mathcal{M}_i, n_i,
-\mathcal{M}_j, n_j)\in E$, where $\mathcal{M}_{i,j} \in M, \mathcal{M}_i \neq
-\mathcal{M}_j$, and $n_{i,j}\in N$.
-\item $\delta: E \rightarrow \mathbb{R}$ is a labeling function over a
-connection. Given a connection, $\delta$ returns the angle offset in degree
-between the two connected nodes.
+\item $C$ is a set of configurations, $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$.
+\item $\gamma: C \rightarrow M$ is a function that, when given a configuration, returns all modules of that configuration.
+\item $M$ is the set of modules. If this configuration contains no other configurations, i.e. $C = \emptyset$, $M$ is just the set of all modules of this configuration. If this configuration is composed by other configurations, i.e. $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$, we define $M=\bigcup_{\mathcal{C}\in C}{\gamma(\mathcal{C})}$.
+\item $E$ is a set of connections between modules. $(\mathcal{M}_i.n_i, \mathcal{M}_j.n_j)\in E$, where $\mathcal{M}_{i,j} \in M, \mathcal{M}_i \neq \mathcal{M}_j$, and $n_i\in \mathcal{M}_i.N$, $n_j\in \mathcal{M}_j.N$.
+\item $\mathcal{M}_b\in M$ is a single module that will be treated as a base module, i.e. $\not\exists (\mathcal{M}_i.n_i, \mathcal{M}_j.n_j)\in E, s.t. \mathcal{M}_j=\mathcal{M}_b$.
+\item $\delta: E \rightarrow \mathbb{R}$ is a labeling function over a connection. Given a connection, $\delta$ returns the angle offset in degree between the two connected nodes.
 \end{itemize}
-Figure~\ref{fig:smores_conf_graph} shows a photo of a configuration and its
+We assume the set of connections is defined such that, if we form a directed graph by treating modules in $M$ as nodes and connections in $E$ as edges, the graph should not have any cycle. Figure~\ref{fig:smores_conf_photo} shows a photo of a configuration that does not include other configurations. Figure~\ref{fig:smores_conf_graph} shows its
 graphical representation. Blue zigzag lines represent connections between
 modules, and the label of each connection shows the angle offset of that
-connection.
+connection. Notice that the definition of a configuration allow it to represent a complex structure with nested configurations with arbitrary depth.
 \end{definition}
 
 \begin{figure}
@@ -303,36 +301,23 @@ connection.
 
 
 \subsection{Configuration Composition} \label{sec:conf_composition}
-In order to demonstrate our algorithm on configuration composition, we need to first extend the definition on configuration to allow make a configuration by composing multiple configurations.
 
-\begin{definition}[Extended Configuration] 
-We extend the definition of a configuration as $\mathcal{C}_\alpha=(C_\alpha, \gamma, M, \mathcal{M}_b, E, \delta)$, where
-\begin{itemize}
-\item $C_\alpha$ is a set of configurations, $C_\alpha=\{\mathcal{C}_{\alpha1}, \mathcal{C}_{\alpha2}, ..., \mathcal{C}_{\alpha q}\}$.
-\item $\gamma: C_\alpha \rightarrow M$ is a function that, when given a configuration, returns all modules of that configuration.
-\item $M$ is the set of modules. If this configuration contains no other configurations, i.e. $C_\alpha = \emptyset$, $M$ is just the set of all modules of this configuration as defined in Definition~\ref{def:configuration}. If this configuration is composed by other configurations, i.e. $C_\alpha=\{\mathcal{C}_{\alpha1}, \mathcal{C}_{\alpha2}, ..., \mathcal{C}_{\alpha q}\}$, we define $M=\bigcup_{\mathcal{C}_{\alpha}\in C_{\alpha}}{\gamma(\mathcal{C}_{\alpha})}$.
-\item $\mathcal{M}_b\in M$ is a single module that will be treated as a base module.
-\item $E$ is a set of connections between modules. $(\mathcal{M}_i, n_i, \mathcal{M}_j, n_j)\in E$, where $\mathcal{M}_{i,j} \in M, \mathcal{M}_i \neq \mathcal{M}_j$, and $n_{i,j}\in N$.
-\item $\delta: E \rightarrow \mathbb{R}$ is a labeling function over a connection. Given a connection, $\delta$ returns the angle offset in degree between the two connected nodes.
-\end{itemize}
-\end{definition}
-The extended configuration can represent a complex structure with nested configurations with arbitrary depth. For the rest of the paper, we will omit the subscript $\alpha$, and use $\mathcal{C}$, $C$ to stand for ``one extended configuration'' and ``a set of extended configurations'' respectively.
 
 \begin{definition}[Configuration Composition] 
-Given a set of configurations $C$, a base configuration $\mathcal{C}_b\in C$, and a set of connections $E_C$ that encodes the connections between configurations in $C$, configuration composition combines all configuration in $C$ to a single configuration $\mathcal{C}^*$ that has the following guarantees: i) $\mathcal{C}^*$ includes all modules and connections from $C$ and $E_C$ (section~\ref{sec:update_connection}); ii) the positions of all modules in $\mathcal{C}^*$ are adjusted based on the connections to preserve structures of original configurations in $C$ (section~\ref{sec:update_position}); iii) $\mathcal{C}^*$ is a safe configuration as defined in section~\ref{sec:safe_conf}. 
+Given a set of configurations $C$, a base configuration $\mathcal{C}_b\in C$, and a set of connections $E_C$ that encodes the connections between configurations in $C$, configuration composition combines all configuration in $C$ to a single configuration $\mathcal{C}^*$ that has the following guarantees: i) $\mathcal{C}^*$ includes all modules and connections from $C$ and $E_C$ (section~\ref{sec:update_connection}); ii) the positions of all modules in $\mathcal{C}^*$ are adjusted based on the connections to preserve structures of original configurations in $C$ (section~\ref{sec:update_position}).
 \end{definition}
 
 \subsubsection{Update Modules and Connections} \label{sec:update_connection}
 Before presenting the procedure to update modules and configurations in $\mathcal{C}^*$, we will first discuss some assumptions about the set of connections $E_C$.
 
-The set of connections $E_C$ between configurations in $C$ is defined as $(\mathcal{C}_i, \mathcal{M}_i, n_i, \mathcal{C}_j, \mathcal{M}_j, n_j) \in E_C$, where $\mathcal{C}_{i,j}\in C$, $\mathcal{M}_i \in \gamma(\mathcal{C}_i), \mathcal{M}_j \in \gamma(\mathcal{C}_j)$, and $n_{i,j} \in N$. In addition, we assume the connections in $E_C$ form a tree structure with the configurations in $C$. That means, if we form an undirected graph by treating configurations in $C$ as nodes and connections in $E_C$ as edges, the graph should not have any simple cycle (\TODO{cite, diagram?}).
+The set of connections $E_C$ between configurations in $C$ is defined as $(\mathcal{C}_i.\mathcal{M}_i.n_i, \mathcal{C}_j.\mathcal{M}_j.n_j) \in E_C$, where $\mathcal{C}_{i,j}\in C$, $\mathcal{M}_i \in \gamma(\mathcal{C}_i), \mathcal{M}_j \in \gamma(\mathcal{C}_j)$, and $n_i\in \mathcal{M}_i.N$, $n_j\in \mathcal{M}_j.N$. Similar to the assumption about connections in a configuration, we assume that if we form a directed graph with configurations in $C$ as nodes and connections in $E_C$ as edges, the graph does not have any cycle.
 
 Given a set of configurations $C$, a base configuration $\mathcal{C}_b\in C$, and a set of connections $E_C$, we define the composed configurations to be $\mathcal{C}^*=(C^*, \gamma, M, \mathcal{M}_b, E, \delta)$, where
 \begin{itemize}
 \item $C^*=C$
 \item $M=\bigcup_{\mathcal{C}\in C^*}{\gamma(\mathcal{C})}$.
 \item $\mathcal{M}_b\in M$ is the base module of the base configuration $\mathcal{C}_b$.
-\item $E= (\bigcup_{(\mathcal{C}_i, \mathcal{M}_i, n_i, \mathcal{C}_j, \mathcal{M}_j, n_j)\in E_C}{\{(\mathcal{M}_i, n_i, \mathcal{M}_j, n_j)}\})$ $\cup$ $(\bigcup_{\mathcal{C} \in C^*}{E}$ of $\mathcal{C})$
+\item $E= (\bigcup_{(\mathcal{C}_i.\mathcal{M}_i.n_i, \mathcal{C}_j.\mathcal{M}_j.n_j)\in E_C}{\{(\mathcal{M}_i.n_i, \mathcal{M}_j.n_j)}\})$ $\cup$ $(\bigcup_{\mathcal{C} \in C^*}{E}$ of $\mathcal{C})$
 \end{itemize}
 The definitions of $\gamma$ and $\delta$ are the same as the ones in Definition~\ref{def:configuration}.
 
@@ -345,38 +330,52 @@ As multiple configurations are combined, positions and orientations of some modu
 \Require
 \Statex A parent module $\mathcal{M}_p$
 \Statex A child module $\mathcal{M}_c$
-\Statex A connection $(\mathcal{M}_p, n_p, \mathcal{M}_c, n_c)$ and labeling function $\delta$
+\Statex A connection $e=(\mathcal{M}_p.n_p, \mathcal{M}_c.n_c)$ and the labeling function $\delta$
 \Ensure
 \Statex The child module $\mathcal{M}_c$ with position and orientation updated
 \Statex
-\State c\_wrt\_p $\gets$ get\_transform($V_p$, $V_c$, $n_p$, $n_c$)
-\State p\_wrt\_world $\gets$ get\_matrix($P_p$, $O_p$)
-\State c\_wrt\_world $\gets$ p\_wrt\_world $\cdot$ c\_wrt\_p
-\State $P_c \gets$ get\_position(c\_wrt\_world)
-\State $O_c \gets$ get\_orientation(c\_wrt\_world)
-\State Update $\mathcal{M}_c$ with $P_c$ and $O_c$
+\State c\_wrt\_p $\gets$ get\_transform($\mathcal{M}_p.V_p$, $\mathcal{M}_p.V_p$, $e$, $\delta$) \label{line:1}
+\State p\_wrt\_world $\gets$ get\_matrix($\mathcal{M}_p.P_p$, $\mathcal{M}_p.O_p$) \label{line:2}
+\State c\_wrt\_world $\gets$ p\_wrt\_world $\cdot$ c\_wrt\_p \label{line:3}
+\State $\mathcal{M}_c.P_c \gets$ get\_position(c\_wrt\_world) \label{line:4}
+\State $\mathcal{M}_c.O_c \gets$ get\_orientation(c\_wrt\_world) \label{line:5}
+\State \Return $\mathcal{M}_c$
 \end{algorithmic}
 \end{algorithm}
 
+\begin{algorithm}
+\caption{Update All Module Positions}\label{alg:update_all_positions}
+\begin{algorithmic}[1]
+\Require
+\Statex A configuration $\mathcal{C}$
+\Ensure
+\Statex The configuration $\mathcal{C}$ whose module positions are all updated
+\Statex
+\State $\mathcal{M}_p \gets \mathcal{C}.\mathcal{M}_b$ \label{line:6}
+\State $M=\{\mathcal{M}_p\}$ \label{line:7}
+\State $\mathcal{C}.M=\emptyset$ \label{line:8}
 
-\paragraph{Configuration composition}
-Define the composition of a set of configurations to a single configuration.
+\While{$M\neq\emptyset$} \label{line:9}
+\For{$(\mathcal{M}_i.n_i, \mathcal{M}_j.n_j) \in \mathcal{C}.E$} \label{line:10}
+\If{$\mathcal{M}_i=\mathcal{M}_p$} \label{line:11}
+\State $\mathcal{M}_j=$~UpdateModulePosition$($ \label{line:12}
+\Statex \hspace{3cm}$\mathcal{M}_i, \mathcal{M}_j, (\mathcal{M}_i.n_i, \mathcal{M}_j.n_j), \mathcal{C}.\delta)$
+\State $M=M\cup\{\mathcal{M}_j\}$ \label{line:13}
+\State $\mathcal{C}.M=\mathcal{C}.M\cup\{\mathcal{M}_j\}$ \label{line:14}
+\EndIf \label{line:15}
+\EndFor \label{line:16}
+\State $M=M \setminus \{\mathcal{M}_p\}$ \label{line:17}
+\State $\mathcal{M}_p \gets$ RandomOneFrom$(M)$ \label{line:18}
+\EndWhile \label{line:19}
 
-\TODO{Jim writes}
-\paragraph{Input}
-A set of configurations. A topology graph representing the connectivity among those configurations. A base module (for position transformation).
-\paragraph{Output}
-A composed configuration if it is safe.
-\paragraph{Procedure}
-\begin{itemize}
-\item Start from the configurations that connects to the configuration with base module, transform their positions based on the position of the base configuration and topology graph.
-\item Check if there is any collisions among the modules and report such collision.
-\item \textbf{Check if the final configuration is stable. If not, find the plane that will make the configuration stable and transform the configuration.}
-\item Show the expected behavior in simulator.
-\end{itemize}
+\State \Return $\mathcal{M}_c$
+\end{algorithmic}
+\end{algorithm}
 
-\paragraph{Controller composition}
-Define the composition of a set of controllers to a single controller. Define the difference between a parallel composition and a series composition. Define the control composition graph.
+Given a parent module $\mathcal{M}_p$, a child module $\mathcal{M}_c$, the connection between them and the corresponding labeling function, Algorithm~\ref{alg:update_position} updates the position and orientation in the global reference frame of the child module based on the relative positioning between $\mathcal{M}_p$ and $\mathcal{M}_c$. Function ``get\_transform'' in line~\ref{line:1} computes the transformation matrix for the reference frame from the parent module to the child module. Function ``get\_matrix'' in line~\ref{line:2} computes the transformation matrix from global frame to the parent module frame. With the two transformation matrices, line~\ref{line:3} computes the transformation matrix from the global frame to the child module frame. In line~\ref{line:4}, \ref{line:5}, functions ``get\_position'' and ``get\_orientation'' update the position and orientation of the child module.
+
+With the algorithm to update the position and orientation between two modules, Algorithm~\ref{alg:update_all_positions} shows the procedure to update the position and orientation of all modules in a given configurations $\mathcal{C}$. The algorithm starts with the base module of $\mathcal{C}$ as shown in line~\ref{line:6}. $M$ is the set of modules who are updated already, but some modules that are directly connected to modules in $M$ are not updated yet. The set of modules of $\mathcal{C}$ is reset to empty set in line~\ref{line:8}. The while loop from line~\ref{line:9} to \ref{line:19} ensures all modules in $\mathcal{C}$ are updated. The for loop and if statement in line~\ref{line:10}, \ref{line:11} find all connections in $\mathcal{C}.E$ whose first module is $\mathcal{M}_p$. In line~\ref{line:12} we apply Algorithm~\ref{alg:update_position} to update the position and orientation of the second module in those connections. Line~\ref{line:13}, \ref{line:14} append the updated module into the set $M$ and $\mathcal{C}.M$. In line~\ref{line:17}, \ref{line:18}, we remove the current $\mathcal{M}_p$ from the set $M$ and randomly choose a new $\mathcal{M}_p$ from $M$. Notice that the assumption we made about connections of a configuration in Definition~\ref{def:configuration} prevents us from updating the same module twice.
+
 
 \subsection{Behavior Representation: Series-Parallel Action Graphs}
 \label{sec:behavior-representation}
@@ -523,6 +522,8 @@ The action completes when both wheels actually reach their commanded angles of \
 % \end{figure}
  
 \subsection{Controller Composition}
+\paragraph{Controller composition}
+Define the composition of a set of controllers to a single controller. Define the difference between a parallel composition and a series composition. Define the control composition graph.
 \TODO{Tarik and Jim write}
 \paragraph{Input}
 A configurations. A set of controllers. A control composition graph.
