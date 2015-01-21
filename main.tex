@@ -56,6 +56,8 @@ of quasi-static stability.
 Modular reconfigurable robot systems have been studied extensively for several
 decades \TODO{citations}.  These systems distinguish themselves in their
 ability to transform into different shapes to address a wide variety of tasks.
+\TODO{Mention applications (SAR etc).}
+
 
 This additional flexibility places an additional burden on the user, because
 solving problems with modular robots involves not only designing  software,
@@ -69,7 +71,7 @@ hardware will be defeated.
 Software modularity is a well-established practice for developing large
 maintainable systems and avoiding duplication of effort \TODO{cite}. In robotics, software
 behaviors are inextricably linked to the hardware they control, resulting in
-additional challenges to modularity. Significant progress has been made in
+additional challenges to making modularity effective. Significant progress has been made in
 sharing robotics software between researchers
 and hardware platforms, most notably
 ROS which provides IPC and standard libraries for common robot tasks. 
@@ -104,8 +106,8 @@ verification tools that detect common problems.
 
 \section{Contribution and Paper Structure}
 
-The primary contribution of this paper is a software framework that allows modular
-robot configurations and behaviors to be built hierarchically, and a simulation
+The primary contribution of this paper is a formalism for the construction of modular
+robot configurations and behaviors by composition, and a simulation
 environment that helps the user verify intended behavior.  Together, these tools
 help manage the complexity of a modular robot system, significantly reducing the
 time and effort required to accomplish tasks with modular robots.  The software we
@@ -171,17 +173,84 @@ planning \cite{yoshida2002self}.
 In this section, we present concepts and terms which will be used later in the paper.
 
 \subsection{Concepts and terms}
-\begin{definition}[Configuration]
-A \textit{configuration} is a contiguous set of connected modules which we treat as a
-single robot.  Configurations are defined by their connective structure, and
-are represented by graphs with nodes representing modules and edges
-representing connections between modules.  Edges are labeled to indicate which
-faces are connected as well as any angular offset, so that all information
-about the connective topology of the modules is captured.  Individual modules
-are considered interchangeable (as long as they are of the same kind), so any
-two identically connected sets of modules are considered instances of the same
-configuration.
+\begin{definition}[Module] A module is a small robot that can move, respond to commands,
+and attach to other modules.  Formally, we define a  module  as $\mathcal{M}=(P_{/\mathcal{R}}, O_{/\mathcal{R}}, V, N)$, where:
+\begin{itemize}
+\item $P_{/\mathcal{R}}=(p_x,p_y,p_z)$ is the position of the module in the global reference frame $\mathcal{R}$. We consider the position the center of the module as the position of the module.
+\item $O_{/\mathcal{R}}=(o_w, o_x, o_y, o_z)$ is the orientation of the module represented by quaternion in the global reference frame $\mathcal{R}$.
+\item $V=\{v_1, v_2, ..., v_m\}$ is the set of joint values. Each joint value corresponds to each degree of freedom of the module.
+\item $N=\{n_1, n_2, ..., n_k\}$ is the set of nodes where the module can connect to other modules.
+\end{itemize}
+\TODO{Move this SMORES stuff to come later} For a single SMORES module, there are four degree of freedom as shown in Figure~\ref{fig:SmoresRobot}, and there are four nodes to connect to other modules, i.e. $N=\{$front, left, right, back$\}$ as shown in Figure~\ref{fig:smores}.
+
+\begin{figure}
+\begin{center}
+        \begin{subfigure}[b]{0.4\columnwidth}
+                \includegraphics[width=\textwidth]{images/smores.JPG}
+                \caption{A SMORES module}
+                \label{fig:smores_photo}
+           \end{subfigure}
+           ~
+        \begin{subfigure}[b]{0.4\columnwidth}
+                \includegraphics[width=\textwidth]{images/tikz/smores.pdf}
+                \caption{The graphical representation}
+                \label{fig:smores_graph}
+        \end{subfigure}
+\end{center}
+\caption{A photo of a SMORES module and its graphical representation}
+\label{fig:smores}
+\end{figure}
 \end{definition}
+
+\begin{definition}[Configuration]
+\label{def:configuration}
+A \textit{configuration} is a contiguous set of connected modules which we treat as a
+single robot.  The identity of a configuration is determined by its connective structure; configurations
+can be represented by graphs with nodes representing modules and edges
+representing connections between modules.   Individual modules
+are considered interchangeable (as long as they are of the same kind).
+
+In this paper, we present an object-oriented design framework for modular robot
+systems, an treat configurations as the fundamental objects. Rather than defining
+configurations by the topology of their component modules, we define them recursively,
+as being composed of connected sub-configurations. A single module is considered the
+smallest configuration.
+
+Formally, we define a configuration as $\mathcal{C}=(C_, \gamma, M, \mathcal{M}_b, E, \delta)$, where:
+\begin{itemize}
+\item $C$ is a set of configurations, $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$.
+\item $\gamma: C \rightarrow M$ is a function that, when given a configuration, returns all modules of that configuration.
+\item $M$ is the set of modules. If this configuration contains no other configurations, i.e. $C = \emptyset$, $M$ is just the set of all modules of this configuration. If this configuration is composed by other configurations, i.e. $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$, we define $M=\bigcup_{\mathcal{C}\in C}{\gamma(\mathcal{C})}$.
+\item $E$ is a set of connections between modules. $(\mathcal{M}_i.n_i, \mathcal{M}_j.n_j)\in E$, where $\mathcal{M}_{i,j} \in M, \mathcal{M}_i \neq \mathcal{M}_j$, and $n_i\in \mathcal{M}_i.N$, $n_j\in \mathcal{M}_j.N$.
+\item $\mathcal{M}_b\in M$ is a single module that will be treated as a base module, i.e. $\not\exists (\mathcal{M}_i.n_i, \mathcal{M}_j.n_j)\in E, s.t. \mathcal{M}_j=\mathcal{M}_b$.
+\item $\delta: E \rightarrow \mathbb{R}$ is a labeling function over a connection. Given a connection, $\delta$ returns the angle offset in degree between the two connected nodes.
+\end{itemize}
+We assume the set of connections is defined such that, if we form a directed graph by treating modules in $M$ as nodes and connections in $E$ as edges, the graph should not have any cycle. Figure~\ref{fig:smores_conf_photo} shows a photo of a configuration that does not include other configurations. Figure~\ref{fig:smores_conf_graph} shows its
+graphical representation. Blue zigzag lines represent connections between
+modules, and the label of each connection shows the angle offset of that
+connection. Notice that the definition of a configuration allow it to represent a complex structure with nested configurations with arbitrary depth.
+\end{definition}
+
+\begin{figure}
+\begin{center}
+        \begin{subfigure}[b]{0.4\columnwidth}
+                \includegraphics[width=\textwidth]{images/smores_conf.JPG}
+                \caption{A configuration}
+                \label{fig:smores_conf_photo}
+           \end{subfigure}
+           ~
+        \begin{subfigure}[b]{0.4\columnwidth}
+                \includegraphics[width=\textwidth]{images/tikz/smores_conf.pdf}
+                \caption{The graphical representation}
+                \label{fig:smores_conf_graph}
+        \end{subfigure}
+\end{center}
+\caption{A photo of a configuration with SMORES modules and its graphical representation}
+\label{fig:smores_conf}
+\end{figure}
+
+
+
 \begin{definition}[Behavior]
 A \textit{behavior} is a programmed sequence of movements for a specific configuration
 intended to produce a desired effect.  A gait for walking is one example.  In
@@ -221,72 +290,7 @@ section, and in some cases (like ``configuration'') merged with these definition
 \section{Approach and Algorithm}
 \label{sec:approach}
 The three major components of our framework are configuration composition, behavior
-composition, and verification of configurations and behaviors.  We begin with some definitions, and then
-address each of these three components.
-\begin{definition}[Module] 
-We define a single module  as $\mathcal{M}=(P_{/\mathcal{R}}, O_{/\mathcal{R}}, V, N)$, where
-\begin{itemize}
-\item $P_{/\mathcal{R}}=(p_x,p_y,p_z)$ is the position of the module in the global reference frame $\mathcal{R}$. We consider the position the center of the module as the position of the module.
-\item $O_{/\mathcal{R}}=(o_w, o_x, o_y, o_z)$ is the orientation of the module represented by quaternion in the global reference frame $\mathcal{R}$.
-\item $V=\{v_1, v_2, ..., v_m\}$ is the set of joint values. Each joint value corresponds to each degree of freedom of the module.
-\item $N=\{n_1, n_2, ..., n_k\}$ is the set of nodes where the module can connect to other modules.
-\end{itemize}
-For a single SMORES module, there are four degree of freedom as shown in Figure~\ref{fig:SmoresRobot}, and there are four nodes to connect to other modules, i.e. $N=\{$front, left, right, back$\}$ as shown in Figure~\ref{fig:smores}.
-
-\begin{figure}
-\begin{center}
-        \begin{subfigure}[b]{0.4\columnwidth}
-                \includegraphics[width=\textwidth]{images/smores.JPG}
-                \caption{A SMORES module}
-                \label{fig:smores_photo}
-           \end{subfigure}
-           ~
-        \begin{subfigure}[b]{0.4\columnwidth}
-                \includegraphics[width=\textwidth]{images/tikz/smores.pdf}
-                \caption{The graphical representation}
-                \label{fig:smores_graph}
-        \end{subfigure}
-\end{center}
-\caption{A photo of a SMORES module and its graphical representation}
-\label{fig:smores}
-\end{figure}
-\end{definition}
-
-\begin{definition}[Configuration] \label{def:configuration}
-We define a configuration as $\mathcal{C}=(C_, \gamma, M, \mathcal{M}_b, E, \delta)$, where
-\begin{itemize}
-\item $C$ is a set of configurations, $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$.
-\item $\gamma: C \rightarrow M$ is a function that, when given a configuration, returns all modules of that configuration.
-\item $M$ is the set of modules. If this configuration contains no other configurations, i.e. $C = \emptyset$, $M$ is just the set of all modules of this configuration. If this configuration is composed by other configurations, i.e. $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$, we define $M=\bigcup_{\mathcal{C}\in C}{\gamma(\mathcal{C})}$.
-\item $E$ is a set of connections between modules. $(\mathcal{M}_i.n_i, \mathcal{M}_j.n_j)\in E$, where $\mathcal{M}_{i,j} \in M, \mathcal{M}_i \neq \mathcal{M}_j$, and $n_i\in \mathcal{M}_i.N$, $n_j\in \mathcal{M}_j.N$.
-\item $\mathcal{M}_b\in M$ is a single module that will be treated as a base module, i.e. $\not\exists (\mathcal{M}_i.n_i, \mathcal{M}_j.n_j)\in E, s.t. \mathcal{M}_j=\mathcal{M}_b$.
-\item $\delta: E \rightarrow \mathbb{R}$ is a labeling function over a connection. Given a connection, $\delta$ returns the angle offset in degree between the two connected nodes.
-\end{itemize}
-We assume the set of connections is defined such that, if we form a directed graph by treating modules in $M$ as nodes and connections in $E$ as edges, the graph should not have any cycle. Figure~\ref{fig:smores_conf_photo} shows a photo of a configuration that does not include other configurations. Figure~\ref{fig:smores_conf_graph} shows its
-graphical representation. Blue zigzag lines represent connections between
-modules, and the label of each connection shows the angle offset of that
-connection. Notice that the definition of a configuration allow it to represent a complex structure with nested configurations with arbitrary depth.
-\end{definition}
-
-\begin{figure}
-\begin{center}
-        \begin{subfigure}[b]{0.4\columnwidth}
-                \includegraphics[width=\textwidth]{images/smores_conf.JPG}
-                \caption{A configuration}
-                \label{fig:smores_conf_photo}
-           \end{subfigure}
-           ~
-        \begin{subfigure}[b]{0.4\columnwidth}
-                \includegraphics[width=\textwidth]{images/tikz/smores_conf.pdf}
-                \caption{The graphical representation}
-                \label{fig:smores_conf_graph}
-        \end{subfigure}
-\end{center}
-\caption{A photo of a configuration with SMORES modules and its graphical representation}
-\label{fig:smores_conf}
-\end{figure}
-
-
+composition, and verification of configurations and behaviors. 
 \subsection{Configuration Composition} \label{sec:conf_composition}
 
 
@@ -576,7 +580,7 @@ Similar to the verification of a configuration , we need to know the geometry in
 
 
 \subsection{Complexity}
-Discuss the complexity of the algorithm with respect to the number of modules and size of gait tables.
+\TODO{Discuss the complexity of the algorithm with respect to the number of modules and size of gait tables.}
 
 \section{Implementation }
 \label{sec:example}
@@ -768,6 +772,7 @@ We worked hard, and had fun.
 \section{Future}
 \begin{itemize}
 \item How to represent different attribute/ability of the configurations
+\item Mention that we're going to run behaviors on actual hardware.
 \end{itemize}
 
 
@@ -779,6 +784,7 @@ We worked hard, and had fun.
 \bibliography{references}
 
 \end{document}
+
 
 
 
