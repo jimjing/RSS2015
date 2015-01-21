@@ -8,12 +8,14 @@
 \usepackage[bookmarks=true]{hyperref}
 \usepackage{color}
 \usepackage{graphicx}
+%\usepackage{subfloat}
 \usepackage{textcomp}
 \usepackage{amsthm}
 \usepackage{amsfonts}
 \usepackage{subcaption}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{pbox}
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
@@ -31,7 +33,7 @@
 \begin{document}
 
 % paper title
-\title{Computer-aided design of complex configurations and behaviors for modular robots}
+\title{Computer-aided Compositional Design and Verification for Modular Robots}
 
 % You will get a Paper-ID when submitting a pdf file to the conference system
 \author{Author Names Omitted for Anonymous Review. Paper-ID [add your ID here]}
@@ -106,12 +108,8 @@ The primary contribution of this paper is a software framework that allows modul
 robot configurations and behaviors to be built hierarchically, and a simulation
 environment that helps the user verify intended behavior.  Together, these tools
 help manage the complexity of a modular robot system, significantly reducing the
-time and effort required to accomplish tasks with modular robots.
-
-The software we developed is open-source and freely available at\TODO{Link}.  Our
-code is built for SMORES,  a modular robot developed at the University of
-Pennsylvania (see sec \ref{fig:SmoresRobot}), but could easily be adapted for use with
-other modular robot systems.
+time and effort required to accomplish tasks with modular robots.  The software we
+have developed is open-source and will be made freely available online.
 
 The remainder of this paper provides a comprehensive description of the
 structure and algorithmic components of our software system.  In Section \ref{sec:related-work},
@@ -170,31 +168,10 @@ planning \cite{yoshida2002self}.
 
 \section{Preliminaries}
 \label{sec:preliminaries}
-\subsection{SMORES robot}
-We have developed our system for the SMORES modular robot, developed at the
-University of Pennsylvania \cite{Davey2012}. Each SMORES modules has four DoF
-(DoF) - three continuously rotating faces we call {\em turntables} and one
-central hinge with a 180\textdegree\ range of motion (Figure~\ref{fig:SmoresRobot}). The
-DoF marked 1, 2, and 4 have rotational axes that are parallel and coincident.
-\changedByJim{Each SMORES module can drive around as a two-wheel differential
-drive robot.}
-SMORES modules may connect to one another via magnets on each of their four
-faces, and are capable of  self-reconfiguration.
-
-Note that while we demonstrate our software with SMORES, it is not limited to
-the SMORES robot - it could be applied to any modular robot which may be
-simulated using Gazebo.
-
-
-\begin{figure}[tb]
-    \begin{center}
-        \includegraphics[width=\columnwidth]{images/smores_robot.png}
-    \end{center}
-    \caption{SMORES robot}
-    \label{fig:SmoresRobot}
-\end{figure}
+In this section, we present concepts and terms which will be used later in the paper.
 
 \subsection{Concepts and terms}
+\begin{definition}[Configuration]
 A \textit{configuration} is a contiguous set of connected modules which we treat as a
 single robot.  Configurations are defined by their connective structure, and
 are represented by graphs with nodes representing modules and edges
@@ -204,34 +181,42 @@ about the connective topology of the modules is captured.  Individual modules
 are considered interchangeable (as long as they are of the same kind), so any
 two identically connected sets of modules are considered instances of the same
 configuration.
-
+\end{definition}
+\begin{definition}[Behavior]
 A \textit{behavior} is a programmed sequence of movements for a specific configuration
 intended to produce a desired effect.  A gait for walking is one example.  In
 this paper, we consider open-loop kinematic behaviors represented as
 series-parallel action graphs, described in detail in section
 \ref{sec:behavior-representation}.
-
+\end{definition}
+\begin{definition}[Controller]
 A \textit{controller} is a position and velocity servo for one DoF of a modular
 robot.  A controller takes as input a desired position or angular velocity, and
 drives the error between the desired and actual state of the DoF it controls to
 zero over time.
-
+\end{definition}
+\begin{definition}[Controller Conflict]
 When writing a behavior, it is possible to command one controller to
 simultaneously hold more than one desired position; this is known as a
 \textit{controller conflict}.  Behaviors with controller conflicts are
 impossible to execute.
-
+\end{definition}
+\begin{definition}[Self-Collision]
 During execution of a behavior, a \textit{self-collision} can occur when two
 different parts of configuration are commanded to occupy the same location in
 space.  Self-collisions can damage the robot, and are usually unwanted.
-
+\end{definition}
+\begin{definition}[Gravitational Stability]
 While executing many behaviors, it is desirable to maintain \textit{gravitational
 stability} (also called quasi-static stability).  Informally speaking, a
 robot is gravitationally stable when it is balanced, and gravity does not
 create any net moment on it.  Mathematically, the robot is gravitationally stable
 if the Z-projection of its center of
 mass lies within the convex hull of its load-supporting contact points in the
-ground plane.  
+ground plane.
+\end{definition}
+\TODO{The definitions in the following section should probably be moved into this
+section, and in some cases (like ``configuration'') merged with these definitions.  We will do this soon.}
 
 \section{Approach and Algorithm}
 \label{sec:approach}
@@ -384,24 +369,30 @@ With the algorithm to update the position and orientation between two modules, A
 We present a novel motion description language for modular robots.  The
 language aims to balance simplicity and expressiveness, and is compositional in
 nature, designed to manage the complexity of developing complicated behaviors
-for large clusters of modular robots through abstraction and modularity. The language
-is in some ways similar to typical extended motion description languages (see \cite{hristu2003motion}),
-but was specifically designed to facilitate  composition.
- 
-The fundamental atoms of the language are called actions.  An \textit{action} is a tuple \(
+for large clusters of modular robots through abstraction and modularity. 
+The language is in some ways similar to typical motion description languages, which have atomic elements that represent controller
+commands (set-points and gains) with limited duration \cite{brockett1988computer}.
+Extended motion description languages introduce interrupts to control the duration
+of commands \cite{hristu2003motion}.  The atomic commands of our language are have unlimited
+duration (until they are superceded by another command), and each apply to a single
+DoF of the robot.  These properties allow complex behaviors to be created through composition
+operations.
+
+ The fundamental atoms of the language are called actions.  An \textit{action} is a tuple \(
 (J, X, \xi, T)\), where \(J\) identifies a single DoF of a configuration, \(X\) is a
 controller setpoint for that degree of freedom, \(\xi\) specifies an interrupt
 condition, and T specifies a timeout. When an action executes, the controller
 setpoint (position or velocity) for the specified DoF is changed to the specified
 value. The controller maintains this setpoint until receiving a new one from another
-action. 
-
-The interrupt condition is a boolean function of the (sensed) state of the DoF \(J\).
+action. The interrupt condition is a boolean function of the (sensed) state of the DoF \(J\).
 When either the interrupt condition is met or time runs out (whichever comes
 first), the action is considered complete, and the next action  begins. The
 interrupt condition can be set to \(false\) (so that only the timeout has effect),
-and \(T\) can be set to infinity (so that only the interrupt has effect).
-
+and \(T\) can be set to infinity (so that only the interrupt has effect). As an example,
+the action \((~Module0\_L,~ \theta_{set}=\pi,~ \xi:\theta==\pi,~T:\infty~)\) encodes
+``Command the controller of the left wheel of module zero to maintain a setpoint
+of \(\pi\) radians.  When the encoder of that wheel indicates that \(\pi\) radians
+ 
 Actions are composed to form behaviors. We define a \textit{behavior} as a directed acyclic graph where nodes are
 actions and edges are transitions between actions.  A behavior \(B\) always has
 two special nodes \(S\) and \(T\), which are the \textit{Start} and
@@ -579,6 +570,30 @@ Discuss the complexity of the algorithm with respect to the number of modules an
 \label{sec:example}
 We implement a program to aid users to design and verify complex configurations and controllers from a set of basic configurations and associated controllers. We separated the program into two main parts, a configuration builder and a controller builder.
 
+\subsection{SMORES robot}
+We have developed our system for the SMORES modular robot, developed at the
+University of Pennsylvania \cite{Davey2012}. Each SMORES modules has four DoF
+(DoF) - three continuously rotating faces we call {\em turntables} and one
+central hinge with a 180\textdegree\ range of motion (Figure~\ref{fig:SmoresRobot}). The
+DoF marked 1, 2, and 4 have rotational axes that are parallel and coincident.
+Each SMORES module can drive around as a two-wheel differential
+drive robot.
+SMORES modules may connect to one another via magnets on each of their four
+faces, and are capable of  self-reconfiguration.
+
+Note that while we demonstrate our software with SMORES, it is not limited to
+the SMORES robot - it could be applied to any modular robot which may be
+simulated using Gazebo.
+
+
+\begin{figure}[tb]
+    \begin{center}
+        \includegraphics[width=\columnwidth]{images/smores_robot.png}
+    \end{center}
+    \caption{SMORES robot}
+    \label{fig:SmoresRobot}
+\end{figure}
+
 \subsection{Configuration Builder}
 Given a set of basic configurations, the configuration builder allows users to combine basic configurations by choosing connection node on each configuration, as demonstrated by green nodes in Figure~\ref{fig:gui_conf}. In addition, the configuration builder will also warn users when the composed configuration is not valid without the usage of a physical simulator, e.g. Gazebo.
 
@@ -604,19 +619,15 @@ Given a composed configuration from the configuration builder, the controller bu
 \label{fig:smores_conf}
 \end{figure}
 
-
-
-
-
-\TODO{Tarik and Jim write}\\
-With simulation in Gazebo:
-\begin{itemize}
-\item Show a configuration composed from a set of basic configurations.
-\item Show a composed controller that results in a collision in the configuration.
-\item Show an updated controller that resolves the collision
-\item Show a composed controller that results in an unexpected behavior.
-\item Show an updated controller that eliminates the unexpected behavior.
-\end{itemize}
+% \TODO{Tarik and Jim write}\\
+% With simulation in Gazebo:
+% \begin{itemize}
+% \item Show a configuration composed from a set of basic configurations.
+% \item Show a composed controller that results in a collision in the configuration.
+% \item Show an updated controller that resolves the collision
+% \item Show a composed controller that results in an unexpected behavior.
+% \item Show an updated controller that eliminates the unexpected behavior.
+% \end{itemize}
 
 \section{Examples}
 Here we present some examples to illustrate important features of our framework.
@@ -632,8 +643,8 @@ and associated behaviors in Tables \ref{Order-1-configurations} and \ref{Order-2
 Configurations in the library are organized by \textit{order}, defined recursively
 as follows: a single module is an order-zero configuration, and the order of all
 other configurations is one greater than the largest order of the sub-configurations
-from which it is composed. Associated with each configuration is a set of behaviors. \TODO{Behaviors are grouped
-by functionality?}.
+from which it is composed. Each configuration has an associated set of behaviors,
+which the user can compose to accomplish tasks.  New behaviors for higher-order configuration can be created by composing the behaviors of its component sub-configurations.
 
 For the library to be most effective, the set of configurations and behaviors available
  at each level (and especially at the lowest levels) should provide a rich set of
@@ -644,17 +655,28 @@ be constructed from only three first-order configurations. Developing metrics to
 evaluate the quality of such a library is an interesting opportunity for future work. 
 
 \begin{table*}
-    \begin{center}
-        \includegraphics[width=\textwidth]{images/library/tier1.pdf}
-        \caption{Tier-1 configurations (basic configurations)}
-        \label{Order-1-configurations}
-    \end{center}
+     \begin{center}
+        \begin{tabular}{c c}
+         \includegraphics[scale=1]{images/library/tier0.pdf} &
+         \includegraphics[scale=1]{images/library/tier1.pdf} \\
+         \textbf{Order-0 (single module)} & \textbf{Order-1}
+        \end{tabular}
+         \caption{Order-0 and Order-1 configurations}
+         \label{Order-1-configurations}
+     \end{center}
 \end{table*}
 \begin{table*}
     \begin{center}
         \includegraphics[width=\textwidth]{images/library/tier2.pdf}
-        \caption{Tier-2 configurations (composed of basic configurations)}
+        \caption{Order-2 configurations}
         \label{Order-2-configurations}
+    \end{center}
+\end{table*}
+\begin{table*}
+    \begin{center}
+        \includegraphics[scale=1]{images/library/tier3.pdf}
+        \caption{Order-3 configurations}
+        \label{Order-3-configurations}
     \end{center}
 \end{table*}
 
@@ -697,18 +719,36 @@ nSnakeSineGait = ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\\
 Pc \left(~Sc\begin{pmatrix} halfSine1 \\ halfSine2 \end{pmatrix},
 ~Sc\begin{pmatrix} halfSine2 \\ halfSine1 \end{pmatrix},\ldots ~\right)
 \end{align*}
+
+\begin{figure}
+        \begin{subfigure}{\columnwidth}
+        \begin{center}
+                \includegraphics[width=1.5in]{images/library/snake3.png}
+        \end{center}
+                \caption{CHAIN3 (order 1)}
+                \label{fig:chain3}
+        \end{subfigure}
+        \begin{subfigure}{\columnwidth}
+                \includegraphics[width=\columnwidth]{images/library/snake18.png}
+                \caption{SNAKE18 (order 2)}
+                \label{fig:snake18}
+        \end{subfigure}
+\caption{CHAIN3 and SNAKE18 configurations}
+\end{figure}
+
 \subsection{Verification}
 The need for verification becomes more important as design complexity increases.
- Consider the Backhoe design, composed of the 2nd-order car and PUMA arm configurations.
+ Consider the order-3 Backhoe design, composed of the order-2 car and PUMA arm configurations.
  It is easy for this design to become gravitationally unstable.  Our verification
- system warns the user when this happens.
+ system warns the user when this happens. \TODO{We need to include pictures of this,
+and flesh out this section.}
 
 \section{Results}
 In the past, designing configurations and behaviors to address new tasks has required
 time on the order of one day \cite{sastra2011using}. Using our framework and library,
 complex designs (such as the Walkbot or 18-module snake) can be created and programmed
 in under an hour. \TODO{Mark, what is the best
-way to present this comparison?} 
+way to present this comparison} 
 
 \section{Conclusions}
 We worked hard, and had fun.
@@ -727,6 +767,9 @@ We worked hard, and had fun.
 \bibliography{references}
 
 \end{document}
+
+
+
 
 
 
