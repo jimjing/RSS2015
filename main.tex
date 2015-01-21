@@ -577,6 +577,37 @@ Discuss the complexity of the algorithm with respect to the number of modules an
 
 \section{Implementation }
 \label{sec:example}
+We implement a program to aid users to design and verify complex configurations and controllers from a set of basic configurations and associated controllers. We separated the program into two main parts, a configuration builder and a controller builder.
+
+\subsection{Configuration Builder}
+Given a set of basic configurations, the configuration builder allows users to combine basic configurations by choosing connection node on each configuration, as demonstrated by green nodes in Figure~\ref{fig:gui_conf}. In addition, the configuration builder will also warn users when the composed configuration is not valid without the usage of a physical simulator, e.g. Gazebo.
+
+\subsection{Control Builder}
+Given a composed configuration from the configuration builder, the controller builder aids user to design controllers for the composed configuration by arranging a set of basic controllers in parallel or in series. Figure~\ref{fig:gui_gait} illustrates a new controller is composed by putting four basic controllers in parallel. Similar to the configuration builder, the controller builder will also warn users if there is self-collision in the configuration during the execution of composed controllers without simulations in a physical engine.
+
+
+\begin{figure}
+\begin{center}
+        \begin{subfigure}[b]{0.9\columnwidth}
+                \includegraphics[width=\textwidth]{images/conf_window.png}
+                \caption{GUI for configuration builder}
+                \label{fig:gui_conf}
+           \end{subfigure}
+           
+        \begin{subfigure}[b]{0.9\columnwidth}
+                \includegraphics[width=\textwidth]{images/gait_window.png}
+                \caption{GUI for controller builder}
+                \label{fig:gui_gait}
+        \end{subfigure}
+\end{center}
+\caption{The program to design and verify configurations and controllers}
+\label{fig:smores_conf}
+\end{figure}
+
+
+
+
+
 \TODO{Tarik and Jim write}\\
 With simulation in Gazebo:
 \begin{itemize}
@@ -628,8 +659,26 @@ evaluate the quality of such a library is an interesting opportunity for future 
 \end{table*}
 
 \subsection{The User Perspective}
-We present the start-to-end user perspective in designing a complicated configuration,
-called Walkbot. \TODO{Jim, can you write this section?}
+We present the start-to-end user perspective in designing a complicated configuration called Walkbot. Consider a basic configuration formed by three modules in a line. We can form a ``body'' configuration by connecting two of the basic configurations as shown in Figure~\ref{fig:walkbot1}. With four more basic configurations and attach sides of those basic configurations to sides of the ``body'' configuration with certain angle offset, we can build a complex configuration, Walkbot, with four legs, as shown in Figure~\ref{fig:walkbot2}. Notice that by connecting multiple  basic configurations together, we can design a complex configuration without building with individual modules.
+
+
+\begin{figure}
+\begin{center}
+        \begin{subfigure}[b]{0.6\columnwidth}
+                \includegraphics[width=\textwidth]{images/tikz/walkbot.pdf}
+                \caption{Two identical configurations form a body}
+                \label{fig:walkbot1}
+           \end{subfigure}
+           ~
+        \begin{subfigure}[b]{0.9\columnwidth}
+                \includegraphics[width=\textwidth]{images/tikz/walkbot2.pdf}
+                \caption{The body and four identical configurations form a Walkbot}
+                \label{fig:walkbot2}
+        \end{subfigure}
+\end{center}
+\caption{Building a Walkbot with six identical configurations}
+\label{fig:walkbot}
+\end{figure}
 
 \subsection{Easy scale-up through composition}
 Our framework allows users to quickly create and program large configurations. The
