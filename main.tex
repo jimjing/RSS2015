@@ -530,7 +530,7 @@ The action completes when both wheels actually reach their commanded angles of \
 % \end{itemize}
 
 \subsection{ Verification of Configuration and Control}
-\subsubsection{Verification of Configurations} In section~\ref{sec:conf_composition}, we introduced algorithms to compose a set of configurations into a single configuration. However, it might not be possible  or safe to form the structure represented by the composed configuration with the actual module. Consider the configuration shown in Figure~\ref{fig:smores_conf_collision}. It is easy to tell that such configuration is impossible to build with modules that allow only one connection at each node. Thus it is important to verify whether the configuration is valid or not for a given modular system.
+\subsubsection{Verification of Configurations} In section~\ref{sec:conf_composition}, we introduced algorithms to compose a set of configurations into a single configuration. However, it might not be possible  or safe to form the structure represented by the composed configuration with the actual module. Consider the configuration shown in Figure~\ref{fig:smores_conf_collision}. It is easy to tell that such configuration is impossible to build with modules that allow only one connection at each node. Thus it is important to verify whether the configuration is valid or not for a given modular robot system.
 
 \begin{figure}
 \begin{center}
@@ -546,7 +546,7 @@ Given a configuration $\mathcal{C}$, we say $\mathcal{C}$ is valid if it satisfi
 \item There is no collision between modules in the configuration.
 \item The configuration is statically stable.
 \end{itemize}
-Notice that in order to verify the validity of the configuration, one needs to know some properties of all modules for the given modular system, e.g. the geometry information, the mass of each module.
+Notice that in order to verify the validity of the configuration, one needs to know some properties of all modules for the given modular robot system, e.g. the geometry information, the mass of each module.
 \end{definition}
 
 \paragraph{Collision Checking} 
@@ -561,6 +561,18 @@ where $\mathcal{M}_m$ is the mass of the module $\mathcal{M}$.
 Then we find the set of modules $M_c$ that have minimal position in the $z$ direction and consider them as the contact points between the ground plane and the configuration. A set of points in the $x$-$y$ plane can be extracted from $M_c$ as $\sigma=\{(\mathcal{M}.P.x, \mathcal{M}.P.y)\mid \mathcal{M} \in M_c\}$. If point $(P_\mathcal{C}.x, P_\mathcal{C}.y)$ is inside of the convex polygon formed by the set of points $\sigma$, the given configuration $\mathcal{C}$ is considered statically stable.
 
 \subsubsection{Verification of Control}
+In section~\ref{sec:behavior-representation}, we introduced a novel motion description language for modular robots. Actions defined by the language can be combined to produce more complex behaviors. Similar to configuration composition, we want to make sure the composed behaviors are valid and safe to execute. For example, a behavior that results two module colliding with each other during the execution should be considered unsafe. As the composed behaviors are used to control modular robots to produce locomotion or actions, we also refer to a behavior as a controller.
+
+\begin{definition}[Verification on Controller]
+A controller is valid if it satisfied the following set of properties when controlling a configuration of a given modular robot system
+\begin{itemize}
+\item There is no collision between modules at all time during the execution of the controller.
+\item The configuration is statically stable at the end of the execution.
+\item The maximum duration when the configuration is not statically stable during the execution is less than a time bound $t$.
+\end{itemize}
+Similar to the verification of a configuration , we need to know the geometry information and the mass of each module for the given modular robot system.
+\end{definition}
+
 
 
 \subsection{Complexity}
