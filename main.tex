@@ -305,7 +305,7 @@ connection. Notice that the definition of a configuration allow it to represent 
 \subsection{Configuration Composition} \label{sec:conf_composition}
 
 
-\begin{definition}[Configuration Composition] 
+\begin{definition}[Configuration Composition]
 Given a set of configurations $C$, a base configuration $\mathcal{C}_b\in C$, and a set of connections $E_C$ that encodes the connections between configurations in $C$, configuration composition combines all configuration in $C$ to a single configuration $\mathcal{C}^*$ that has the following guarantees: i) $\mathcal{C}^*$ includes all modules and connections from $C$ and $E_C$ (section~\ref{sec:update_connection}); ii) the positions of all modules in $\mathcal{C}^*$ are adjusted based on the connections to preserve structures of original configurations in $C$ (section~\ref{sec:update_position}).
 \end{definition}
 
@@ -538,8 +538,39 @@ The action completes when both wheels actually reach their commanded angles of \
 % \item \textbf{At each time step, check if the configuration will not have any unexpected behavior.}
 % \end{itemize}
 
-\subsection{ Verification of Configurations and Designs}
-\TODO{Jim writes}
+\subsection{ Verification of Configuration and Control}
+\subsubsection{Verification of Configurations} In section~\ref{sec:conf_composition}, we introduced algorithms to compose a set of configurations into a single configuration. However, it might not be possible  or safe to form the structure represented by the composed configuration with the actual module. Consider the configuration shown in Figure~\ref{fig:smores_conf_collision}. It is easy to tell that such configuration is impossible to build with modules that allow only one connection at each node. Thus it is important to verify whether the configuration is valid or not for a given modular system.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.5\columnwidth]{images/tikz/smores_conf_collision.pdf}
+\end{center}
+\caption{A configuration with self-collision}
+\label{fig:smores_conf_collision}
+\end{figure}
+
+\begin{definition}[Verification on Configuration]
+Given a configuration $\mathcal{C}$, we say $\mathcal{C}$ is valid if it satisfied the following set of properties
+\begin{itemize}
+\item There is no collision between modules in the configuration.
+\item The configuration is statically stable.
+\end{itemize}
+Notice that in order to verify the validity of the configuration, one needs to know some properties of all modules for the given modular system, e.g. the geometry information, the mass of each module.
+\end{definition}
+
+\paragraph{Collision Checking} 
+With positions and orientations of all modules in the configuration update, and the geometry information of all module, we can check whether any two modules occupy the same space. If so, there exist a self-collision in the configuration.
+\paragraph{Stability Checking}
+The static stability is checked by first computing the location of the center of mass of the configuration. For the given configuration $\mathcal{C}$, the position of the center of mass is
+\begin{equation*}
+ P_{\mathcal{C}}=\dfrac{\sum\limits_{\mathcal{M}\in \gamma(\mathcal{C})}{\mathcal{M}.P\cdot \mathcal{M}_m}}{\sum\limits_{\mathcal{M}\in \gamma(\mathcal{C})}{\mathcal{M}_m}}
+\end{equation*}
+where $\mathcal{M}_m$ is the mass of the module $\mathcal{M}$.
+
+Then we find the set of modules $M_c$ that have minimal position in the $z$ direction and consider them as the contact points between the ground plane and the configuration. A set of points in the $x$-$y$ plane can be extracted from $M_c$ as $\sigma=\{(\mathcal{M}.P.x, \mathcal{M}.P.y)\mid \mathcal{M} \in M_c\}$. If point $(P_\mathcal{C}.x, P_\mathcal{C}.y)$ is inside of the convex polygon formed by the set of points $\sigma$, the given configuration $\mathcal{C}$ is considered statically stable.
+
+\subsubsection{Verification of Control}
+
 
 \subsection{Complexity}
 Discuss the complexity of the algorithm with respect to the number of modules and size of gait tables.
