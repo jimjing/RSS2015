@@ -697,12 +697,19 @@ evaluate the quality of such a library is an interesting opportunity for future 
 \end{table*}
 
 \subsection{The User Perspective}
-We present the start-to-end user perspective in designing a complicated configuration called Walkbot. Consider a basic configuration formed by three modules in a line. We can form a ``body'' configuration by connecting two of the basic configurations as shown in Figure~\ref{fig:walkbot1}. With four more basic configurations and attach sides of those basic configurations to sides of the ``body'' configuration with certain angle offset, we can build a complex configuration, Walkbot, with four legs, as shown in Figure~\ref{fig:walkbot2}. Notice that by connecting multiple  basic configurations together, we can design a complex configuration without building with individual modules.
-
+Figure~\ref{fig:design} demonstrates the design low when a user is designing a configuration an its behaviors. We present the start-to-end user perspective in designing a complicated configuration called Walkbot. Consider a basic configuration formed by three modules in a line. We can form a ``body'' configuration by connecting two of the basic configurations as shown in Figure~\ref{fig:walkbot1}. With four more basic configurations and attach sides of those basic configurations to sides of the ``body'' configuration with certain angle offset, we can build a complex configuration, Walkbot, with four legs, as shown in Figure~\ref{fig:walkbot2}. Notice that by connecting multiple  basic configurations together, we can design a complex configuration without building with individual modules.
 
 \begin{figure}
 \begin{center}
-        \begin{subfigure}[b]{0.6\columnwidth}
+\includegraphics[width=0.9\columnwidth]{images/tikz/design_diagram.pdf}
+\caption{The design flow}
+\label{fig:design}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+        \begin{subfigure}[b]{0.7\columnwidth}
                 \includegraphics[width=\textwidth]{images/tikz/walkbot.pdf}
                 \caption{Two identical configurations form a body}
                 \label{fig:walkbot1}
