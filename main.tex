@@ -533,8 +533,9 @@ The action completes when both wheels actually reach their commanded angles of \
 % \item \textbf{At each time step, check if the configuration will not have any unexpected behavior.}
 % \end{itemize}
 
-\subsection{ Verification of Configuration and Control}
-\subsubsection{Verification of Configurations} In section~\ref{sec:conf_composition}, we introduced algorithms to compose a set of configurations into a single configuration. However, it might not be possible  or safe to form the structure represented by the composed configuration with the actual module. Consider the configuration shown in Figure~\ref{fig:smores_conf_collision}. It is easy to tell that such configuration is impossible to build with modules that allow only one connection at each node. Thus it is important to verify whether the configuration is valid or not for a given modular robot system.
+\subsection{ Verification of Configuration and Behavior}
+
+\subsubsection{Verification of Configurations}\label{sec:verify_conf} In section~\ref{sec:conf_composition}, we introduced algorithms to compose a set of configurations into a single configuration. However, it might not be possible  or safe to form the structure represented by the composed configuration with the actual module. Consider the configuration shown in Figure~\ref{fig:smores_conf_collision}. It is easy to tell that such configuration is impossible to build with modules that allow only one connection at each node. Thus it is important to verify whether the configuration is valid or not for a given modular robot system.
 
 \begin{figure}
 \begin{center}
@@ -548,7 +549,7 @@ The action completes when both wheels actually reach their commanded angles of \
 Given a configuration $\mathcal{C}$, we say $\mathcal{C}$ is valid if it satisfied the following set of properties
 \begin{itemize}
 \item There is no collision between modules in the configuration.
-\item The configuration is statically stable.
+\item The configuration is gravitationally stable.
 \end{itemize}
 Notice that in order to verify the validity of the configuration, one needs to know some properties of all modules for the given modular robot system, e.g. the geometry information, the mass of each module.
 \end{definition}
@@ -556,31 +557,31 @@ Notice that in order to verify the validity of the configuration, one needs to k
 \paragraph{Collision Checking} 
 With positions and orientations of all modules in the configuration update, and the geometry information of all module, we can check whether any two modules occupy the same space. If so, there exist a self-collision in the configuration.
 \paragraph{Stability Checking}
-The static stability is checked by first computing the location of the center of mass of the configuration. For the given configuration $\mathcal{C}$, the position of the center of mass is
+The gravitational stability is checked by first computing the location of the center of mass of the configuration. For the given configuration $\mathcal{C}$, the position of the center of mass is
 \begin{equation*}
  P_{\mathcal{C}}=\dfrac{\sum\limits_{\mathcal{M}\in \gamma(\mathcal{C})}{\mathcal{M}.P\cdot \mathcal{M}_m}}{\sum\limits_{\mathcal{M}\in \gamma(\mathcal{C})}{\mathcal{M}_m}}
 \end{equation*}
 where $\mathcal{M}_m$ is the mass of the module $\mathcal{M}$.
 
-Then we find the set of modules $M_c$ that have minimal position in the $z$ direction and consider them as the contact points between the ground plane and the configuration. A set of points in the $x$-$y$ plane can be extracted from $M_c$ as $\sigma=\{(\mathcal{M}.P.x, \mathcal{M}.P.y)\mid \mathcal{M} \in M_c\}$. If point $(P_\mathcal{C}.x, P_\mathcal{C}.y)$ is inside of the convex polygon formed by the set of points $\sigma$, the given configuration $\mathcal{C}$ is considered statically stable.
+Then we find the set of modules $M_c$ that have minimal position in the $z$ direction and consider them as the contact points between the ground plane and the configuration. A set of points in the $x$-$y$ plane can be extracted from $M_c$ as $\sigma=\{(\mathcal{M}.P.x, \mathcal{M}.P.y)\mid \mathcal{M} \in M_c\}$. If point $(P_\mathcal{C}.x, P_\mathcal{C}.y)$ is inside of the convex polygon formed by the set of points $\sigma$, the given configuration $\mathcal{C}$ is considered gravitationally stable.
 
-\subsubsection{Verification of Control}
-In section~\ref{sec:behavior-representation}, we introduced a novel motion description language for modular robots. Actions defined by the language can be combined to produce more complex behaviors. Similar to configuration composition, we want to make sure the composed behaviors are valid and safe to execute. For example, a behavior that results two module colliding with each other during the execution should be considered unsafe. As the composed behaviors are used to control modular robots to produce locomotion or actions, we also refer to a behavior as a controller.
+\subsubsection{Verification of Behavior}
+In section~\ref{sec:behavior-representation}, we introduced a novel motion description language for modular robots. Actions defined by the language can be combined to produce more complex behaviors. Similar to configuration composition, we want to make sure the composed behaviors are valid and safe to execute. For example, a behavior that results two module colliding with each other during the execution should be considered unsafe.
 
-\begin{definition}[Verification on Controller]
-A controller is valid if it satisfied the following set of properties when controlling a configuration of a given modular robot system
+\begin{definition}[Verification on Behavior]
+A behavior is valid if it satisfied the following set of properties when controlling a configuration of a given modular robot system
 \begin{itemize}
 \item There is no collision between modules at all time during the execution of the controller.
-\item The configuration is statically stable at the end of the execution.
-\item The maximum duration when the configuration is not statically stable during the execution is less than a time bound $t$.
+\item There is no behavior conflict at all time during the execution.
+\item The configuration is gravitationally stable at the end of the execution.
+\item The maximum duration when the configuration is not gravitationally stable during the execution is less than a time bound $t$.
 \end{itemize}
-Similar to the verification of a configuration , we need to know the geometry information and the mass of each module for the given modular robot system.
 \end{definition}
 
-
-
-\subsection{Complexity}
-\TODO{Discuss the complexity of the algorithm with respect to the number of modules and size of gait tables.}
+For a behavior with duration time $T_B$, we can check the state (\TODO{check if state is the term}) of the configuration with sampling time $t_B<t$. For each sample, we first detect behavior conflict by checking if different commands are given to the same joint of a module. If there is no behavior conflict, we can update the positions and orientations of all modules in the configuration based on behavior commands. Then we can check collision and gravitational stability of each configuration as we discussed in section~\ref{sec:verify_conf}. We argue that this behavior is not safe, if i) there are $n$ consecutive samples when the configuration is not gravitationally stable and $n\cdot t_B > t$; or ii) the configuration at time $T_B$ is not gravitationally stable.
+ 
+%\subsection{Complexity}
+%\TODO{Discuss the complexity of the algorithm with respect to the number of modules and size of gait tables.}
 
 \section{Implementation }
 \label{sec:example}
