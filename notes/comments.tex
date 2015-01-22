@@ -1,0 +1,24 @@
+%&pdflatex
+\documentclass[12pt]{article}
+
+\usepackage[normalem]{ulem}
+
+
+\begin{document}
+\begin{itemize}
+\item In general there are many verb tense problems. too many to write without editing file directly. Maybe someone else will fix these.
+\item 1st paragraph should also state the value of these MSRs:“They promise to be versatile, robust and low cost [cite yimicra2000].”
+\item Here’s some more text for 1st paragraph (from our proposal) (feel free to trim down see end of text for citations) There are dozens of groups who have constructed many versions of reconfigurable robots [91–108], with many approaches for programming them [81, 109–125]. Over 800 papers and a book [126] have been written including a survey [127].
+\item \sout{Replace all instances of “flexibility” with “versatility” to avoid confusion with material stiffness.}
+\item In the places where Hadas wants “control” in place of “software” I think we need to say either “high-level control” or “control software” since we don’t want to confuse the dynamic systems portions of control with the software part we’re talking about.
+\item This statement isn’t exactly true: “Identification of these conditions is common in modular robot reconfiguration planning [3] and motion planning [13].”  I know of only Casal's work that explicitly looked at self-collision and stability under gravity.  Self-collision is really only an issue for chain based systems as it’s easy to detect with lattice.
+\item “While this is a constraint, the majority of functional designs for chain-architecture modular robots are acyclic, so we feel that it does not unreasonably limit the utility of our framework. TODO: Mark, should we cite something here? .”
+We should not make this statement. It is not true. Instead we should say “While this constrains the types of configurations,  the functionality achieved by configurations that can be represented with acyclic graphs is very large and we leave the inclusion of cyclic graphs as future work.”
+\item I don’t like the use of the term “controller” since the word “control” is used for other purposes (beyond reducing a set point error to 0.) Also, we may want to say: “is a position OR velocity servo for one DoF of a modular robot.”  We lose force control - which we don’t currently use, but might use in the future. But we can think about changing later if we have time.
+\item \sout{“The atomic commands of our language are have unlimited” should be: The atomic commands of our language have unlimited}
+\item “allow complex behaviors to be created through composition operations.” not really clear… having a command last forever only affects temporal issues, composition doesn’t only depend on time. Perhaps you mean simplifies the instruction of modules since only differences between one state in time and another state in time need to be commanded - or contemplated.
+\item We need to say what the advantage of SPG is. Why do we use it? Does it provide a structure so that it is easy to do the behavior conflict avoidance or verification? Why is being acyclic so important? One nice thing the S and T nodes provides is a simple way to “synchronize multiple behaviors” something that was always done manually and explicitly with gait tables ( since they typically have a time value axis). where there is an implied synchrony with the S and T nodes. Gaits also inherently are looped (cyclic). If we had behaviors B1=LEG forward, B2= Shift Weight, B3=LEG backwards, how would we define a gait that went B1-B2-B3-B1… forever?
+\item \sout{add to bib [yimicra 2000]}
+\item \sout{Citation [3] is wrong. It’s not Aranzazu, It’s Arancha}
+\end{itemize}
+\end{document}
