@@ -48,7 +48,7 @@ create complex designs.  Likewise, complex behaviors are constructed by
 composing controllers from a library in a nested series/parallel structure. The
 system is integrated with a full dynamic simulator, and provides tools to
 identify common problems with behaviors, specifically self-collision and loss
-of quasi-static stability.
+of gravitational stability.
 
 \end{abstract}
 
@@ -56,8 +56,6 @@ of quasi-static stability.
 Modular reconfigurable robot systems have been studied extensively for several
 decades \TODO{citations}.  These systems distinguish themselves in their
 ability to transform into different shapes to address a wide variety of tasks.
-\TODO{Mention applications (SAR etc).}
-
 
 This additional flexibility places an additional burden on the user, because
 solving problems with modular robots involves not only designing  software,
@@ -182,9 +180,8 @@ of the module body frame in the world reference frame $\mathcal{W}$.
 \item \(X=\lbrace x_1, x_2, \ldots, x_d \rbrace\) is the \textit{state} of the module,
 with each \(x_i\) corresponding to one of the \(d\) degrees of freedom of the module.
 \item $A=\{a_1, a_2, ..., a_k\}$ is the set of \textit{attachment points} where the module can connect to other modules.
-\item \(K: (X, a_i) \rightarrow SE(#3) \) is the module's \textit{forward kinematics function}, returning \({^\mathcal{B}}D^{a_{i}}\) (the displacement of attachment point \(a_i\)
+\item \(K: (X, a_i) \rightarrow SE(3) \) is the module's \textit{forward kinematics function}, returning \({^\mathcal{B}}D^{a_{i}}\) (the displacement of attachment point \(a_i\)
 in the body frame) as a function of \(X\)  \end{itemize}
-\TODO{Move this SMORES stuff to come later} For a single SMORES module, there are four degree of freedom as shown in Figure~\ref{fig:SmoresRobot}, and there are four nodes to connect to other modules, i.e. $N=\{$front, left, right, back$\}$ as shown in Figure~\ref{fig:smores}.
 
 \begin{figure}
 \begin{center}
@@ -215,7 +212,7 @@ are considered interchangeable (as long as they are of the same kind).
 
 In this paper, we present an object-oriented design framework for modular robot
 systems, an treat configurations as the fundamental objects. Rather than defining
-configurations by the topology of their component modules, we define them recursively,
+configurations only by the topology of their component modules, we define them recursively,
 as being composed of connected sub-configurations. A single module is considered the
 smallest configuration.
 
@@ -223,9 +220,12 @@ Formally, we define a configuration as $\mathcal{C}=(C_, \gamma, M, E, \delta,
 X, B)$, where:
 \begin{itemize}
 \item $C$ is a set of configurations, $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$.
-\item $M$ is the set of modules. If this configuration contains no other configurations, i.e. $C = \emptyset$, $M$ is just the set of all modules of this configuration. If this configuration is composed by other configurations, i.e. $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$, we define $M=\bigcup_{\mathcal{C}\in C}{\gamma(\mathcal{C})}$.
 \item $\gamma: C \rightarrow M$ is a function that, when given a configuration, returns all modules of that configuration.
-\item $E$ is a set of connections between modules. $(\mathcal{M}_i.a_i, \mathcal{M}_j.a_j)\in E$, where $\mathcal{M}_{i,j} \in M, m_i \neq \mathcal{M}_j$, and $a_i\in \mathcal{M}_i.N$, $a_j\in \mathcal{M}_j.N$.
+% Note: if we define a single module as the smallest configuration, we don't have
+% to worry about the case when the configuration contains no configurations.
+\item \( M=\bigcup_{\mathcal{C}\in C}{\gamma(\mathcal{C})} \) is the set of modules.
+%\item $M$ is the set of modules. If this configuration contains no other configurations, i.e. $C = \emptyset$, $M$ is just the set of all modules of this configuration. If this configuration is composed by other configurations, i.e. $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$, we define $M=\bigcup_{\mathcal{C}\in C}{\gamma(\mathcal{C})}$.
+\item $E$ is a set of connections between modules. $(\mathcal{M}_i.a_i, \mathcal{M}_j.a_j)\in E,$ where $\mathcal{M}_{i,j} \in M, m_i \neq \mathcal{M}_j$, and $a_i\in \mathcal{M}_i.A$, $a_j\in \mathcal{M}_j.A$.
 \item $\delta: E \rightarrow SE(3)$ is a labeling function over connections, returning
 \({^{\mathcal{M}_i.a_i}}D^{\mathcal{M}_j.a_j}\) the displacement of one attachment point relative the
 other. \item \(X = \displaystyle\bigcup_{m_i \in M} X_i \) is the \textit{state} of the configuration.
@@ -233,7 +233,8 @@ other. \item \(X = \displaystyle\bigcup_{m_i \in M} X_i \) is the \textit{state}
 \end{itemize}
 
 Figure~\ref{fig:smores_conf_photo} shows a photo of a configuration composed
-of three SMORES modules \TODO{technically we haven't introduced SMORES\ yet...}. Figure~\ref{fig:smores_conf_graph} shows its
+of three SMORES modules \TODO{technically we haven't introduced SMORES\ yet. Maybe
+we should just present them as ``modules with four attachment points''}. Figure~\ref{fig:smores_conf_graph} shows its
 graphical representation. Blue zigzag lines represent connections between
 modules, and the label of each connection shows the angle offset of that
 connection.
@@ -255,9 +256,8 @@ Let \(\mathcal{M}_i: (\mathcal{M}_i.a_i,~\mathcal{M}_f.a_f) \in E \) be connecte
 \end{align*}
 
 Where \(e=(\mathcal{M}_i.a_i,~\mathcal{M}_f.a_f)\). To find the world-frame displacements
-of other modules, we may continue composing displacements in the manner above until
-we reach the desired module.
-
+of all other modules, we may traverse the connections of the configuration,  repeatedly
+composing displacements in the manner above.
 \end{definition}
 
 \begin{figure}
@@ -309,8 +309,8 @@ While executing many behaviors, it is desirable to maintain \textit{gravitationa
 stability} (also called quasi-static stability).  Informally speaking, a
 robot is gravitationally stable when it is balanced, and gravity does not
 create any net moment on it.  Mathematically, the robot is gravitationally stable
-if the Z-projection of its center of
-mass lies within the convex hull of its load-supporting contact points in the
+if the projection of its center of
+mass onto the group plane lies within the convex hull of its load-supporting contact points in the
 ground plane.
 \end{definition}
 
@@ -323,12 +323,19 @@ composition, and verification of configurations and behaviors.
 
 \begin{definition}[Configuration Composition]
 Given a set of configurations $C$ %, a base configuration $\mathcal{C}_b\in C$, 
-and a set of connections $E_C$ that encodes the connections between configurations in $C$, configuration composition combines all configurations in $C$ to a single configuration $\mathcal{C}^*$ that has the following guarantees: i) $\mathcal{C}^*$ includes all modules and connections from $C$ and $E_C$ (section~\ref{sec:update_connection}); ii) the positions of all modules in $\mathcal{C}^*$ are adjusted based on the connections to preserve structures of original configurations in $C$ (section~\ref{sec:update_position}).
+and a set \ $E_C$ of connections between them, configuration composition
+combines all configurations in $C$ to a single configuration $\mathcal{C}^*$
+that
+%has the following guarantees: i) $\mathcal{C}^*$ 
+includes all modules and
+connections from $C$ and $E_C$.% (section~\ref{sec:update_connection})
+% ; ii) the
+% positions of all modules in $\mathcal{C}^*$ are adjusted based on the
+% connections to preserve structures of original configurations in $C$
+% (section~\ref{sec:update_position}).
 \end{definition}
-
-\subsubsection{Update Modules and Connections} \label{sec:update_connection}
-Before presenting the procedure to update modules and configurations in $\mathcal{C}^*$, we will first discuss some assumptions about the set of connections $E_C$.
-
+%\subsubsection{Update Modules and Connections} \label{sec:update_connection}
+%Before presenting the procedure to update modules and configurations in $\mathcal{C}^*$, we will first discuss some assumptions about the set of connections $E_C$.
 The set of connections $E_C$ between configurations in $C$ is defined as $(\mathcal{C}_i.\mathcal{M}_i.a_i, \mathcal{C}_j.\mathcal{M}_j.a_j) \in E_C$, where $\mathcal{C}_{i,j}\in C$, $\mathcal{M}_i \in \gamma(\mathcal{C}_i), \mathcal{M}_j \in \gamma(\mathcal{C}_j)$, and $a_i\in \mathcal{M}_i.a$, $a_j\in \mathcal{M}_j.A$. Similar to the assumption about connections in a configuration, we assume that if we form an
 acyclic graph with configurations in $C$ as nodes and connections in $E_C$ as edges.
 
@@ -466,7 +473,7 @@ are completed. Figure \ref{fig:graph-composition} provides a visual companion.
 \end{figure}
 
 \subsubsection*{Example}
-A single SMORES module can use its left and right wheels to drive like a car. To
+Consider a single module that has two wheels that allow it to drive like a car. To
 drive forward, we might define a DRIVE behavior composing actions for  the left and right wheels
 in parallel:\begin{align*}
 \mathrm{DRIVE} =~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\
@@ -571,7 +578,8 @@ The action completes when both wheels actually reach their commanded angles of \
 \begin{center}
 \includegraphics[width=0.5\columnwidth]{images/tikz/smores_conf_collision.pdf}
 \end{center}
-\caption{A configuration with self-collision}
+\caption{A configuration with self-collision \TODO{Should we call this self-collision?
+ It's actually topologically flawed, which to me seems different than self-collision.}}
 \label{fig:smores_conf_collision}
 \end{figure}
 
@@ -591,14 +599,20 @@ Using the known model geometry, we  check whether any two modules occupy the sam
 \TODO{In general, this is a non-trivial problem to solve efficiently.  We should
 briefly mention our method, and cite a reference to other available algorithms.}
 \paragraph{Stability Checking}
- Gravitational stability is checked by computing the location of the center of mass of the configuration. For the given configuration $\mathcal{C}$, the position of the center of mass is
+ Gravitational stability is checked by computing the location of the center of mass of the configuration. For the given configuration $\mathcal{C}$
+and state \(X_0\), the position of the center of mass is
 \begin{equation*}
- P_{\mathcal{C}}=\dfrac{\sum\limits_{\mathcal{M}\in \gamma(\mathcal{C})}{\mathcal{M}.P\cdot \mathcal{M}_m}}{\sum\limits_{\mathcal{M}\in \gamma(\mathcal{C})}{\mathcal{M}_m}}
+ P_{\mathcal{C}}=\dfrac{\sum\limits_{\mathcal{M}\in \gamma(\mathcal{C})}{P(\mathcal{M})\cdot \mathcal{M}_m}}{\sum\limits_{\mathcal{M}\in \gamma(\mathcal{C})}{\mathcal{M}_m}}
 \end{equation*}
-where $\mathcal{M}_m$ is the mass of the module $\mathcal{M}$.
+where $\mathcal{M}_m$ is the mass of the module $\mathcal{M}$, and \(P(\mathcal{M})\)
+is a function returning the position coordinates of \(\mathcal{M}\) in the world frame.
 
 Then we find the set of modules $M_c$ that have minimal position in the $z$ direction and consider them to
-be the contact points between the ground plane and the configuration. A set of points in the $x$-$y$ plane can be extracted from $M_c$ as $\sigma=\{(\mathcal{M}.P.x, \mathcal{M}.P.y)\mid \mathcal{M} \in M_c\}$. If point $(P_\mathcal{C}.x, P_\mathcal{C}.y)$ is inside of the convex polygon formed by the set of points $\sigma$, the given configuration $\mathcal{C}$ is considered statically stable.
+be the contact points between the ground plane and the configuration. We treat the
+set \( \sigma = P(\mathcal{M})_i \forall \mathcal{M}_i \in M_c \ \) as an approximate set of contact points.
+%A set of points in the $x$-$y$ plane can be extracted from $M_c$ as $\sigma=\{(\mathcal{M}.P.x, \mathcal{M}.P.y)\mid \mathcal{M} \in M_c\}$.
+If projection of \(P_c\) onto the ground plane lies within the convex hull of \(\sigma\),
+ configuration $\mathcal{C}$ is considered statically stable in state \(X_0\).
 
 \subsubsection{Verification of Behavior}
 In section~\ref{sec:behavior-representation}, we introduced a novel motion description language for modular robots. Actions defined by the language can be combined to produce more complex behaviors. Similar to configuration composition, we want to make sure the composed behaviors are valid and safe to execute. For example, a behavior that results two module colliding with each other during the execution should be considered unsafe.
@@ -609,19 +623,19 @@ A behavior is valid if it satisfied the following set of properties when control
 \item There is no collision between modules at all time during the execution of the controller.
 \item There is no behavior conflict at all time during the execution.
 \item The configuration is gravitationally stable at the end of the execution.
-\item The maximum duration when the configuration is not gravitationally stable during the execution is less than a time bound $t$.
+\item The maximum duration when the configuration is not gravitationally stable during the execution is less than a time bound $t_{max}$.
 \end{itemize}
 \end{definition}
-
-For a behavior with duration time $T_B$, we can check the state (\TODO{check if state is the term}) of the configuration with sampling time $t_B<t$. For each sample, we first detect behavior conflict by checking if different commands are given to the same joint of a module. If there is no behavior conflict, we can update the positions and orientations of all modules in the configuration based on behavior commands. Then we can check collision and gravitational stability of each configuration as we discussed in section~\ref{sec:verify_conf}. We argue that this behavior is not safe, if i) there are $n$ consecutive samples when the configuration is not gravitationally stable and $n\cdot t_B > t$; or ii) the configuration at time $T_B$ is not gravitationally stable.
+% State is the right term, so I deleted the TODO.
+For a behavior with duration time $T_B$, we can check the state of the configuration with sampling time $t_B<t_{max}$. For each sample, we first detect behavior conflict by checking if different commands are given to the same joint of a module. If there is no behavior conflict, we can update the positions and orientations of all modules in the configuration based on behavior commands. Then we can check collision and gravitational stability of each configuration as we discussed in section~\ref{sec:verify_conf}. We argue that this behavior is not safe, if i) there are $n$ consecutive samples when the configuration is not gravitationally stable and $n\cdot t_B > t$; or ii) the configuration at time $T_B$ is not gravitationally stable.
 %\subsection{Complexity}
 %\TODO{Discuss the complexity of the algorithm with respect to the number of modules and size of gait tables.}
 
 \section{Implementation }
 \label{sec:example}
-We implement a program to aid users to design and verify complex configurations and controllers from a set of basic configurations and associated controllers. We separated the program into two main parts, a configuration builder and a controller builder.
-
-\subsection{SMORES robot}
+We implement a program to aid users to design and verify complex configurations and controllers from a set of basic configurations and associated controllers. We separated the program into two main parts, a configuration builder and a behavior builder.
+Our implementation is built for the SMORES modular robot, but could easily be adapted
+to other modular robot systems. \subsection{SMORES robot}
 We have developed our system for the SMORES modular robot, developed at the
 University of Pennsylvania \cite{Davey2012}. Each SMORES modules has four DoF
 (DoF) - three continuously rotating faces we call {\em turntables} and one
@@ -631,10 +645,10 @@ Each SMORES module can drive around as a two-wheel differential
 drive robot.
 SMORES modules may connect to one another via magnets on each of their four
 faces, and are capable of  self-reconfiguration.
+Formally, we denote the state of a SMORES module as \(X=\lbrace \theta_L, \theta_R,
+\theta_F, \theta_B \rbrace\) and the set of attachment points as \(A=\lbrace L,R,T,B \rbrace\).
 
-Note that while we demonstrate our software with SMORES, it is not limited to
-the SMORES robot - it could be applied to any modular robot which may be
-simulated using Gazebo.
+
 
 
 \begin{figure}[tb]
@@ -646,7 +660,8 @@ simulated using Gazebo.
 \end{figure}
 
 \subsection{Configuration Builder}
-Given a set of basic configurations, the configuration builder allows users to combine basic configurations by choosing connection node on each configuration, as demonstrated by green nodes in Figure~\ref{fig:gui_conf}. In addition, the configuration builder will also warn users when the composed configuration is not valid without the usage of a physical simulator, e.g. Gazebo.
+Given a set of basic configurations, the configuration builder allows users to combine basic configurations by choosing connection node on each configuration, as demonstrated by green nodes in Figure~\ref{fig:gui_conf}. In addition, the configuration builder will also warn users when the composed configuration is not valid without the usage of a physical simulator, e.g. Gazebo
+\TODO{Cite Gazebo}.
 
 \subsection{Control Builder}
 Given a composed configuration from the configuration builder, the controller builder aids user to design controllers for the composed configuration by arranging a set of basic controllers in parallel or in series. Figure~\ref{fig:gui_gait} illustrates a new controller is composed by putting four basic controllers in parallel. Similar to the configuration builder, the controller builder will also warn users if there is self-collision in the configuration during the execution of composed controllers without simulations in a physical engine.
@@ -702,7 +717,7 @@ For the library to be most effective, the set of configurations and behaviors av
  functionalities without presenting the user with an overwhelming number of options. 
  Considering the small library in Tables \ref{Order-1-configurations} and \ref{Order-2-configurations},
  it is interested to note that a large  and diverse set of second- and third-order configurations can
-be constructed from only three first-order configurations. Developing metrics to
+be constructed from only one zero- and one first-order configuration. Developing metrics to
 evaluate the quality of such a library is an interesting opportunity for future work. 
 
 \begin{table*}
@@ -732,7 +747,7 @@ evaluate the quality of such a library is an interesting opportunity for future 
 \end{table*}
 
 \subsection{The User Perspective}
-Figure~\ref{fig:design} demonstrates the design low when a user is designing a configuration an its behaviors. We present the start-to-end user perspective in designing a complicated configuration called Walkbot. Consider a basic configuration formed by three modules in a line. We can form a ``body'' configuration by connecting two of the basic configurations as shown in Figure~\ref{fig:walkbot1}. With four more basic configurations and attach sides of those basic configurations to sides of the ``body'' configuration with certain angle offset, we can build a complex configuration, Walkbot, with four legs, as shown in Figure~\ref{fig:walkbot2}. Notice that by connecting multiple  basic configurations together, we can design a complex configuration without building with individual modules.
+Figure~\ref{fig:design} demonstrates the design flow when a user is designing a configuration an its behaviors. We present the start-to-end user perspective in designing a complicated configuration called Walkbot. Consider a basic configuration formed by three modules in a line. We can form a ``body'' configuration by connecting two of the basic configurations as shown in Figure~\ref{fig:walkbot1}. With four more basic configurations and attach sides of those basic configurations to sides of the ``body'' configuration with certain angle offset, we can build a complex configuration, Walkbot, with four legs, as shown in Figure~\ref{fig:walkbot2}. Notice that by connecting multiple  basic configurations together, we can design a complex configuration without building with individual modules.
 
 \begin{figure}
 \begin{center}
@@ -762,7 +777,7 @@ Figure~\ref{fig:design} demonstrates the design low when a user is designing a c
 
 \subsection{Easy scale-up through composition}
 Our framework allows users to quickly create and program large configurations. The
-first order CHAIN3 configuration (Figure \ref{fig:chain3}) can use a \(sineGait\)
+first-order CHAIN3 configuration (Figure \ref{fig:chain3}) can use a \(sineGait\)
 behavior to locomote like a snake. Defining \(sineGait\)  as the series composition
 of two half-waves will allow us to re-use the gait with larger snakes:
 \begin{displaymath}
@@ -806,7 +821,7 @@ In the past, designing configurations and behaviors to address new tasks has req
 time on the order of one day \cite{sastra2011using}. Using our framework and library,
 complex designs (such as the Walkbot or 18-module snake) can be created and programmed
 in under an hour. \TODO{Mark, what is the best
-way to present this comparison} 
+way to present this comparison?} 
 
 \section{Conclusions}
 We worked hard, and had fun.
@@ -826,6 +841,8 @@ We worked hard, and had fun.
 \bibliography{references}
 
 \end{document}
+
+
 
 
 
