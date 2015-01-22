@@ -16,6 +16,7 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{pbox}
+\usepackage[normalem]{ulem}
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
@@ -27,7 +28,9 @@
 %% Tarik's Shortcuts
 % For marking TODOs in an obvious way
 \newcommand{\TODO}[1]{ {\bf \textcolor{red}{TODO:} #1 }}
-\newcommand{\changedByJim}[1]{\textcolor{blue}{#1}}
+\newcommand{\abj}[1]{\textcolor{blue}{#1}}
+\newcommand{\dbj}[1]{\textcolor{blue}{\sout{#1}}}
+\newcommand{\cbj}[2]{\textcolor{blue}{\sout{#1}}\textcolor{blue}{~#2}}
 \usepackage{amsbsy}
 
 \begin{document}
@@ -46,7 +49,7 @@ modular robot configurations and behaviors. Designs are constructed
 hierarchically by composing elements from a library, allowing users to easily
 create complex designs.  Likewise, complex behaviors are constructed by
 composing controllers from a library in a nested series/parallel structure. The
-system is integrated with a full dynamic simulator, and provides tools to
+system is integrated with a full dynamic simulator, and provides tools to \abj{automatically}
 identify common problems with behaviors, specifically self-collision and loss
 of gravitational stability.
 
@@ -54,10 +57,10 @@ of gravitational stability.
 
 \section{Introduction}
 Modular reconfigurable robot systems have been studied extensively for several
-decades \TODO{citations}.  These systems distinguish themselves in their
+decades \TODO{citations}.  These systems distinguish themselves \abj{from conventional robotic systems} in their
 ability to transform into different shapes to address a wide variety of tasks.
 
-This additional versatility places an additional burden on the user, because
+This \dbj{additional }versatility places an additional burden on the user, because
 solving problems with modular robots involves not only designing  software,
 but also the best physical form for the task at hand. We argue that if this
 complexity is not appropriately managed, it can make the system
@@ -72,9 +75,9 @@ behaviors are inextricably linked to the hardware they control, resulting in
 additional challenges to making modularity effective. Significant progress has been made in
 sharing robotics software between researchers
 and hardware platforms, most notably
-ROS which provides IPC and standard libraries for common robot tasks. 
+ROS\cite{Quigley2009} which provides IPC and standard libraries for common robot tasks. 
 
-The challenges of software design are different in modular robotics than
+The challenges of \cbj{software design}{designing controls} are different in modular robotics than
 in typical robotics, because the hardware itself is modular. Porting software
 from one robot platform to a completely different robot platform takes a
 considerable amount of time, and needs to be facilitated by a large framework
@@ -85,14 +88,14 @@ designs can be made for each task. We need to  very quickly develop simple kinem
 behaviors (\textit{i.e.} take a step with a leg) with new morphologies that share some of the
 structure of old morphologies.
 
-Our solution to this problem is to let the modularity of our hardware determine the
-modularity of our software. We create new modular robot designs by combining existing sub-designs,
+Our solution to this problem is to let the modularity of our hardware \cbj{determine}{guide} the
+modularity of our \cbj{software}{designs of control}. We create new modular robot designs by combining existing sub-designs,
 for example combining four legs with a body to create a walking robot.
 We provide a GUI tool that allows users to do this easily. Designs have
-associated libraries of software behaviors, so that when new designs are created
+associated libraries of \dbj{software }behaviors, so that when new designs are created
 by composing existing sub-designs, new behaviors for that design can be quickly
 and easily created by composing the behaviors associate with its component
-sub-designs. We introduce new scripting language with a series-parallel
+sub-designs. We introduce \abj{a} new \cbj{scripting language}{control composition formalism} with a series-parallel
 execution structure that allows old behaviors to be easily and clearly combined
 into new behaviors.
 
@@ -137,7 +140,7 @@ intended specifically for modular robots, and consequently the workflow and desi
 from that presented by Mehta and Bezzo.  In
 traditional robot design (or printable robot design), hardware and software are somewhat
 decoupled - hardware is
-designed and built once, and then programmed many times.  In the case of a MRS, the system can be reconfigured to meet new tasks,
+designed and built once, and then programmed many times.  In the case of a \cbj{MRS}{modular robot system}, the system can be reconfigured to meet new tasks,
 so hardware configuration and behavior programming go hand in hand.  We intend
 our system to be fast enough that the user could conceivably develop and program
 a new design for every new task - designs are built once, and programmed once.  Where Mehta et al provide many facilities to generate and verify
@@ -158,7 +161,7 @@ of modular robot systems has been acknowledged in the literature \cite{yim2000mo
 Historically, gait tables have been a commonly used format in which open-loop kinematic
 behaviors can be easily encoded \cite{yim1994locomotion}. Phased automata have also
 been presented as a way to easily create scalable gaits for large numbers of modular
-robots \cite{zhang2003phase}. In this paper, we present a novel scripting language
+robots \cite{zhang2003phase}. In this paper, we present a \cbj{novel scripting language}{computer aided design that enables novice}
 to quickly create complex behaviors for modular robots.
 
 Our framework assists users in verifying design validity by identifying self-collision
@@ -170,9 +173,8 @@ planning \cite{yoshida2002self}.
 \label{sec:preliminaries}
 In this section, we present concepts and terms which will be used later in the paper.
 
-\subsection{Concepts and terms}
 \begin{definition}[Module] A module is a small robot that can move, respond to commands,
-and attach to other modules.  Formally, we define a  module  as $\mathcal{M}=(P_{/\mathcal{W}}, X, A,
+and attach to other modules.  Formally, we define a  module  as $\mathcal{M}=({^\mathcal{W}}D^{\mathcal{M}}, X, A,
 K)$, where:
 \begin{itemize}
 \item ${^\mathcal{W}}D^{\mathcal{M}}\in SE(3)$ is the rigid-body \textit{displacement} (position and orientation)
@@ -183,11 +185,14 @@ with each \(x_i\) corresponding to one of the \(d\) degrees of freedom of the mo
 \item \(K: (X, a_i) \rightarrow SE(3) \) is the module's \textit{forward kinematics function}, returning \({^\mathcal{B}}D^{a_{i}}\) (the displacement of attachment point \(a_i\)
 in the body frame) as a function of \(X\)  \end{itemize}
 
+\abj{Figure~\ref{fig:smores} shows a module with four degrees of freedom and four attachment points}
+\end{definition}
+
 \begin{figure}
 \begin{center}
         \begin{subfigure}[b]{0.4\columnwidth}
                 \includegraphics[width=\textwidth]{images/smores.JPG}
-                \caption{A SMORES module}
+                \caption{A module}
                 \label{fig:smores_photo}
            \end{subfigure}
            ~
@@ -197,10 +202,10 @@ in the body frame) as a function of \(X\)  \end{itemize}
                 \label{fig:smores_graph}
         \end{subfigure}
 \end{center}
-\caption{A photo of a SMORES module and its graphical representation}
+\caption{A photo of a module and its graphical representation}
 \label{fig:smores}
 \end{figure}
-\end{definition}
+
 
 \begin{definition}[Configuration]
 \label{def:configuration}
@@ -211,7 +216,7 @@ representing connections between modules.   Individual modules
 are considered interchangeable (as long as they are of the same kind).
 
 In this paper, we present an object-oriented design framework for modular robot
-systems, an treat configurations as the fundamental objects. Rather than defining
+systems, and treat configurations as the fundamental objects. Rather than defining
 configurations only by the topology of their component modules, we define them recursively,
 as being composed of connected sub-configurations. A single module is considered the
 smallest configuration.
@@ -219,22 +224,21 @@ smallest configuration.
 Formally, we define a configuration as $\mathcal{C}=(C_, \gamma, M, E, \delta,
 X, B)$, where:
 \begin{itemize}
-\item $C$ is a set of configurations, $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$.
-\item $\gamma: C \rightarrow M$ is a function that, when given a configuration, returns all modules of that configuration.
+\item $C$ is a set of \abj{sub-}configurations, $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$.
+\item $\gamma: C \rightarrow M$ is a function \cbj{that, when given}{mapping} a configuration\cbj{, returns}{to} all modules of that configuration.
 % Note: if we define a single module as the smallest configuration, we don't have
 % to worry about the case when the configuration contains no configurations.
 \item \( M=\bigcup_{\mathcal{C}\in C}{\gamma(\mathcal{C})} \) is the set of modules.
 %\item $M$ is the set of modules. If this configuration contains no other configurations, i.e. $C = \emptyset$, $M$ is just the set of all modules of this configuration. If this configuration is composed by other configurations, i.e. $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$, we define $M=\bigcup_{\mathcal{C}\in C}{\gamma(\mathcal{C})}$.
-\item $E$ is a set of connections between modules. $(\mathcal{M}_i.a_i, \mathcal{M}_j.a_j)\in E,$ where $\mathcal{M}_{i,j} \in M, m_i \neq \mathcal{M}_j$, and $a_i\in \mathcal{M}_i.A$, $a_j\in \mathcal{M}_j.A$.
+\item $E$ is a set of connections between modules. $(\mathcal{M}_i.a_i, \mathcal{M}_j.a_j)\in E,$ where $\mathcal{M}_{i},\mathcal{M}_j \in M, \mathcal{M}_i \neq \mathcal{M}_j$, and $a_i\in \mathcal{M}_i.A$, $a_j\in \mathcal{M}_j.A$.
 \item $\delta: E \rightarrow SE(3)$ is a labeling function over connections, returning
 \({^{\mathcal{M}_i.a_i}}D^{\mathcal{M}_j.a_j}\) the displacement of one attachment point relative the
-other. \item \(X = \displaystyle\bigcup_{m_i \in M} X_i \) is the \textit{state} of the configuration.
-\item \(B\) is a set of \textit{behaviors} associated with the configuration.
+other. \item \(X = \displaystyle\bigcup_{\mathcal{M}_i \in M} \mathcal{M}_i.X \) is the \textit{state} of the configuration.
+\item \(B\) is a set of \textit{behaviors} \abj{(Definition~\ref{def:behavior})} associated with the configuration.
 \end{itemize}
 
 Figure~\ref{fig:smores_conf_photo} shows a photo of a configuration composed
-of three SMORES modules \TODO{technically we haven't introduced SMORES\ yet. Maybe
-we should just present them as ``modules with four attachment points''}. Figure~\ref{fig:smores_conf_graph} shows its
+of three \cbj{SMORES modules}{modules each with four attachment points}.  Figure~\ref{fig:smores_conf_graph} shows its
 graphical representation. Blue zigzag lines represent connections between
 modules, and the label of each connection shows the angle offset of that
 connection.
@@ -274,13 +278,13 @@ composing displacements in the manner above.
                 \label{fig:smores_conf_graph}
         \end{subfigure}
 \end{center}
-\caption{A photo of a configuration with SMORES modules and its graphical representation}
+\caption{A photo of a configuration with three modules and its graphical representation}
 \label{fig:smores_conf}
 \end{figure}
 
 
 
-\begin{definition}[Behavior]
+\begin{definition}[Behavior]\label{def:behavior}
 A \textit{behavior} is a programmed sequence of movements for a specific configuration
 intended to produce a desired effect.  A gait for walking is one example.  In
 this paper, we consider open-loop kinematic behaviors represented as
