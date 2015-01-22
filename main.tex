@@ -64,7 +64,7 @@ This \dbj{additional }versatility places an additional burden on the user, becau
 solving problems with modular robots involves not only designing  software,
 but also the best physical form for the task at hand. We argue that if this
 complexity is not appropriately managed, it can make the system
-impractical. If the user is free to create any new design he/she pleases to
+impractical. If the user is free to create any new design \dbj{he/she pleases }to
 solve a new task, but must program the design from scratch every time, creating
 new designs will be a huge amount of effort, and the advantage of versatile modular
 hardware will be defeated.
@@ -85,7 +85,7 @@ such as ROS, in which fundamental software libraries are almost totally decouple
 specific hardware. In modular robotics, the emphasis needs to be on speed of
 design, because the major advantage of a modular robot system is that new
 designs can be made for each task. We need to  very quickly develop simple kinematic
-behaviors (\textit{i.e.} take a step with a leg) with new morphologies that share some of the
+behaviors (\cbj{\textit{i.e.}}{\textit{e.g.}} take a step with a leg) with new morphologies that share some of the
 structure of old morphologies.
 
 Our solution to this problem is to let the modularity of our hardware \cbj{determine}{guide} the
@@ -131,9 +131,9 @@ capable designs.
 
 \section{Related Work}
 \label{sec:related-work}
-In some respect, our work parallels the efforts of Mehta \cite{mehta2014design}
+In some respect\abj{s}, our work parallels the efforts of Mehta \cite{mehta2014design}
 and Bezzo \cite{bezzo2014demo}, who aim to create and program printable robots from
-design specification by a novice user.  Users create new designs by composing
+\cbj{design specification by a novice user}{novice users' design specifications}.  Users create new designs by composing
 existing elements from a design library, and appropriate circuitry and
 control software are automatically generated as physical designs are assembled. The framework we present is
 intended specifically for modular robots, and consequently the workflow and design considerations are fundamentally different
@@ -143,8 +143,8 @@ decoupled - hardware is
 designed and built once, and then programmed many times.  In the case of a \cbj{MRS}{modular robot system}, the system can be reconfigured to meet new tasks,
 so hardware configuration and behavior programming go hand in hand.  We intend
 our system to be fast enough that the user could conceivably develop and program
-a new design for every new task - designs are built once, and programmed once.  Where Mehta et al provide many facilities to generate and verify
-low-level behaviors (i.e. motor drivers appropriate for motors, we do so for
+a new design for every new task - designs are built once, and programmed once.  Where Mehta et al. provide many facilities to generate and verify
+low-level behaviors (\cbj{i.e.}{e.g.} motor drivers appropriate for motors\abj{)}, we do so for
 high-level behaviors.
 
 A significant amount of work has been done in developing behaviors and software
@@ -180,12 +180,12 @@ K)$, where:
 \item ${^\mathcal{W}}D^{\mathcal{M}}\in SE(3)$ is the rigid-body \textit{displacement} (position and orientation)
 of the module body frame in the world reference frame $\mathcal{W}$. 
 \item \(X=\lbrace x_1, x_2, \ldots, x_d \rbrace\) is the \textit{state} of the module,
-with each \(x_i\) corresponding to one of the \(d\) degrees of freedom of the module.
+with each \(x_i\) corresponding to one of the \(d\) degrees of freedom \abj{(DoF)} of the module.
 \item $A=\{a_1, a_2, ..., a_k\}$ is the set of \textit{attachment points} where the module can connect to other modules.
 \item \(K: (X, a_i) \rightarrow SE(3) \) is the module's \textit{forward kinematics function}, returning \({^\mathcal{B}}D^{a_{i}}\) (the displacement of attachment point \(a_i\)
 in the body frame) as a function of \(X\)  \end{itemize}
 
-\abj{Figure~\ref{fig:smores} shows a module with four degrees of freedom and four attachment points}
+\abj{Figure~\ref{fig:smores} shows a module with four DoF and four attachment points}
 \end{definition}
 
 \begin{figure}
@@ -259,7 +259,7 @@ Let \(\mathcal{M}_i: (\mathcal{M}_i.a_i,~\mathcal{M}_f.a_f) \in E \) be connecte
 =& [{^\mathcal{W}}D^{\mathcal{M}_f}] [K_f(X_f,a_f)] [\delta(e)] [K_i(X_i,a_i)]^T
 \end{align*}
 
-Where \(e=(\mathcal{M}_i.a_i,~\mathcal{M}_f.a_f)\). To find the world-frame displacements
+where \(e=(\mathcal{M}_i.a_i,~\mathcal{M}_f.a_f)\). To find the world-frame displacements
 of all other modules, we may traverse the connections of the configuration,  repeatedly
 composing displacements in the manner above.
 \end{definition}
@@ -419,13 +419,13 @@ The language is in some ways similar to typical motion description languages, wh
 commands (set-points and gains) with limited duration \cite{brockett1988computer}.
 Extended motion description languages introduce interrupts to control the duration
 of commands \cite{hristu2003motion}.  The atomic commands of our language have unlimited
-duration (until they are superceded by another command), and each apply to a single
+duration (until they are superseded by another command), and each apply to a single
 DoF of the robot.  These properties allow complex behaviors to be created through composition
 operations.
 
  The fundamental atoms of the language are called actions.  An \textit{action} is a tuple \(
 (J, X, \xi, T)\), where \(J\) identifies a single DoF of a configuration, \(X\) is a
-controller setpoint for that degree of freedom, \(\xi\) specifies an interrupt
+controller setpoint for that \cbj{degree of freedom}{DoF}, \(\xi\) specifies an interrupt
 condition, and T specifies a timeout. When an action executes, the controller
 setpoint (position or velocity) for the specified DoF is changed to the specified
 value. The controller maintains this setpoint until receiving a new one from another
@@ -436,7 +436,7 @@ interrupt condition can be set to \(false\) (so that only the timeout has effect
 and \(T\) can be set to infinity (so that only the interrupt has effect). As an example,
 the action \((~Module0\_L,~ \theta_{set}=\pi,~ \xi:\theta==\pi,~T:\infty~)\) encodes
 ``Command the controller of the left wheel of module zero to maintain a setpoint
-of \(\pi\) radians.  When the encoder of that wheel indicates that \(\pi\) radians
+of \(\pi\) radians.  When the encoder of that wheel indicates that \(\pi\) radians \TODO{unfinished}
  
 Actions are composed to form behaviors. We define a \textit{behavior} as a directed acyclic graph where nodes are
 actions and edges are transitions between actions.  A behavior \(B\) always has
@@ -497,7 +497,7 @@ Pc \left( \begin{array}{cccc}
 \end{array} \right)\\
 \end{align*}
 
-Here, \(\theta_0\) denotes the currently-sensed value of theta at the beginning of
+Here, \(\theta_0\) denotes the currently-sensed value of \cbj{theta}{$\theta$} at the beginning of
 the TURN behavior.
 The action completes when both wheels actually reach their commanded angles of \(\theta_0\pm\pi\). To drive in a square, we compose DRIVE and TURN behaviors in series:
 
@@ -599,7 +599,7 @@ Notice that in order to verify the validity of the configuration, one needs to k
 
 \paragraph{Collision Checking} 
 We obtain the positions and orientation of all modules through forward kinematics.
-Using the known model geometry, we  check whether any two modules occupy the same space. If so, there exist a self-collision in the configuration.
+Using the known model geometry, we  check whether any two modules occupy the same space. If so, there exists a self-collision in the configuration.
 \TODO{In general, this is a non-trivial problem to solve efficiently.  We should
 briefly mention our method, and cite a reference to other available algorithms.}
 \paragraph{Stability Checking}
@@ -611,7 +611,7 @@ and state \(X_0\), the position of the center of mass is
 where $\mathcal{M}_m$ is the mass of the module $\mathcal{M}$, and \(P(\mathcal{M})\)
 is a function returning the position coordinates of \(\mathcal{M}\) in the world frame.
 
-Then we find the set of modules $M_c$ that have minimal position in the $z$ direction and consider them to
+We find the set of modules $M_c$ that have minimal position in the $z$ direction and consider them to
 be the contact points between the ground plane and the configuration. We treat the
 set \( \sigma = P(\mathcal{M})_i \forall \mathcal{M}_i \in M_c \ \) as an approximate set of contact points.
 %A set of points in the $x$-$y$ plane can be extracted from $M_c$ as $\sigma=\{(\mathcal{M}.P.x, \mathcal{M}.P.y)\mid \mathcal{M} \in M_c\}$.
@@ -619,10 +619,10 @@ If projection of \(P_c\) onto the ground plane lies within the convex hull of \(
  configuration $\mathcal{C}$ is considered statically stable in state \(X_0\).
 
 \subsubsection{Verification of Behavior}
-In section~\ref{sec:behavior-representation}, we introduced a novel motion description language for modular robots. Actions defined by the language can be combined to produce more complex behaviors. Similar to configuration composition, we want to make sure the composed behaviors are valid and safe to execute. For example, a behavior that results two module colliding with each other during the execution should be considered unsafe.
+In section~\ref{sec:behavior-representation}, we introduced a novel motion description language for modular robots. Actions defined by the language can be combined to produce more complex behaviors. Similar to configuration composition, we want to make sure the composed behaviors are valid and safe to execute. For example, a behavior that results in two modules colliding during the execution should be considered unsafe.
 
 \begin{definition}[Verification on Behavior]
-A behavior is valid if it satisfied the following set of properties when controlling a configuration of a given modular robot system
+A behavior is valid if it satisfies the following set of properties when controlling a configuration of a given modular robot system
 \begin{itemize}
 \item There is no collision between modules at all time during the execution of the controller.
 \item There is no behavior conflict at all time during the execution.
@@ -637,12 +637,12 @@ For a behavior with duration time $T_B$, we can check the state of the configura
 
 \section{Implementation }
 \label{sec:example}
-We implement a program to aid users to design and verify complex configurations and controllers from a set of basic configurations and associated controllers. We separated the program into two main parts, a configuration builder and a behavior builder.
+We implement a program to aid users to design and verify complex configurations and behaviors from a set of basic configurations and associated behaviors. We separated the program into two main parts, a configuration builder and a behavior builder.
 Our implementation is built for the SMORES modular robot, but could easily be adapted
 to other modular robot systems. \subsection{SMORES robot}
 We have developed our system for the SMORES modular robot, developed at the
 University of Pennsylvania \cite{Davey2012}. Each SMORES modules has four DoF
-(DoF) - three continuously rotating faces we call {\em turntables} and one
+\dbj{(DoF) }- three continuously rotating faces we call {\em turntables} and one
 central hinge with a 180\textdegree\ range of motion (Figure~\ref{fig:SmoresRobot}). The
 DoF marked 1, 2, and 4 have rotational axes that are parallel and coincident.
 Each SMORES module can drive around as a two-wheel differential
@@ -664,11 +664,11 @@ Formally, we denote the state of a SMORES module as \(X=\lbrace \theta_L, \theta
 \end{figure}
 
 \subsection{Configuration Builder}
-Given a set of basic configurations, the configuration builder allows users to combine basic configurations by choosing connection node on each configuration, as demonstrated by green nodes in Figure~\ref{fig:gui_conf}. In addition, the configuration builder will also warn users when the composed configuration is not valid without the usage of a physical simulator, e.g. Gazebo
+Given a set of basic configurations, the configuration builder allows users to combine basic configurations by choosing connection node on each configuration, as demonstrated by green nodes in Figure~\ref{fig:gui_conf}. In addition, the configuration builder will warn users when the composed configuration is not valid without the usage of a physical simulator, e.g. Gazebo
 \TODO{Cite Gazebo}.
 
-\subsection{Control Builder}
-Given a composed configuration from the configuration builder, the controller builder aids user to design controllers for the composed configuration by arranging a set of basic controllers in parallel or in series. Figure~\ref{fig:gui_gait} illustrates a new controller is composed by putting four basic controllers in parallel. Similar to the configuration builder, the controller builder will also warn users if there is self-collision in the configuration during the execution of composed controllers without simulations in a physical engine.
+\subsection{Behavior Builder}
+Given a composed configuration from the configuration builder, the behavior builder aids users in designing behaviors for the composed configuration by arranging a set of basic behaviors in parallel or in series. Figure~\ref{fig:gui_gait} illustrates a new behavior is composed by putting four basic behaviors in parallel. Similar to the configuration builder, the behavior builder will also warn users if there is self-collision in the configuration during the execution of composed behaviors without simulations in a physical engine.
 
 
 \begin{figure}
@@ -681,11 +681,11 @@ Given a composed configuration from the configuration builder, the controller bu
            
         \begin{subfigure}[b]{0.9\columnwidth}
                 \includegraphics[width=\textwidth]{images/gait_window.png}
-                \caption{GUI for controller builder}
+                \caption{GUI for behavior builder}
                 \label{fig:gui_gait}
         \end{subfigure}
 \end{center}
-\caption{The program to design and verify configurations and controllers}
+\caption{The program to design and verify configurations and behaviors}
 \label{fig:smores_conf}
 \end{figure}
 
@@ -788,7 +788,7 @@ of two half-waves will allow us to re-use the gait with larger snakes:
 sineGait = Sc(~halfSine1,~halfSine2~)
 \end{displaymath}
 Arbitrarily long snake configurations can be created
-by composing CHAIN3's end-to-end; Figure \ref{fig:snake18} shows one with 18 modules.
+by composing CHAIN3\dbj{'s} end-to-end; Figure \ref{fig:snake18} shows one with 18 modules.
 A gait for an arbitrarily long snake is created by composing sine wave
 gaits for each component in parallel, but with alternating phase:
 \begin{align*}
