@@ -174,17 +174,16 @@ In this section, we present concepts and terms which will be used later in the p
 
 \subsection{Concepts and terms}
 \begin{definition}[Module] A module is a small robot that can move, respond to commands,
-and attach to other modules.  Formally, we define a  module  as $\mathcal{M}=(P_{/\mathcal{R}}, O_{/\mathcal{R}}, X, A)$, where:
+and attach to other modules.  Formally, we define a  module  as $\mathcal{M}=(P_{/\mathcal{W}}, X, A,
+K)$, where:
 \begin{itemize}
-\item $P_{/\mathcal{R}}=(p_x,p_y,p_z)$ is the position of the module in the global reference frame $\mathcal{R}$. We consider the position the center of the module as the position of the module.
-\item $O_{/\mathcal{R}}=(o_w, o_x, o_y, o_z)$ is the orientation of the module represented by quaternion in the global reference frame $\mathcal{R}$.
-%\item $V=\{v_1, v_2, ..., v_m\}$ is the set of joint values. Each joint value corresponds to each degree of freedom of the module.
+\item ${^\mathcal{W}}D^{\mathcal{M}}\in SE(3)$ is the rigid-body \textit{displacement} (position and orientation)
+of the module body frame in the world reference frame $\mathcal{W}$. 
 \item \(X=\lbrace x_1, x_2, \ldots, x_d \rbrace\) is the \textit{state} of the module,
 with each \(x_i\) corresponding to one of the \(d\) degrees of freedom of the module.
-
-
-\item $A=\{a_1, a_2, ..., a_k\}$ is the set of attachment points where the module can connect to other modules.
-\end{itemize}
+\item $A=\{a_1, a_2, ..., a_k\}$ is the set of \textit{attachment points} where the module can connect to other modules.
+\item \(K: (X, a_i) \rightarrow SE(#3) \) is the module's \textit{forward kinematics function}, returning \({^\mathcal{B}}D^{a_{i}}\) (the displacement of attachment point \(a_i\)
+in the body frame) as a function of \(X\)  \end{itemize}
 \TODO{Move this SMORES stuff to come later} For a single SMORES module, there are four degree of freedom as shown in Figure~\ref{fig:SmoresRobot}, and there are four nodes to connect to other modules, i.e. $N=\{$front, left, right, back$\}$ as shown in Figure~\ref{fig:smores}.
 
 \begin{figure}
@@ -220,24 +219,45 @@ configurations by the topology of their component modules, we define them recurs
 as being composed of connected sub-configurations. A single module is considered the
 smallest configuration.
 
-Formally, we define a configuration as $\mathcal{C}=(C_, \gamma, M, \mathcal{M}_b, E, \delta,
+Formally, we define a configuration as $\mathcal{C}=(C_, \gamma, M, E, \delta,
 X, B)$, where:
 \begin{itemize}
 \item $C$ is a set of configurations, $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$.
-\item $\gamma: C \rightarrow M$ is a function that, when given a configuration, returns all modules of that configuration.
 \item $M$ is the set of modules. If this configuration contains no other configurations, i.e. $C = \emptyset$, $M$ is just the set of all modules of this configuration. If this configuration is composed by other configurations, i.e. $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$, we define $M=\bigcup_{\mathcal{C}\in C}{\gamma(\mathcal{C})}$.
-\item $E$ is a set of connections between modules. $(\mathcal{M}_i.n_i, \mathcal{M}_j.n_j)\in E$, where $\mathcal{M}_{i,j} \in M, \mathcal{M}_i \neq \mathcal{M}_j$, and $n_i\in \mathcal{M}_i.N$, $n_j\in \mathcal{M}_j.N$.
-\item $\mathcal{M}_b\in M$ is a single module that will be treated as a base module, i.e. $\not\exists (\mathcal{M}_i.n_i, \mathcal{M}_j.n_j)\in E, s.t. \mathcal{M}_j=\mathcal{M}_b$.
-\item $\delta: E \rightarrow \mathbb{R}$ is a labeling function over a connection. Given a connection, $\delta$ returns the fixed
-angular
- offset in degrees at the attachment point of two connected modules.
-\item \(X = \displaystyle\bigcup_{m_i \in M} X_i \) is the \textit{state} of the configuration.
-\item \(B\) is a set of behaviors associated with the configuration.
+\item $\gamma: C \rightarrow M$ is a function that, when given a configuration, returns all modules of that configuration.
+\item $E$ is a set of connections between modules. $(\mathcal{M}_i.a_i, \mathcal{M}_j.a_j)\in E$, where $\mathcal{M}_{i,j} \in M, m_i \neq \mathcal{M}_j$, and $a_i\in \mathcal{M}_i.N$, $a_j\in \mathcal{M}_j.N$.
+\item $\delta: E \rightarrow SE(3)$ is a labeling function over connections, returning
+\({^{\mathcal{M}_i.a_i}}D^{\mathcal{M}_j.a_j}\) the displacement of one attachment point relative the
+other. \item \(X = \displaystyle\bigcup_{m_i \in M} X_i \) is the \textit{state} of the configuration.
+\item \(B\) is a set of \textit{behaviors} associated with the configuration.
 \end{itemize}
-We assume the set of connections is defined such that, if we form a directed graph by treating modules in $M$ as nodes and connections in $E$ as edges, the graph should not have any cycle. Figure~\ref{fig:smores_conf_photo} shows a photo of a configuration that does not include other configurations. Figure~\ref{fig:smores_conf_graph} shows its
+
+Figure~\ref{fig:smores_conf_photo} shows a photo of a configuration composed
+of three SMORES modules \TODO{technically we haven't introduced SMORES\ yet...}. Figure~\ref{fig:smores_conf_graph} shows its
 graphical representation. Blue zigzag lines represent connections between
 modules, and the label of each connection shows the angle offset of that
-connection. Notice that the definition of a configuration allow it to represent a complex structure with nested configurations with arbitrary depth.
+connection.
+
+In this paper, we consider only configurations without cycles. While this is a constraint,
+the majority of functional designs for chain-architecture modular robots are acyclic,
+so we feel that it does not unreasonably limit the utility of our framework. \TODO{Mark,
+should we cite something here?}.   
+ 
+ Assuming acyclic configurations, we can compute forward kinematics for the entire
+configuration by composing displacements module-to-module. Let any module \(\mathcal{M}_f \in M\) have
+fixed displacement \({^\mathcal{W}}D^{\mathcal{B}_f}\) in the world frame.
+Let \(\mathcal{M}_i: (\mathcal{M}_i.a_i,~\mathcal{M}_f.a_f) \in E \) be connected to \(\mathcal{M}_f\).
+ We can find \({^\mathcal{W}}D^{\mathcal{M}_i}\) by composing displacements as follows:
+\begin{align*}
+{^\mathcal{W}}D^{\mathcal{M}_i} =& [{^\mathcal{W}}D^{\mathcal{M}_f}] [{^{\mathcal{M}_f}}D^{a_f}][
+{^{a_f}}D^{a_i}] [{^{\mathcal{M}_i}}D^{a_i}]^T \\
+=& [{^\mathcal{W}}D^{\mathcal{M}_f}] [K_f(X_f,a_f)] [\delta(e)] [K_i(X_i,a_i)]^T
+\end{align*}
+
+Where \(e=(\mathcal{M}_i.a_i,~\mathcal{M}_f.a_f)\). To find the world-frame displacements
+of other modules, we may continue composing displacements in the manner above until
+we reach the desired module.
+
 \end{definition}
 
 \begin{figure}
@@ -273,7 +293,7 @@ robot.  A controller takes as input a desired position or angular velocity, and
 drives the error between the desired and actual state of the DoF it controls to
 zero over time.
 \end{definition}
-\begin{definition}[Behaviors Conflict]
+\begin{definition}[Behavior Conflict]
 When writing a behavior, it is possible to command one controller to
 simultaneously hold more than one desired position; this is known as a
 \textit{behavior conflict}.  Behaviors with conflicts are
@@ -293,8 +313,6 @@ if the Z-projection of its center of
 mass lies within the convex hull of its load-supporting contact points in the
 ground plane.
 \end{definition}
-\TODO{The definitions in the following section should probably be moved into this
-section, and in some cases (like ``configuration'') merged with these definitions.  We will do this soon.}
 
 \section{Approach and Algorithm}
 \label{sec:approach}
@@ -304,80 +322,82 @@ composition, and verification of configurations and behaviors.
 
 
 \begin{definition}[Configuration Composition]
-Given a set of configurations $C$, a base configuration $\mathcal{C}_b\in C$, and a set of connections $E_C$ that encodes the connections between configurations in $C$, configuration composition combines all configuration in $C$ to a single configuration $\mathcal{C}^*$ that has the following guarantees: i) $\mathcal{C}^*$ includes all modules and connections from $C$ and $E_C$ (section~\ref{sec:update_connection}); ii) the positions of all modules in $\mathcal{C}^*$ are adjusted based on the connections to preserve structures of original configurations in $C$ (section~\ref{sec:update_position}).
+Given a set of configurations $C$ %, a base configuration $\mathcal{C}_b\in C$, 
+and a set of connections $E_C$ that encodes the connections between configurations in $C$, configuration composition combines all configurations in $C$ to a single configuration $\mathcal{C}^*$ that has the following guarantees: i) $\mathcal{C}^*$ includes all modules and connections from $C$ and $E_C$ (section~\ref{sec:update_connection}); ii) the positions of all modules in $\mathcal{C}^*$ are adjusted based on the connections to preserve structures of original configurations in $C$ (section~\ref{sec:update_position}).
 \end{definition}
 
 \subsubsection{Update Modules and Connections} \label{sec:update_connection}
 Before presenting the procedure to update modules and configurations in $\mathcal{C}^*$, we will first discuss some assumptions about the set of connections $E_C$.
 
-The set of connections $E_C$ between configurations in $C$ is defined as $(\mathcal{C}_i.\mathcal{M}_i.n_i, \mathcal{C}_j.\mathcal{M}_j.n_j) \in E_C$, where $\mathcal{C}_{i,j}\in C$, $\mathcal{M}_i \in \gamma(\mathcal{C}_i), \mathcal{M}_j \in \gamma(\mathcal{C}_j)$, and $n_i\in \mathcal{M}_i.N$, $n_j\in \mathcal{M}_j.N$. Similar to the assumption about connections in a configuration, we assume that if we form a directed graph with configurations in $C$ as nodes and connections in $E_C$ as edges, the graph does not have any cycle.
+The set of connections $E_C$ between configurations in $C$ is defined as $(\mathcal{C}_i.\mathcal{M}_i.a_i, \mathcal{C}_j.\mathcal{M}_j.a_j) \in E_C$, where $\mathcal{C}_{i,j}\in C$, $\mathcal{M}_i \in \gamma(\mathcal{C}_i), \mathcal{M}_j \in \gamma(\mathcal{C}_j)$, and $a_i\in \mathcal{M}_i.a$, $a_j\in \mathcal{M}_j.A$. Similar to the assumption about connections in a configuration, we assume that if we form an
+acyclic graph with configurations in $C$ as nodes and connections in $E_C$ as edges.
 
-Given a set of configurations $C$, a base configuration $\mathcal{C}_b\in C$, and a set of connections $E_C$, we define the composed configurations to be $\mathcal{C}^*=(C^*, \gamma, M, \mathcal{M}_b, E, \delta)$, where
+Given a set of configurations $C$ %, a base configuration $\mathcal{C}_b\in C$, 
+and a set of connections $E_C$, we define the composed configuration to be $\mathcal{C}^*=(C^*, \gamma, M, E, \delta,
+X, B)$, where
 \begin{itemize}
 \item $C^*=C$
 \item $M=\bigcup_{\mathcal{C}\in C^*}{\gamma(\mathcal{C})}$.
-\item $\mathcal{M}_b\in M$ is the base module of the base configuration $\mathcal{C}_b$.
-\item $E= (\bigcup_{(\mathcal{C}_i.\mathcal{M}_i.n_i, \mathcal{C}_j.\mathcal{M}_j.n_j)\in E_C}{\{(\mathcal{M}_i.n_i, \mathcal{M}_j.n_j)}\})$ $\cup$ $(\bigcup_{\mathcal{C} \in C^*}{E}$ of $\mathcal{C})$
+%\item $\mathcal{M}_b\in M$ is the base module of the base configuration $\mathcal{C}_b$.
+\item $E= (\bigcup_{(\mathcal{C}_i.\mathcal{M}_i.n_i, \mathcal{C}_j.\mathcal{M}_j.n_j)\in E_C}{\{(\mathcal{M}_i.n_i, \mathcal{M}_j.n_j)}\})$ $\cup$ $(\bigcup_{\mathcal{C}_i \in C^*}{E_{i}})$
+\item \(B = \bigcup_{\mathcal{C}_i \in C} B_i\)
 \end{itemize}
-The definitions of $\gamma$ and $\delta$ are the same as the ones in Definition~\ref{def:configuration}.
-
-\subsubsection{Update Positions of all Modules} \label{sec:update_position}
-As multiple configurations are combined, positions and orientations of some modules in them need to be changed to preserve the relative positioning between modules as in the original configurations.
-
-\begin{algorithm}
-\caption{Update Module Position}\label{alg:update_position}
-\begin{algorithmic}[1]
-\Require
-\Statex A parent module $\mathcal{M}_p$
-\Statex A child module $\mathcal{M}_c$
-\Statex A connection $e=(\mathcal{M}_p.n_p, \mathcal{M}_c.n_c)$ and the labeling function $\delta$
-\Ensure
-\Statex The child module $\mathcal{M}_c$ with position and orientation updated
-\Statex
-\State c\_wrt\_p $\gets$ get\_transform($\mathcal{M}_p.V_p$, $\mathcal{M}_p.V_p$, $e$, $\delta$) \label{line:1}
-\State p\_wrt\_world $\gets$ get\_matrix($\mathcal{M}_p.P_p$, $\mathcal{M}_p.O_p$) \label{line:2}
-\State c\_wrt\_world $\gets$ p\_wrt\_world $\cdot$ c\_wrt\_p \label{line:3}
-\State $\mathcal{M}_c.P_c \gets$ get\_position(c\_wrt\_world) \label{line:4}
-\State $\mathcal{M}_c.O_c \gets$ get\_orientation(c\_wrt\_world) \label{line:5}
-\State \Return $\mathcal{M}_c$
-\end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}
-\caption{Update All Module Positions}\label{alg:update_all_positions}
-\begin{algorithmic}[1]
-\Require
-\Statex A configuration $\mathcal{C}$
-\Ensure
-\Statex The configuration $\mathcal{C}$ whose module positions are all updated
-\Statex
-\State $\mathcal{M}_p \gets \mathcal{C}.\mathcal{M}_b$ \label{line:6}
-\State $M=\{\mathcal{M}_p\}$ \label{line:7}
-\State $\mathcal{C}.M=\emptyset$ \label{line:8}
-
-\While{$M\neq\emptyset$} \label{line:9}
-\For{$(\mathcal{M}_i.n_i, \mathcal{M}_j.n_j) \in \mathcal{C}.E$} \label{line:10}
-\If{$\mathcal{M}_i=\mathcal{M}_p$} \label{line:11}
-\State $\mathcal{M}_j=$~UpdateModulePosition$($ \label{line:12}
-\Statex \hspace{3cm}$\mathcal{M}_i, \mathcal{M}_j, (\mathcal{M}_i.n_i, \mathcal{M}_j.n_j), \mathcal{C}.\delta)$
-\State $M=M\cup\{\mathcal{M}_j\}$ \label{line:13}
-\State $\mathcal{C}.M=\mathcal{C}.M\cup\{\mathcal{M}_j\}$ \label{line:14}
-\EndIf \label{line:15}
-\EndFor \label{line:16}
-\State $M=M \setminus \{\mathcal{M}_p\}$ \label{line:17}
-\State $\mathcal{M}_p \gets$ RandomOneFrom$(M)$ \label{line:18}
-\EndWhile \label{line:19}
-
-\State \Return $\mathcal{M}_c$
-\end{algorithmic}
-\end{algorithm}
-
-Given a parent module $\mathcal{M}_p$, a child module $\mathcal{M}_c$, the connection between them and the corresponding labeling function, Algorithm~\ref{alg:update_position} updates the position and orientation in the global reference frame of the child module based on the relative positioning between $\mathcal{M}_p$ and $\mathcal{M}_c$. Function ``get\_transform'' in line~\ref{line:1} computes the transformation matrix for the reference frame from the parent module to the child module. Function ``get\_matrix'' in line~\ref{line:2} computes the transformation matrix from global frame to the parent module frame. With the two transformation matrices, line~\ref{line:3} computes the transformation matrix from the global frame to the child module frame. In line~\ref{line:4}, \ref{line:5}, functions ``get\_position'' and ``get\_orientation'' update the position and orientation of the child module.
-
-With the algorithm to update the position and orientation between two modules, Algorithm~\ref{alg:update_all_positions} shows the procedure to update the position and orientation of all modules in a given configuration $\mathcal{C}$. The algorithm starts with the base module of $\mathcal{C}$ as shown in line~\ref{line:6}. $M$ is the set of modules who are updated already, but some modules that are directly connected to modules in $M$ are not updated yet. The set of modules of $\mathcal{C}$ is reset to the
-empty set in line~\ref{line:8}. The while loop from line~\ref{line:9} to \ref{line:19} ensures all modules in $\mathcal{C}$ are updated. The for loop and if statement in line~\ref{line:10}, \ref{line:11} find all connections in $\mathcal{C}.E$ whose first module is $\mathcal{M}_p$. In line~\ref{line:12} we apply Algorithm~\ref{alg:update_position} to update the position and orientation of the second module in those connections. Line~\ref{line:13}, \ref{line:14} append the updated module into the set $M$ and $\mathcal{C}.M$. In line~\ref{line:17}, \ref{line:18}, we remove the current $\mathcal{M}_p$ from the set $M$ and randomly choose a new $\mathcal{M}_p$ from $M$. Notice that the assumption we made about connections of a configuration in Definition~\ref{def:configuration} prevents us from updating the same module twice.
-
-
+The definitions of $\gamma$, \(X\), and $\delta$ are the same as the ones in Definition~\ref{def:configuration}.
+% \subsubsection{Update Positions of all Modules} \label{sec:update_position}
+% As multiple configurations are combined, positions and orientations of some modules in them need to be changed to preserve the relative positioning between modules as in the original configurations.
+% 
+% \begin{algorithm}
+% \caption{Update Module Position}\label{alg:update_position}
+% \begin{algorithmic}[1]
+% \Require
+% \Statex A parent module $\mathcal{M}_p$
+% \Statex A child module $\mathcal{M}_c$
+% \Statex A connection $e=(\mathcal{M}_p.n_p, \mathcal{M}_c.n_c)$ and the labeling function $\delta$
+% \Ensure
+% \Statex The child module $\mathcal{M}_c$ with position and orientation updated
+% \Statex
+% \State c\_wrt\_p $\gets$ get\_transform($\mathcal{M}_p.V_p$, $\mathcal{M}_p.V_p$, $e$, $\delta$) \label{line:1}
+% \State p\_wrt\_world $\gets$ get\_matrix($\mathcal{M}_p.P_p$, $\mathcal{M}_p.O_p$) \label{line:2}
+% \State c\_wrt\_world $\gets$ p\_wrt\_world $\cdot$ c\_wrt\_p \label{line:3}
+% \State $\mathcal{M}_c.P_c \gets$ get\_position(c\_wrt\_world) \label{line:4}
+% \State $\mathcal{M}_c.O_c \gets$ get\_orientation(c\_wrt\_world) \label{line:5}
+% \State \Return $\mathcal{M}_c$
+% \end{algorithmic}
+% \end{algorithm}
+% 
+% \begin{algorithm}
+% \caption{Update All Module Positions}\label{alg:update_all_positions}
+% \begin{algorithmic}[1]
+% \Require
+% \Statex A configuration $\mathcal{C}$
+% \Ensure
+% \Statex The configuration $\mathcal{C}$ whose module positions are all updated
+% \Statex
+% \State $\mathcal{M}_p \gets \mathcal{C}.\mathcal{M}_b$ \label{line:6}
+% \State $M=\{\mathcal{M}_p\}$ \label{line:7}
+% \State $\mathcal{C}.M=\emptyset$ \label{line:8}
+% 
+% \While{$M\neq\emptyset$} \label{line:9}
+% \For{$(\mathcal{M}_i.n_i, \mathcal{M}_j.n_j) \in \mathcal{C}.E$} \label{line:10}
+% \If{$\mathcal{M}_i=\mathcal{M}_p$} \label{line:11}
+% \State $\mathcal{M}_j=$~UpdateModulePosition$($ \label{line:12}
+% \Statex \hspace{3cm}$\mathcal{M}_i, \mathcal{M}_j, (\mathcal{M}_i.n_i, \mathcal{M}_j.n_j), \mathcal{C}.\delta)$
+% \State $M=M\cup\{\mathcal{M}_j\}$ \label{line:13}
+% \State $\mathcal{C}.M=\mathcal{C}.M\cup\{\mathcal{M}_j\}$ \label{line:14}
+% \EndIf \label{line:15}
+% \EndFor \label{line:16}
+% \State $M=M \setminus \{\mathcal{M}_p\}$ \label{line:17}
+% \State $\mathcal{M}_p \gets$ RandomOneFrom$(M)$ \label{line:18}
+% \EndWhile \label{line:19}
+% 
+% \State \Return $\mathcal{M}_c$
+% \end{algorithmic}
+% \end{algorithm}
+% 
+% Given a parent module $\mathcal{M}_p$, a child module $\mathcal{M}_c$, the connection between them and the corresponding labeling function, Algorithm~\ref{alg:update_position} updates the position and orientation in the global reference frame of the child module based on the relative positioning between $\mathcal{M}_p$ and $\mathcal{M}_c$. Function ``get\_transform'' in line~\ref{line:1} computes the transformation matrix for the reference frame from the parent module to the child module. Function ``get\_matrix'' in line~\ref{line:2} computes the transformation matrix from global frame to the parent module frame. With the two transformation matrices, line~\ref{line:3} computes the transformation matrix from the global frame to the child module frame. In line~\ref{line:4}, \ref{line:5}, functions ``get\_position'' and ``get\_orientation'' update the position and orientation of the child module.
+% 
+% With the algorithm to update the position and orientation between two modules, Algorithm~\ref{alg:update_all_positions} shows the procedure to update the position and orientation of all modules in a given configuration $\mathcal{C}$. The algorithm starts with the base module of $\mathcal{C}$ as shown in line~\ref{line:6}. $M$ is the set of modules who are updated already, but some modules that are directly connected to modules in $M$ are not updated yet. The set of modules of $\mathcal{C}$ is reset to the
+% empty set in line~\ref{line:8}. The while loop from line~\ref{line:9} to \ref{line:19} ensures all modules in $\mathcal{C}$ are updated. The for loop and if statement in line~\ref{line:10}, \ref{line:11} find all connections in $\mathcal{C}.E$ whose first module is $\mathcal{M}_p$. In line~\ref{line:12} we apply Algorithm~\ref{alg:update_position} to update the position and orientation of the second module in those connections. Line~\ref{line:13}, \ref{line:14} append the updated module into the set $M$ and $\mathcal{C}.M$. In line~\ref{line:17}, \ref{line:18}, we remove the current $\mathcal{M}_p$ from the set $M$ and randomly choose a new $\mathcal{M}_p$ from $M$. Notice that the assumption we made about connections of a configuration in Definition~\ref{def:configuration} prevents us from updating the same module twice.
 \subsection{Behavior Composition: Series-Parallel Action Graphs}
 \label{sec:behavior-representation}
 We present a novel motion description language for modular robots.  The
@@ -555,7 +575,8 @@ The action completes when both wheels actually reach their commanded angles of \
 \end{figure}
 
 \begin{definition}[Verification on Configuration]
-Given a configuration $\mathcal{C}$, we say $\mathcal{C}$ is valid if it satisfied the following set of properties
+Given a configuration $\mathcal{C}$ and state \(X_0\), we say $\mathcal{C}$ is valid in
+state \(X_0\) if it satisfied the following set of properties:
 \begin{itemize}
 \item There is no collision between modules in the configuration.
 \item The configuration is statically stable.
@@ -564,15 +585,19 @@ Notice that in order to verify the validity of the configuration, one needs to k
 \end{definition}
 
 \paragraph{Collision Checking} 
-With positions and orientations of all modules in the configuration update, and the geometry information of all module, we can check whether any two modules occupy the same space. If so, there exist a self-collision in the configuration.
+We obtain the positions and orientation of all modules through forward kinematics.
+Using the known model geometry, we  check whether any two modules occupy the same space. If so, there exist a self-collision in the configuration.
+\TODO{In general, this is a non-trivial problem to solve efficiently.  We should
+briefly mention our method, and cite a reference to other available algorithms.}
 \paragraph{Stability Checking}
-The static stability is checked by first computing the location of the center of mass of the configuration. For the given configuration $\mathcal{C}$, the position of the center of mass is
+ Gravitational stability is checked by computing the location of the center of mass of the configuration. For the given configuration $\mathcal{C}$, the position of the center of mass is
 \begin{equation*}
  P_{\mathcal{C}}=\dfrac{\sum\limits_{\mathcal{M}\in \gamma(\mathcal{C})}{\mathcal{M}.P\cdot \mathcal{M}_m}}{\sum\limits_{\mathcal{M}\in \gamma(\mathcal{C})}{\mathcal{M}_m}}
 \end{equation*}
 where $\mathcal{M}_m$ is the mass of the module $\mathcal{M}$.
 
-Then we find the set of modules $M_c$ that have minimal position in the $z$ direction and consider them as the contact points between the ground plane and the configuration. A set of points in the $x$-$y$ plane can be extracted from $M_c$ as $\sigma=\{(\mathcal{M}.P.x, \mathcal{M}.P.y)\mid \mathcal{M} \in M_c\}$. If point $(P_\mathcal{C}.x, P_\mathcal{C}.y)$ is inside of the convex polygon formed by the set of points $\sigma$, the given configuration $\mathcal{C}$ is considered statically stable.
+Then we find the set of modules $M_c$ that have minimal position in the $z$ direction and consider them to
+be the contact points between the ground plane and the configuration. A set of points in the $x$-$y$ plane can be extracted from $M_c$ as $\sigma=\{(\mathcal{M}.P.x, \mathcal{M}.P.y)\mid \mathcal{M} \in M_c\}$. If point $(P_\mathcal{C}.x, P_\mathcal{C}.y)$ is inside of the convex polygon formed by the set of points $\sigma$, the given configuration $\mathcal{C}$ is considered statically stable.
 
 \subsubsection{Verification of Control}
 In section~\ref{sec:behavior-representation}, we introduced a novel motion description language for modular robots. Actions defined by the language can be combined to produce more complex behaviors. Similar to configuration composition, we want to make sure the composed behaviors are valid and safe to execute. For example, a behavior that results two module colliding with each other during the execution should be considered unsafe. As the composed behaviors are used to control modular robots to produce locomotion or actions, we also refer to a behavior as a controller.
@@ -587,10 +612,8 @@ A controller is valid if it satisfied the following set of properties when contr
 Similar to the verification of a configuration , we need to know the geometry information and the mass of each module for the given modular robot system.
 \end{definition}
 
-
-
-\subsection{Complexity}
-\TODO{Discuss the complexity of the algorithm with respect to the number of modules and size of gait tables.}
+%\subsection{Complexity}
+%\TODO{Discuss the complexity of the algorithm with respect to the number of modules and size of gait tables.}
 
 \section{Implementation }
 \label{sec:example}
@@ -801,6 +824,7 @@ We worked hard, and had fun.
 \bibliography{references}
 
 \end{document}
+
 
 
 
