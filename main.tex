@@ -31,6 +31,7 @@
 \newcommand{\abj}[1]{\textcolor{blue}{#1}}
 \newcommand{\dbj}[1]{\textcolor{blue}{\sout{#1}}}
 \newcommand{\cbj}[2]{\textcolor{blue}{\sout{#1}}\textcolor{blue}{~#2}}
+\newcommand{\abt}[1]{\textcolor{magenta}{#1}}
 \usepackage{amsbsy}
 
 \begin{document}
@@ -58,10 +59,14 @@ of gravitational stability.
 \section{Introduction}
 Modular reconfigurable robot systems have been studied extensively for several
 decades \TODO{citations}.  These systems distinguish themselves \abj{from conventional robotic systems} in their
-ability to transform into different shapes to address a wide variety of tasks.
+ability to transform into different shapes to address a wide variety of tasks. \abt{They
+promise to be versatile, robust, and low cost \cite{yim2000polybot}. Dozens of groups
+have different kinds of reconfigurable robots \cite{fukuda1990cellular, lipson2000towards}, and introduced approaches
+for programming them \cite{}.  Over 800 papers, a book \cite{stoy2010book}, and a survey \cite{yim2007modular}
+have been written on the subject. }
 
 This \dbj{additional }versatility places an additional burden on the user, because
-solving problems with modular robots involves not only designing  software,
+solving problems with modular robots involves not only designing  programs,
 but also the best physical form for the task at hand. We argue that if this
 complexity is not appropriately managed, it can make the system
 impractical. If the user is free to create any new design \dbj{he/she pleases }to
@@ -165,9 +170,11 @@ robots \cite{zhang2003phase}. In this paper, we present a \cbj{novel scripting l
 to quickly create complex behaviors for modular robots.
 
 Our framework assists users in verifying design validity by identifying self-collision
-and loss of gravitational stability. Identification of these conditions is common
-in modular robot reconfiguration planning \cite{casal2001reconfiguration} and motion
+and loss of gravitational stability. \abt{In existing literature, these conditions have
+been checked in the context of modular robot reconfiguration planning \cite{casal2001reconfiguration} and motion
 planning \cite{yoshida2002self}.
+To our knowledge, there is no modular robot design tool that verifies
+these conditions to provide assistance to a human designer.}
 
 \section{Definitions}
 \label{sec:preliminaries}
@@ -244,11 +251,11 @@ modules, and the label of each connection shows the angle offset of that
 connection.
 
 In this paper, we consider only configurations without cycles. While this is a constraint,
-the majority of functional designs for chain-architecture modular robots are acyclic,
-so we feel that it does not unreasonably limit the utility of our framework. \TODO{Mark,
-should we cite something here?}.   
- 
- Assuming acyclic configurations, we can compute forward kinematics for the entire
+the \abt{set of functionalities provided by acyclic designs is very rich, so we feel that
+it does not unreasonably limit the utility of our framework. Accomodating designs
+with cycles is left to future work.}
+
+Assuming acyclic configurations, we can compute forward kinematics for the entire
 configuration by composing displacements module-to-module. Let any module \(\mathcal{M}_f \in M\) have
 fixed displacement \({^\mathcal{W}}D^{\mathcal{B}_f}\) in the world frame.
 Let \(\mathcal{M}_i: (\mathcal{M}_i.a_i,~\mathcal{M}_f.a_f) \in E \) be connected to \(\mathcal{M}_f\).
@@ -292,7 +299,7 @@ series-parallel action graphs, described in detail in section
 \ref{sec:behavior-representation}.
 \end{definition}
 \begin{definition}[Controller]
-A \textit{controller} is a position and velocity servo for one DoF of a modular
+A \textit{controller} is a position or velocity servo for one DoF of a modular
 robot.  A controller takes as input a desired position or angular velocity, and
 drives the error between the desired and actual state of the DoF it controls to
 zero over time.
@@ -420,8 +427,10 @@ commands (set-points and gains) with limited duration \cite{brockett1988computer
 Extended motion description languages introduce interrupts to control the duration
 of commands \cite{hristu2003motion}.  The atomic commands of our language have unlimited
 duration (until they are superseded by another command), and each apply to a single
-DoF of the robot.  These properties allow complex behaviors to be created through composition
-operations.
+DoF of the robot.
+%These properties allow complex behaviors to be created through composition operations.
+\TODO{Talk about the reason we are using SPAG's rather than something
+else.}
 
  The fundamental atoms of the language are called actions.  An \textit{action} is a tuple \(
 (J, X, \xi, T)\), where \(J\) identifies a single DoF of a configuration, \(X\) is a
@@ -845,6 +854,9 @@ We worked hard, and had fun.
 \bibliography{references}
 
 \end{document}
+
+
+
 
 
 
