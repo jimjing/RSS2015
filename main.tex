@@ -49,7 +49,7 @@ In this paper, we present a software framework for the compositional design of
 modular robot configurations and behaviors. Designs are constructed
 hierarchically by composing elements from a library, allowing users to easily
 create complex designs.  Likewise, complex behaviors are constructed by
-composing controllers from a library in a nested series/parallel structure. The
+composing behaviors from a library in a nested series/parallel structure. The
 system is integrated with a full dynamic simulator, and provides tools to automatically
 identify common problems with behaviors, specifically self-collision and loss
 of gravitational stability.
@@ -625,7 +625,7 @@ In section~\ref{sec:behavior-representation}, we introduced a novel motion descr
 \begin{definition}[Verification on Behavior]
 A behavior is valid if it satisfies the following set of properties when controlling a configuration of a given modular robot system
 \begin{itemize}
-\item There is no collision between modules at all time during the execution of the controller.
+\item There is no collision between modules at all time during the execution of the behavior.
 \item There is no behavior conflict at all time during the execution.
 \item The configuration is gravitationally stable at the end of the execution.
 \item The maximum duration when the configuration is not gravitationally stable during the execution is less than a time bound $t_{max}$.
@@ -722,7 +722,7 @@ For the library to be most effective, the set of configurations and behaviors av
  at each level (and especially at the lowest levels) should provide a rich set of
  functionalities without presenting the user with an overwhelming number of options. 
  Considering the small library in Tables \ref{Order-1-configurations} and \ref{Order-2-configurations},
- it is interested to note that a large  and diverse set of second- and third-order configurations can
+ we see that a large  and diverse set of second- and third-order configurations can
 be constructed from only one zero- and one first-order configuration. Developing metrics to
 evaluate the quality of such a library is an interesting opportunity for future work. 
 
@@ -823,11 +823,32 @@ The need for verification becomes more important as design complexity increases.
 and flesh out this section.}
 
 \section{Results}
-In the past, designing configurations and behaviors to address new tasks has required
-time on the order of one day \cite{sastra2011using}. Using our framework and library,
-complex designs (such as the Walkbot or 18-module snake) can be created and programmed
-in under an hour. \TODO{Mark, what is the best
-way to present this comparison?} 
+In the past, designing configurations and behaviors to address new tasks has
+required time on the order of one to dozens of hours \cite{sastra2011using}.  To
+evaluate the rapid creation of solutions for robotic tasks using modular robot
+systems, we can look to the modular robot competitions held at large
+conferences IROS 2003, ICRA 2008, ICRA 2010, ICRA 2011 and ICRA 2012. In each
+case participants used modular robot systems to solve problems with little a
+priori knowledge of the task (except that the task would likely require remote
+operation/manipulation of objects).
+
+In the case of IROS 2003, which took place at a Las Vegas casino, the task was
+to create a robot that could “gamble” by placing plastic tokens into a
+toy slot machine, pulling a lever and catching the chips as they popped out.
+One participant was able to take the PolyBot G1V4 system with 14 modules (14
+DoF) and create. The participants had 6 hours to build on design primitives
+they created the previous day (snake-like mobility, and arm like structures)
+that would solve the task - which they almost did - they did not catch any
+chips.
+
+Using our framework and library, complex designs (such as the Walkbot or
+18-module snake) can be created and programmed in under an hour and just a few
+minutes if the primitives have already been created. These are of similar
+complexity to the IROS system except does not include the hardware component
+nor hardware debugging. The other competitions listed had similar tasks, time
+and modular robot resources.  While this is not an apples to apples comparison,
+having the ability to build and test configurations in simulation, in this
+case, would be orders of magnitude faster. 
 
 \section{Conclusions}
 We worked hard, and had fun.
@@ -862,3 +883,5 @@ We worked hard, and had fun.
 
 
 
+ 
+ 
