@@ -820,9 +820,9 @@ Pc \left(~Sc\begin{pmatrix} halfSine1 \\ halfSine2 \end{pmatrix},
 \end{figure}
 
 \subsection{Verification}
-The need for verification becomes more important as design complexity increases. Consider the Walkbot example. If the user sets two of the connections with different angle offset, the composed Walkbot configuration will have two legs pointing to the opposite direction of the other two legs, as shown in Figure~\ref{fig:designer_unstable}. Since the projection of the configuration's center of mass now falls out of the supporting base, the program will warn the user that the configuration is not gravitationally stable. As shown in Figure~\ref{fig:gazebo_unstable2}, in simulation the configuration quickly fell onto the ground due to the instability as warned by the program. 
+The need for verification becomes more important as design complexity increases. Consider the Walkbot example. If the user sets two of the connections with different angle offset, the composed Walkbot configuration will have two legs pointing in the opposite direction of the other two legs, as shown in Figure~\ref{fig:designer_unstable}. Since the projection of the configuration's center of mass now falls out of the supporting base, the program will warn the user that the configuration is not gravitationally stable. As shown in Figure~\ref{fig:gazebo_unstable2}, in simulation the configuration quickly fell to the ground due to the instability as warned by the program. 
 
-Verification in behavior design can also aid the user to create valid and safe robot behaviors. When designing the walking behavior for the Walkbot, if the user commands the front and rear leg at the same side of the robot to swing toward each other at the same time, the program will warn the user that there will be collision between some modules in this behavior, as shown in Figure~\ref{fig:gait_collision}. The photo shown in Figure~\ref{fig:gait_collision2} demonstrates the moment of collision during simulation.
+Verification of behavior design can also aid the user to create valid and safe robot behaviors. When designing the walking behavior for the Walkbot, if the user commands the front and rear leg at the same side of the robot to swing toward each other at the same time, the program will warn the user that there will be collision between some modules in this behavior, as shown in Figure~\ref{fig:gait_collision}. The photo shown in Figure~\ref{fig:gait_collision2} demonstrates the moment of collision during simulation.
  
 \begin{figure}
 \begin{center}
@@ -837,7 +837,7 @@ Verification in behavior design can also aid the user to create valid and safe r
                 \label{fig:gazebo_unstable2}
         \end{subfigure}
 \end{center}
-\caption{(a) The program warns the composed configuration is not gravitationally stable; (b) The robot fell onto ground plane due to instability in simulation}
+\caption{(a) The program warns the composed configuration is not gravitationally stable; (b) The robot fell to ground plane due to instability in simulation}
 \label{fig:unstable}
 \end{figure}
 
