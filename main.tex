@@ -45,15 +45,24 @@
 \maketitle
 
 \begin{abstract}
-In this paper, we present a software framework for the compositional design of
-modular robot configurations and behaviors. Designs are constructed
-hierarchically by composing elements from a library, allowing users to easily
-create complex designs.  Likewise, complex behaviors are constructed by
-composing controllers from a library in a nested series/parallel structure. The
-system is integrated with a full dynamic simulator, and provides tools to automatically
-identify common problems with behaviors, specifically self-collision and loss
-of gravitational stability.
-
+To take full advantage of the flexibility of a modular robot system, users must be
+able to create new configurations and behaviors quickly. We present a design framework  that facilitates  rapid creation
+of new configurations and behaviors through composition of existing ones, tools
+to verify configurations and behaviors as they are being created.
+New configurations are created by combining existing
+sub-configurations,
+for example combining four legs and a body to create a walking robot.
+Behaviors are associated with each configuration, so that when sub-configurations
+are composed, their associated behaviors are immediately available for composition
+as well.
+We introduce a new motion description language (Series-Parallel Action Graphs)
+that facilitates the rapid creation of complex behaviors by composition of simpler
+behaviors.
+We provide tools that automatically verify configurations and behaviors during the
+design process, allowing the user to identify problems early and iterate quickly.
+After verification, users can  evaluate their configurations and behaviors in a physical simulator.
+The software we have developed is open-source, and will be made freely available
+online.
 \end{abstract}
 
 \section{Introduction}
