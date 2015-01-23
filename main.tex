@@ -306,11 +306,11 @@ robot.  A controller takes as input a desired position or angular velocity, and
 drives the error between the desired and actual state of the DoF it controls to
 zero over time.
 \end{definition}
-\begin{definition}[Behavior Conflict]
-When writing a behavior, it is possible to command one controller to
-simultaneously hold more than one desired position; this is known as a
-\textit{behavior conflict}.  Behaviors with conflicts are
-impossible to execute.
+% \begin{definition}[Behavior Conflict]
+% When writing a behavior, it is possible to command one controller to
+% simultaneously hold more than one desired position; this is known as a
+% \textit{behavior conflict}.  Behaviors with conflicts are
+% impossible to execute.
 \end{definition}
 \begin{definition}[Self-Collision]
 During execution of a behavior, a \textit{self-collision} can occur when two
@@ -873,10 +873,16 @@ not be fair to compare these times to the competition times directly, since they
 hardware tests or hardware debugging. However, we think we can safely say that
 our framework is an improvement over past design practices.
 \section{Conclusions}
-In this paper we presented a framework as a computer program that allows novice to complex configurations and behaviors for modular robots.
-With some basic components, such as a single module, complex configurations can be constructed hierarchically.
-In addition, we presented a motion description language, in which basic robot actions can be combine in series or parallel to generate more complex robot behaviors.
-The framework utilize verification in configuration and behavior compositions to provide feedback to users when detecting a set of design flaws, such as self-collision and gravitational instability. The composed designs are then used to build a library of configurations and behaviors for modular robots. Examples on some designs are demonstrated and simulated in a physics engine.
+In this paper, we presented a design framework that facilitates the rapid creation
+of configurations and behaviors for modular robots.
+Complex configurations  are hierarchically constructed from basic
+subcomponents.
+We presented a novel motion description language, which allows existing behaviors
+to be combined in series and parallel  to create more complex  behaviors.
+The framework verifies  configurations and behaviors as they are being created, allowing
+early detection of  design flaws, specifically self-collision and gravitational instability. After
+verification, designs can be evaluated in a physical simulator before testing on
+hardware.
 
 \section{Future}
 Future work will include expansion of the features of our framework.  We will add verification tools to check for behavior conflict (when two behaviors composed in parallel command the same DoF), and check for behaviors that would exceed the actuator and connector force limits of the modules.  We will also work to include configurations with cycles.
