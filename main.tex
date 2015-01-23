@@ -667,7 +667,7 @@ Formally, we denote the state of a SMORES module as \(X=\lbrace \theta_L, \theta
 
 \begin{figure}[tb]
     \begin{center}
-        \includegraphics[width=\columnwidth]{images/smores_robot.png}
+        \includegraphics[width=0.8\columnwidth]{images/smores_robot.png}
     \end{center}
     \caption{SMORES robot}
     \label{fig:SmoresRobot}
@@ -796,14 +796,14 @@ Figure~\ref{fig:design} demonstrates the design flow when a user is designing a 
 
 \subsection{Scale-up through composition}
 Our framework allows users to quickly create and program large configurations. The
-first-order CHAIN3 configuration (Figure \ref{fig:chain3}) can use a \(sineGait\)
+first-order CHAIN3 configuration (Table~\ref{Order-1-configurations}) can use a \(sineGait\)
 behavior to locomote like a snake. Defining \(sineGait\)  as the series composition
 of two half-waves will allow us to re-use the gait with larger snakes:
 \begin{displaymath}
 sineGait = Sc(~halfSine1,~halfSine2~)
 \end{displaymath}
 Arbitrarily long snake configurations can be created
-by composing CHAIN3 configurations end-to-end; Figure \ref{fig:snake18} shows one with 18 modules.
+by composing CHAIN3 configurations end-to-end; Table~\ref{Order-2-configurations} shows one with 18 modules.
 A gait for an arbitrarily long snake is created by composing sine wave
 gaits for each component in parallel, but with alternating phase:
 \begin{align*}
@@ -812,21 +812,6 @@ Pc \left(~Sc\begin{pmatrix} halfSine1 \\ halfSine2 \end{pmatrix},
 ~Sc\begin{pmatrix} halfSine2 \\ halfSine1 \end{pmatrix},\ldots ~\right)
 \end{align*}
 
-\begin{figure}
-        \begin{subfigure}{\columnwidth}
-        \begin{center}
-                \includegraphics[width=1.5in]{images/library/snake3.png}
-        \end{center}
-                \caption{CHAIN3 (order 1)}
-                \label{fig:chain3}
-        \end{subfigure}
-        \begin{subfigure}{\columnwidth}
-                \includegraphics[width=\columnwidth]{images/library/snake18.png}
-                \caption{SNAKE18 (order 2)}
-                \label{fig:snake18}
-        \end{subfigure}
-\caption{CHAIN3 and SNAKE18 configurations}
-\end{figure}
 
 \subsection{Verification}
 The need for verification becomes more important as design complexity increases. Consider the Walkbot example. If the user sets two of the connections with different angle offset, the composed Walkbot configuration will have two legs pointing in the opposite direction of the other two legs, as shown in Figure~\ref{fig:designer_unstable}. Since the projection of the configuration's center of mass now falls out of the supporting base, the program will warn the user that the configuration is not gravitationally stable. As shown in Figure~\ref{fig:gazebo_unstable2}, in simulation the configuration quickly fell to the ground due to the instability as warned by the program. 
