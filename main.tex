@@ -58,12 +58,12 @@ of gravitational stability.
 
 \section{Introduction}
 Modular reconfigurable robot systems have been studied extensively for several
-decades \TODO{citations}.  These systems distinguish themselves from conventional robotic systems in their
-ability to transform into different shapes to address a wide variety of tasks. \abt{They
+decades.  These systems distinguish themselves from conventional robotic systems in their
+ability to transform into different shapes to address a wide variety of tasks. They
 promise to be versatile, robust, and low cost \cite{yim2000polybot}. Dozens of groups
 have different kinds of reconfigurable robots \cite{fukuda1990cellular, lipson2000towards}, and introduced approaches
 for programming them \cite{salemi2001hormone, walter2002choosing, melek2003neurofuzzy}.  Over 800 papers, a book \cite{stoy2010book}, and a survey \cite{yim2007modular}
-have been written on the subject. }
+have been written on the subject.
 
 This versatility places an additional burden on the user, because
 solving problems with modular robots involves not only designing  programs,
@@ -76,67 +76,55 @@ hardware will be defeated. \TODO{Add examples from challenges}
 
 Software modularity is a well-established practice for developing large
 maintainable systems and avoiding duplication of effort \TODO{cite}. In robotics, software
-behaviors are inextricably linked to the hardware they control, resulting in
-additional challenges to making modularity effective. Significant progress has been made in
-sharing robotics software between researchers
-and hardware platforms, most notably
-ROS \cite{Quigley2009} which provides inter-process communication and standard libraries for common robot tasks. 
+behaviors are inextricably linked to the hardware they control, resulting in challenges to making modularity effective. Strong
+ties to physical hardware also increase the need for software verification, to ensure
+that hardware is not damaged. Significant progress has been made on these fronts
+in traditional robotics, most notably
+ROS \cite{Quigley2009} which provides inter-process communication and standard libraries for common robot tasks,
+as well as powerful verification tools to ensure the safety of robots \TODO{cite}.
+  
+In modular robotics, the challenge is different.  Modular robot systems are not optimized
+for specific tasks, so in order for them to be useful, we must take full advantage of their flexibility. To do
+so, a user must be able to generate and verify configurations and behaviors
+as quickly as possible.  
 
-The challenges of designing behaviors are different in modular robotics than
-in typical robotics, because the hardware itself is modular. Porting software
-from one robot platform to a completely different robot platform takes a
-considerable amount of time, and needs to be facilitated by a large framework
-such as ROS, in which fundamental software libraries are almost totally decoupled from
-specific hardware. In modular robotics, the emphasis needs to be on speed of
-design, because the major advantage of a modular robot system is that new
-designs can be made for each task. We need to  very quickly develop simple kinematic
-behaviors (\textit{e.g.} take a step with a leg) with new morphologies that share some of the
-structure of old morphologies.
-
-Our solution to this problem is to let the modularity of our hardware guide the
-modularity of our behaviors. We create new modular robot designs by combining existing sub-designs,
-for example combining four legs with a body to create a walking robot.
-We provide a GUI tool that allows users to do this easily. Designs have
-associated libraries of behaviors, so that when new designs are created
-by composing existing sub-designs, new behaviors for that design can be quickly
-and easily created by composing the behaviors associate with its component
-sub-designs. We introduce a new behavior composition formalism with a series-parallel
-execution structure that allows old behaviors to be easily and clearly combined
-into new behaviors.
-
-Since combining old things in new ways can lead to unexpected problems, we also
-need to verify that our new designs and behaviors perform the way we expect them
-to. This is done in a dynamic simulation in Gazebo, and through
-verification tools that detect common problems. \TODO{Integrate into intro}
-
-
-\section{Contribution and Paper Structure}
-
-The primary contribution of this paper is a formalism for the construction of modular
-robot configurations and behaviors by composition, and a simulation
-environment that helps the user verify intended behavior.  Together, these tools
-help manage the complexity of a modular robot system, significantly reducing the
-time and effort required to develop sophisticated configurations and behaviors.  The software we
-have developed is open-source and will be made freely available online.
+Toward that end, we present a design framework that facilitates the rapid creation
+of new configurations
+and behaviors through composition, and tools to verify configurations and behaviors
+while they are being created. New configurations are created by combining existing
+sub-configurations,
+for example combining four legs and a body to create a walking robot.
+Behaviors are associated with each configuration, so that when sub-configurations
+are composed, their associated behaviors are immediately available for composition
+as well.
+We introduce a new motion description language (Series-Parallel Action Graphs)
+that facilitates the rapid creation of complex behaviors by composition of simpler
+behaviors.
+We provide tools that automatically verify configurations and behaviors during the
+design process, allowing the user to identify problems early and iterate quickly.
+After verification, users can  evaluate their configurations and behaviors in a physical simulator.
+The software we have developed is open-source, and will be made freely available
+online.
 
 The remainder of this paper provides a  description of the
-structure and algorithmic components of our design framework.  In Section \ref{sec:related-work},
+structure and algorithmic components of our framework.  In Section \ref{sec:related-work},
 we discuss relevant background material.
 In Section \ref{sec:preliminaries} we introduce terminology and  concepts used elsewhere in the
 paper. 
 In Section \ref{sec:approach}, we describe the algorithmic basis
 for the three major components of our framework - design composition, behavior
-composition, and behavior verification.  In Section
-\ref{sec:example}, we discuss the open-source software
-tools used to implement our framework, and provide examples demonstrating a user's
-workflow when using this system.  We demonstrate that our framework saves the
+composition, and verification.  In Section
+\ref{sec:implementation}, we discuss the open-source software
+tools used to implement our framework. In Section \ref{sec:examples}, we provide examples highlighting
+important aspects of the framework, including a demonstration of the user's
+workflow.  We demonstrate that our framework saves the
 user time and effort, and allows him or her to easily develop complex and
 capable designs.
 
 
 \section{Related Work}
 \label{sec:related-work}
-In some respect\abj{s}, our work parallels the efforts of Mehta \cite{mehta2014design}
+In some respects, our work parallels the efforts of Mehta \cite{mehta2014design}
 and Bezzo \cite{bezzo2014demo}, who aim to create and program printable robots from
 novice users' design specifications.  Users create new designs by composing
 existing elements from a design library, and appropriate circuitry and
@@ -648,7 +636,7 @@ For a behavior with duration time $T_B$, we can check the state of the configura
 %\TODO{Discuss the complexity of the algorithm with respect to the number of modules and size of gait tables.}
 
 \section{Implementation }
-\label{sec:example}
+\label{sec:implementation}
 We implement a program to aid users to design and verify complex configurations and behaviors from a set of basic configurations and associated behaviors. We separated the program into two main parts, a configuration builder and a behavior builder.
 Our implementation is built for the SMORES modular robot, but could easily be adapted
 to other modular robot systems. \subsection{SMORES robot}
@@ -712,6 +700,7 @@ Given a composed configuration from the configuration builder, the behavior buil
 % \end{itemize}
 
 \section{Examples}
+\label{sec:examples}
 Here we present some examples to illustrate important features of our framework.
 \subsection{Toward a Standard Library}
 Our eventual intention is to develop a large library of configurations and associated
