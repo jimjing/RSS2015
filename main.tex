@@ -757,7 +757,7 @@ evaluate the quality of such a library is an interesting opportunity for future 
 % \end{table*}
 
 \subsection{The User Perspective}
-Figure~\ref{fig:design} demonstrates the design flow when a user is designing a configuration an its behaviors. We present the start-to-end user perspective in designing a complicated configuration called Walkbot. Consider a basic configuration formed by three modules in a line. We can form a ``body'' configuration by connecting two of the basic configurations as shown in Figure~\ref{fig:walkbot1}. With four more basic configurations and attach sides of those basic configurations to sides of the ``body'' configuration with certain angle offset, we can build a complex configuration, Walkbot, with four legs, as shown in Figure~\ref{fig:walkbot2}. Notice that by connecting multiple  basic configurations together, we can design a complex configuration without building with individual modules.
+Figure~\ref{fig:design} demonstrates the design flow when a user is designing a configuration an its behaviors. We present the start-to-end user perspective in designing a complicated configuration called Walkbot. Consider a basic configuration ``CHAIN3'' as shown in Table~\ref{Order-1-configurations}. We can form a ``CHAIN6'' configuration, as a body, by connecting two of the basic configurations as demonstrated in Figure~\ref{fig:walkbot1}. With four more basic configurations and attach sides of those basic configurations to sides of the ``CHAIN6'' configuration with certain angle offset, we can build a complex configuration, Walkbot, with four legs, as shown in Figure~\ref{fig:walkbot2}. Notice that by connecting multiple  basic configurations together, we can design a complex configuration without building with individual modules.
 
 \begin{figure}
 \begin{center}
@@ -820,9 +820,9 @@ Pc \left(~Sc\begin{pmatrix} halfSine1 \\ halfSine2 \end{pmatrix},
 \end{figure}
 
 \subsection{Verification}
-The need for verification becomes more important as design complexity increases. Consider the Walkbot example. If the user sets two of the connections with different angle offset, the composed Walkbot configuration will have two legs pointing to the opposite direction of the other two legs, as shown in Figure~\ref{fig:designer_unstable}. Since the projection of the configuration's center of mass now falls out of the supporting base, the program will warn the user that the configuration is not gravitationally stable. As shown in Figure~\ref{fig:gazebo_unstable2}, in simulation the configuration quickly fell onto the ground due to the instability as warned by the program. 
+The need for verification becomes more important as design complexity increases. Consider the Walkbot example. If the user sets two of the connections with different angle offset, the composed Walkbot configuration will have two legs pointing in the opposite direction of the other two legs, as shown in Figure~\ref{fig:designer_unstable}. Since the projection of the configuration's center of mass now falls out of the supporting base, the program will warn the user that the configuration is not gravitationally stable. As shown in Figure~\ref{fig:gazebo_unstable2}, in simulation the configuration quickly fell to the ground due to the instability as warned by the program. 
 
-Verification in behavior design can also aid the user to create valid and safe robot behaviors. When designing the walking behavior for the Walkbot, if the user commands the front and rear leg at the same side of the robot to swing toward each other at the same time, the program will warn the user that there will be collision between some modules in this behavior, as shown in Figure~\ref{fig:gait_collision}. The photo shown in Figure~\ref{fig:gait_collision2} demonstrates the moment of collision during simulation.
+Verification of behavior design can also aid the user to create valid and safe robot behaviors. When designing the walking behavior for the Walkbot, if the user commands the front and rear leg at the same side of the robot to swing toward each other at the same time, the program will warn the user that there will be collision between some modules in this behavior, as shown in Figure~\ref{fig:gait_collision}. The photo shown in Figure~\ref{fig:gait_collision2} demonstrates the moment of collision during simulation.
  
 \begin{figure}
 \begin{center}
@@ -837,7 +837,7 @@ Verification in behavior design can also aid the user to create valid and safe r
                 \label{fig:gazebo_unstable2}
         \end{subfigure}
 \end{center}
-\caption{(a) The program warns the composed configuration is not gravitationally stable; (b) The robot fell onto ground plane due to instability in simulation}
+\caption{(a) The program warns the composed configuration is not gravitationally stable; (b) The robot fell to ground plane due to instability in simulation}
 \label{fig:unstable}
 \end{figure}
 
@@ -862,6 +862,7 @@ Verification in behavior design can also aid the user to create valid and safe r
 \section{Results}
 In the past, designing configurations and behaviors to address new tasks has required
 time on the order of one to dozens of hours \cite{sastra2011using}.  To evaluate the rapid creation of solutions for robotic tasks using modular robot systems, we can look to the modular robot competitions held at large conferences IROS 2003, ICRA 2008, ICRA 2010, ICRA 2011 and ICRA 2012. In each case participants used modular robot systems to solve problems with little a priori knowledge of the task (except that the task would likely require remote operation/manipulation of objects).
+
 In the case of IROS 2003, the task was to create a robot that could “gamble” by placing plastic tokens into a toy slot machine, pulling a lever and catching the chips as they popped out.  One team created a solution with PolyBot G1V4 system with 14 modules (14 DoF). Participants
 had one day to create primitive configurations and behaviors (snake-like mobility, and arm like structures) and
  6 hours on the following day to solve the task. No teams completed the task, though
