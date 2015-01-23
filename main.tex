@@ -62,17 +62,17 @@ decades \TODO{citations}.  These systems distinguish themselves \abj{from conven
 ability to transform into different shapes to address a wide variety of tasks. \abt{They
 promise to be versatile, robust, and low cost \cite{yim2000polybot}. Dozens of groups
 have different kinds of reconfigurable robots \cite{fukuda1990cellular, lipson2000towards}, and introduced approaches
-for programming them \cite{}.  Over 800 papers, a book \cite{stoy2010book}, and a survey \cite{yim2007modular}
+for programming them \cite{salemi2001hormone, walter2002choosing, melek2003neurofuzzy}.  Over 800 papers, a book \cite{stoy2010book}, and a survey \cite{yim2007modular}
 have been written on the subject. }
 
 This \dbj{additional }versatility places an additional burden on the user, because
 solving problems with modular robots involves not only designing  programs,
-but also the best physical form for the task at hand. We argue that if this
-complexity is not appropriately managed, it can make the system
-impractical. If the user is free to create any new design \dbj{he/she pleases }to
+but also the best physical form for the task at hand. If this
+complexity is not appropriately managed, it will present a significant barrier to
+using modular robots to address practical tasks \cite{yim2000modular}. If the user is free to create any new design \dbj{he/she pleases }to
 solve a new task, but must program the design from scratch every time, creating
 new designs will be a huge amount of effort, and the advantage of versatile modular
-hardware will be defeated.
+hardware will be defeated. \TODO{Add examples from challenges}
 
 Software modularity is a well-established practice for developing large
 maintainable systems and avoiding duplication of effort \TODO{cite}. In robotics, software
@@ -80,7 +80,7 @@ behaviors are inextricably linked to the hardware they control, resulting in
 additional challenges to making modularity effective. Significant progress has been made in
 sharing robotics software between researchers
 and hardware platforms, most notably
-ROS\cite{Quigley2009} which provides IPC and standard libraries for common robot tasks. 
+ROS \cite{Quigley2009} which provides inter-process communication and standard libraries for common robot tasks. 
 
 The challenges of \cbj{software design}{designing controls} are different in modular robotics than
 in typical robotics, because the hardware itself is modular. Porting software
@@ -107,7 +107,7 @@ into new behaviors.
 Since combining old things in new ways can lead to unexpected problems, we also
 need to verify that our new designs and behaviors perform the way we expect them
 to. This is done in a dynamic simulation in Gazebo, and through
-verification tools that detect common problems.
+verification tools that detect common problems. \TODO{Integrate into intro}
 
 
 \section{Contribution and Paper Structure}
@@ -116,11 +116,11 @@ The primary contribution of this paper is a formalism for the construction of mo
 robot configurations and behaviors by composition, and a simulation
 environment that helps the user verify intended behavior.  Together, these tools
 help manage the complexity of a modular robot system, significantly reducing the
-time and effort required to accomplish tasks with modular robots.  The software we
+time and effort required to develop sophisticated configurations and behaviors.  The software we
 have developed is open-source and will be made freely available online.
 
-The remainder of this paper provides a comprehensive description of the
-structure and algorithmic components of our software system.  In Section \ref{sec:related-work},
+The remainder of this paper provides a  description of the
+structure and algorithmic components of our design framework.  In Section \ref{sec:related-work},
 we discuss relevant background material.
 In Section \ref{sec:preliminaries} we introduce terminology and  concepts used elsewhere in the
 paper. 
@@ -128,7 +128,7 @@ In Section \ref{sec:approach}, we describe the algorithmic basis
 for the three major components of our framework - design composition, behavior
 composition, and behavior verification.  In Section
 \ref{sec:example}, we discuss the open-source software
-tools used to implement our system, and provide examples demonstrating a user's
+tools used to implement our framework, and provide examples demonstrating a user's
 workflow when using this system.  We demonstrate that our framework saves the
 user time and effort, and allows him or her to easily develop complex and
 capable designs.
@@ -166,8 +166,8 @@ of modular robot systems has been acknowledged in the literature \cite{yim2000mo
 Historically, gait tables have been a commonly used format in which open-loop kinematic
 behaviors can be easily encoded \cite{yim1994locomotion}. Phased automata have also
 been presented as a way to easily create scalable gaits for large numbers of modular
-robots \cite{zhang2003phase}. In this paper, we present a \cbj{novel scripting language}{computer aided design that enables novice}
-to quickly create complex behaviors for modular robots.
+robots \cite{zhang2003phase}. \abt{In this paper, we introduce a novel motion description
+language that enables users to quickly create behaviors for modular robots}.
 
 Our framework assists users in verifying design validity by identifying self-collision
 and loss of gravitational stability. \abt{In existing literature, these conditions have
@@ -187,12 +187,12 @@ K)$, where:
 \item ${^\mathcal{W}}D^{\mathcal{M}}\in SE(3)$ is the rigid-body \textit{displacement} (position and orientation)
 of the module body frame in the world reference frame $\mathcal{W}$. 
 \item \(X=\lbrace x_1, x_2, \ldots, x_d \rbrace\) is the \textit{state} of the module,
-with each \(x_i\) corresponding to one of the \(d\) degrees of freedom \abj{(DoF)} of the module.
+with each \(x_i\) corresponding to one of the \(d\) degrees of freedom (DoF) of the module.
 \item $A=\{a_1, a_2, ..., a_k\}$ is the set of \textit{attachment points} where the module can connect to other modules.
 \item \(K: (X, a_i) \rightarrow SE(3) \) is the module's \textit{forward kinematics function}, returning \({^\mathcal{B}}D^{a_{i}}\) (the displacement of attachment point \(a_i\)
 in the body frame) as a function of \(X\)  \end{itemize}
 
-\abj{Figure~\ref{fig:smores} shows a module with four DoF and four attachment points}
+Figure~\ref{fig:smores} shows a schematic representation of a module with  four attachment points
 \end{definition}
 
 \begin{figure}
@@ -232,20 +232,22 @@ Formally, we define a configuration as $\mathcal{C}=(C_, \gamma, M, E, \delta,
 X, B)$, where:
 \begin{itemize}
 \item $C$ is a set of \abj{sub-}configurations, $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$.
-\item $\gamma: C \rightarrow M$ is a function \cbj{that, when given}{mapping} a configuration\cbj{, returns}{to} all modules of that configuration.
+\item $\gamma: C \rightarrow M$ is a function {mapping} a configuration \( \mathcal{C}
+\in C\) to its set
+of modules.
 % Note: if we define a single module as the smallest configuration, we don't have
 % to worry about the case when the configuration contains no configurations.
 \item \( M=\bigcup_{\mathcal{C}\in C}{\gamma(\mathcal{C})} \) is the set of modules.
 %\item $M$ is the set of modules. If this configuration contains no other configurations, i.e. $C = \emptyset$, $M$ is just the set of all modules of this configuration. If this configuration is composed by other configurations, i.e. $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$, we define $M=\bigcup_{\mathcal{C}\in C}{\gamma(\mathcal{C})}$.
 \item $E$ is a set of connections between modules. $(\mathcal{M}_i.a_i, \mathcal{M}_j.a_j)\in E,$ where $\mathcal{M}_{i},\mathcal{M}_j \in M, \mathcal{M}_i \neq \mathcal{M}_j$, and $a_i\in \mathcal{M}_i.A$, $a_j\in \mathcal{M}_j.A$.
-\item $\delta: E \rightarrow SE(3)$ is a labeling function over connections, returning
-\({^{\mathcal{M}_i.a_i}}D^{\mathcal{M}_j.a_j}\) the displacement of one attachment point relative the
+\item $\delta: E \rightarrow SO(3)$ is a labeling function over connections returning
+\({^{\mathcal{M}_i.a_i}}R^{\mathcal{M}_j.a_j}\), the \abt{orientation} of one attachment point relative the
 other. \item \(X = \displaystyle\bigcup_{\mathcal{M}_i \in M} \mathcal{M}_i.X \) is the \textit{state} of the configuration.
-\item \(B\) is a set of \textit{behaviors} \abj{(Definition~\ref{def:behavior})} associated with the configuration.
+\item \(B\) is a set of \textit{behaviors} (Definition~\ref{def:behavior}) associated with the configuration.
 \end{itemize}
 
 Figure~\ref{fig:smores_conf_photo} shows a photo of a configuration composed
-of three \cbj{SMORES modules}{modules each with four attachment points}.  Figure~\ref{fig:smores_conf_graph} shows its
+of three modules, each with four attachment points.  Figure~\ref{fig:smores_conf_graph} shows its
 graphical representation. Blue zigzag lines represent connections between
 modules, and the label of each connection shows the angle offset of that
 connection.
@@ -263,7 +265,8 @@ Let \(\mathcal{M}_i: (\mathcal{M}_i.a_i,~\mathcal{M}_f.a_f) \in E \) be connecte
 \begin{align*}
 {^\mathcal{W}}D^{\mathcal{M}_i} =& [{^\mathcal{W}}D^{\mathcal{M}_f}] [{^{\mathcal{M}_f}}D^{a_f}][
 {^{a_f}}D^{a_i}] [{^{\mathcal{M}_i}}D^{a_i}]^T \\
-=& [{^\mathcal{W}}D^{\mathcal{M}_f}] [K_f(X_f,a_f)] [\delta(e)] [K_i(X_i,a_i)]^T
+=& [{^\mathcal{W}}D^{\mathcal{M}_f}] [K_f(X_f,a_f)] \begin{bmatrix} \delta(e) & 0
+\\ 0 & 1\end{bmatrix} [K_i(X_i,a_i)]^T
 \end{align*}
 
 where \(e=(\mathcal{M}_i.a_i,~\mathcal{M}_f.a_f)\). To find the world-frame displacements
@@ -854,6 +857,7 @@ We worked hard, and had fun.
 \bibliography{references}
 
 \end{document}
+
 
 
 
