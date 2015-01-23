@@ -588,14 +588,13 @@ The action completes when both wheels actually reach their commanded angles of \
 
 \subsection{ Verification of Configuration and Behavior}
 
-\subsubsection{Verification of Configurations}\label{sec:verify_conf} In section~\ref{sec:conf_composition}, we introduced algorithms to compose a set of configurations into a single configuration. However, it might not be possible  or safe to form the structure represented by the composed configuration with the actual module. Consider the configuration shown in Figure~\ref{fig:smores_conf_collision}. It is easy to tell that such configuration is impossible to build with modules that allow only one connection at each node. Thus it is important to verify whether the configuration is valid or not for a given modular robot system.
+\subsubsection{Verification of Configurations}\label{sec:verify_conf} In section~\ref{sec:conf_composition}, we introduced algorithms to compose a set of configurations into a single configuration. However, it might not be possible  or safe to form the structure represented by the composed configuration with the actual module. Consider the configuration shown in Figure~\ref{fig:smores_conf_collision}. It is easy to tell that such configuration is not ideal for any task. Thus it is important to verify whether the configuration is valid or not for a given modular robot system.
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=0.5\columnwidth]{images/tikz/smores_conf_collision.pdf}
+\includegraphics[width=0.5\columnwidth]{images/walkbot_collision.png}
 \end{center}
-\caption{A configuration with self-collision \TODO{Should we call this self-collision?
- It's actually topologically flawed, which to me seems different than self-collision.}}
+\caption{A configuration with self-collision}
 \label{fig:smores_conf_collision}
 \end{figure}
 
