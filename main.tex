@@ -882,13 +882,13 @@ our framework is an improvement over past design practices.
 We worked hard, and had fun.
 
 \section{Future}
-\begin{itemize}
-\item How to represent different attribute/ability of the configurations
-\item Mention that we're going to run behaviors on actual hardware.
-\end{itemize}
+Future work will include expansion of the features of our framework.  We will add verification tools to check for behavior conflict (when two behaviors composed in parallel command the same DoF), and check for behaviors that would exceed the actuator and connector force limits of the modules.  We will also work to include configurations with cycles.
 
+Another area of future work is developing a standard library of configurations and
+behaviors for the SMORES robot.  We will also investigate metrics to evaluate the quality of such a library.
+Perhaps most importantly, we will test and evaluate the designs and behaviors with actual hardware modules.
 
-
+Currently, each behavior is associated with exactly one configuration. In many cases, a given behavior could be executed by several different configurations (if it were correctly mapped onto a subset of their modules). In the future, we will apply an embedding detection algorithm (see \cite{mantzouratos2014embeddability}) to map behaviors into any configuration capable of executing them.
 
 %% Use plainnat to work nicely with natbib. 
 
@@ -896,4 +896,3 @@ We worked hard, and had fun.
 \bibliography{references}
 
 \end{document}
- 
