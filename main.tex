@@ -436,7 +436,8 @@ interrupt condition can be set to \(false\) (so that only the timeout has effect
 and \(T\) can be set to infinity (so that only the interrupt has effect). As an example,
 the action \((~Module0\_L,~ \theta_{set}=\pi,~ \xi:\theta==\pi,~T:\infty~)\) encodes
 ``Command the controller of the left wheel of module zero to maintain a setpoint
-of \(\pi\) radians.  When the encoder of that wheel indicates that \(\pi\) radians \TODO{unfinished}
+of \(\pi\) radians.  When the encoder of that wheel indicates that \(\pi\) radians
+has actually been reached, consider this action complete and move on.''
  
 Actions are composed to form behaviors. We define a \textit{behavior} as a directed acyclic graph where nodes are
 actions and edges are transitions between actions.  A behavior \(B\) always has
