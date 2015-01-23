@@ -72,16 +72,16 @@ complexity is not appropriately managed, it will present a significant barrier t
 using modular robots to address practical tasks \cite{yim2000modular}. If the user is free to create any new design to
 solve a new task, but must program the design from scratch every time, creating
 new designs will be a huge amount of effort, and the advantage of versatile modular
-hardware will be defeated. \TODO{Add examples from challenges}
+hardware will be defeated.
 
 Software modularity is a well-established practice for developing large
-maintainable systems and avoiding duplication of effort \TODO{cite}. In robotics, software
+maintainable systems and avoiding duplication of effort. In robotics, software
 behaviors are inextricably linked to the hardware they control, resulting in challenges to making modularity effective. Strong
 ties to physical hardware also increase the need for software verification, to ensure
 that hardware is not damaged. Significant progress has been made on these fronts
 in traditional robotics, most notably
 ROS \cite{Quigley2009} which provides inter-process communication and standard libraries for common robot tasks,
-as well as powerful verification tools to ensure the safety of robots \TODO{cite}.
+as well as powerful verification tools \cite{huang2014rosrv}.
   
 In modular robotics, the challenge is different.  Modular robot systems are not optimized
 for specific tasks, so in order for them to be useful, we must take full advantage of their flexibility. To do
@@ -145,7 +145,8 @@ for modular robots. Much of this work focused on automatically
 generating designs and behaviors using artificial intelligence systems. Genetic
 algorithms have been applied for the automated generation of designs
 and behaviors \cite{hornby2003generative}. Other work has
-focused on emergent behavior from distributed algorithms \TODO{cite papers}.
+focused on distributed control \cite{walter2002choosing} and hormone-based control
+\cite{salemi2001hormone}.
 
 While significant progress has been made in the automated generation of modular robot behaviors,
 automated systems are not yet capable of making modular robots truly useful in practice
@@ -154,15 +155,15 @@ of modular robot systems has been acknowledged in the literature \cite{yim2000mo
 Historically, gait tables have been a commonly used format in which open-loop kinematic
 behaviors can be easily encoded \cite{yim1994locomotion}. Phased automata have also
 been presented as a way to easily create scalable gaits for large numbers of modular
-robots \cite{zhang2003phase}. \abt{In this paper, we introduce a novel motion description
-language that enables users to quickly create behaviors for modular robots}.
+robots \cite{zhang2003phase}. In this paper, we introduce a novel motion description
+language that enables users to quickly create behaviors for modular robots.
 
 Our framework assists users in verifying design validity by identifying self-collision
-and loss of gravitational stability. \abt{In existing literature, these conditions have
+and loss of gravitational stability. In existing literature, these conditions have
 been checked in the context of modular robot reconfiguration planning \cite{casal2001reconfiguration} and motion
 planning \cite{yoshida2002self}.
 To our knowledge, there is no modular robot design tool that verifies
-these conditions to provide assistance to a human designer.}
+these conditions to provide assistance to a human designer.
 
 \section{Definitions}
 \label{sec:preliminaries}
@@ -230,7 +231,7 @@ of modules.
 %\item $M$ is the set of modules. If this configuration contains no other configurations, i.e. $C = \emptyset$, $M$ is just the set of all modules of this configuration. If this configuration is composed by other configurations, i.e. $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$, we define $M=\bigcup_{\mathcal{C}\in C}{\gamma(\mathcal{C})}$.
 \item $E$ is a set of connections between modules. $(\mathcal{M}_i.a_i, \mathcal{M}_j.a_j)\in E,$ where $\mathcal{M}_{i},\mathcal{M}_j \in M, \mathcal{M}_i \neq \mathcal{M}_j$, and $a_i\in \mathcal{M}_i.A$, $a_j\in \mathcal{M}_j.A$.
 \item $\delta: E \rightarrow SO(3)$ is a labeling function over connections returning
-\({^{\mathcal{M}_i.a_i}}R^{\mathcal{M}_j.a_j}\), the \abt{orientation} of one attachment point relative the
+\({^{\mathcal{M}_i.a_i}}R^{\mathcal{M}_j.a_j}\), the orientation of one attachment point relative the
 other. \item \(X = \displaystyle\bigcup_{\mathcal{M}_i \in M} \mathcal{M}_i.X \) is the \textit{state} of the configuration.
 \item \(B\) is a set of \textit{behaviors} (Definition~\ref{def:behavior}) associated with the configuration.
 \end{itemize}
@@ -242,9 +243,9 @@ modules, and the label of each connection shows the angle offset of that
 connection.
 
 In this paper, we consider only configurations without cycles. While this is a constraint,
-the \abt{set of functionalities provided by acyclic designs is very rich, so we feel that
+the set of functionalities provided by acyclic designs is very rich, so we feel that
 it does not unreasonably limit the utility of our framework. Accomodating designs
-with cycles is left to future work.}
+with cycles is left to future work.
 
 Assuming acyclic configurations, we can compute forward kinematics for the entire
 configuration by composing displacements module-to-module. Let any module \(\mathcal{M}_f \in M\) have
@@ -601,8 +602,9 @@ Notice that in order to verify the validity of the configuration, one needs to k
 \paragraph{Collision Checking} 
 We obtain the positions and orientation of all modules through forward kinematics.
 Using the known model geometry, we  check whether any two modules occupy the same space. If so, there exists a self-collision in the configuration.
-\TODO{In general, this is a non-trivial problem to solve efficiently.  We should
-briefly mention our method, and cite a reference to other available algorithms.}
+Our implementation checks self-collision by approximating modules as spheres, and checking
+the intersection of all pairs. More sophisticated techniques are available which
+produce exact results \cite{pan2012fcl}.
 \paragraph{Stability Checking}
  Gravitational stability is checked by computing the location of the center of mass of the configuration. For the given configuration $\mathcal{C}$
 and state \(X_0\), the position of the center of mass is
