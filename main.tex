@@ -154,15 +154,15 @@ of modular robot systems has been acknowledged in the literature \cite{yim2000mo
 Historically, gait tables have been a commonly used format in which open-loop kinematic
 behaviors can be easily encoded \cite{yim1994locomotion}. Phased automata have also
 been presented as a way to easily create scalable gaits for large numbers of modular
-robots \cite{zhang2003phase}. \abt{In this paper, we introduce a novel motion description
-language that enables users to quickly create behaviors for modular robots}.
+robots \cite{zhang2003phase}. In this paper, we introduce a novel motion description
+language that enables users to quickly create behaviors for modular robots.
 
 Our framework assists users in verifying design validity by identifying self-collision
-and loss of gravitational stability. \abt{In existing literature, these conditions have
+and loss of gravitational stability. In existing literature, these conditions have
 been checked in the context of modular robot reconfiguration planning \cite{casal2001reconfiguration} and motion
 planning \cite{yoshida2002self}.
 To our knowledge, there is no modular robot design tool that verifies
-these conditions to provide assistance to a human designer.}
+these conditions to provide assistance to a human designer.
 
 \section{Definitions}
 \label{sec:preliminaries}
@@ -230,7 +230,7 @@ of modules.
 %\item $M$ is the set of modules. If this configuration contains no other configurations, i.e. $C = \emptyset$, $M$ is just the set of all modules of this configuration. If this configuration is composed by other configurations, i.e. $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$, we define $M=\bigcup_{\mathcal{C}\in C}{\gamma(\mathcal{C})}$.
 \item $E$ is a set of connections between modules. $(\mathcal{M}_i.a_i, \mathcal{M}_j.a_j)\in E,$ where $\mathcal{M}_{i},\mathcal{M}_j \in M, \mathcal{M}_i \neq \mathcal{M}_j$, and $a_i\in \mathcal{M}_i.A$, $a_j\in \mathcal{M}_j.A$.
 \item $\delta: E \rightarrow SO(3)$ is a labeling function over connections returning
-\({^{\mathcal{M}_i.a_i}}R^{\mathcal{M}_j.a_j}\), the \abt{orientation} of one attachment point relative the
+\({^{\mathcal{M}_i.a_i}}R^{\mathcal{M}_j.a_j}\), the orientation of one attachment point relative the
 other. \item \(X = \displaystyle\bigcup_{\mathcal{M}_i \in M} \mathcal{M}_i.X \) is the \textit{state} of the configuration.
 \item \(B\) is a set of \textit{behaviors} (Definition~\ref{def:behavior}) associated with the configuration.
 \end{itemize}
@@ -242,9 +242,9 @@ modules, and the label of each connection shows the angle offset of that
 connection.
 
 In this paper, we consider only configurations without cycles. While this is a constraint,
-the \abt{set of functionalities provided by acyclic designs is very rich, so we feel that
-it does not unreasonably limit the utility of our framework. Accomodating designs
-with cycles is left to future work.}
+the set of functionalities provided by acyclic designs is very rich, so we feel that
+it does not unreasonably limit the utility of our framework. Accommodating designs
+with cycles is left to future work.
 
 Assuming acyclic configurations, we can compute forward kinematics for the entire
 configuration by composing displacements module-to-module. Let any module \(\mathcal{M}_f \in M\) have
@@ -862,7 +862,7 @@ Verification of behavior design can also aid the user to create valid and safe r
 In the past, designing configurations and behaviors to address new tasks has required
 time on the order of one to dozens of hours \cite{sastra2011using}.  To evaluate the rapid creation of solutions for robotic tasks using modular robot systems, we can look to the modular robot competitions held at large conferences IROS 2003, ICRA 2008, ICRA 2010, ICRA 2011 and ICRA 2012. In each case participants used modular robot systems to solve problems with little a priori knowledge of the task (except that the task would likely require remote operation/manipulation of objects).
 
-In the case of IROS 2003, the task was to create a robot that could “gamble” by placing plastic tokens into a toy slot machine, pulling a lever and catching the chips as they popped out.  One team created a solution with PolyBot G1V4 system with 14 modules (14 DoF). Participants
+In the case of IROS 2003, the task was to create a robot that could ï¿½gambleï¿½ by placing plastic tokens into a toy slot machine, pulling a lever and catching the chips as they popped out.  One team created a solution with PolyBot G1V4 system with 14 modules (14 DoF). Participants
 had one day to create primitive configurations and behaviors (snake-like mobility, and arm like structures) and
  6 hours on the following day to solve the task. No teams completed the task, though
 some came close. 
