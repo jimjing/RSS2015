@@ -888,7 +888,10 @@ not be fair to compare these times to the competition times directly, since they
 hardware tests or hardware debugging. However, we think we can safely say that
 our framework is an improvement over past design practices.
 \section{Conclusions}
-We worked hard, and had fun.
+In this paper we presented a framework as a computer program that allows novice to complex configurations and behaviors for modular robots.
+With some basic components, such as a single module, complex configurations can be constructed hierarchically.
+In addition, we presented a motion description language, in which basic robot actions can be combine in series or parallel to generate more complex robot behaviors.
+The framework utilize verification in configuration and behavior compositions to provide feedback to users when detecting a set of design flaws, such as self-collision and gravitational instability. The composed designs are then used to build a library of configurations and behaviors for modular robots. Examples on some designs are demonstrated and simulated in a physics engine.
 
 \section{Future}
 Future work will include expansion of the features of our framework.  We will add verification tools to check for behavior conflict (when two behaviors composed in parallel command the same DoF), and check for behaviors that would exceed the actuator and connector force limits of the modules.  We will also work to include configurations with cycles.
