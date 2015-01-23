@@ -412,18 +412,16 @@ The definitions of $\gamma$, \(X\), and $\delta$ are the same as the ones in Def
 \subsection{Behavior Composition: Series-Parallel Action Graphs}
 \label{sec:behavior-representation}
 We present a novel motion description language for modular robots.  The
-language aims to balance simplicity and expressiveness, and is compositional in
-nature, designed to manage the complexity of developing complicated behaviors
-for large clusters of modular robots through abstraction and modularity. 
-The language is in some ways similar to typical motion description languages, which have atomic elements that represent controller
+language aims to balance simplicity and expressiveness, and is designed specifically
+for composition, allowing complex behaviors
+to be rapidly created by combining existing behaviors. 
+Typical motion description languages, which have atomic elements that represent controller
 commands (set-points and gains) with limited duration \cite{brockett1988computer}.
 Extended motion description languages introduce interrupts to control the duration
-of commands \cite{hristu2003motion}.  The atomic commands of our language have unlimited
-duration (until they are superseded by another command), and each apply to a single
-DoF of the robot.
+of commands \cite{hristu2003motion}.  Our language distinguishes itself by allowing
+existing behaviors to be easily composed to form new behaviors.
+%The atomic commands of our language have unlimitedduration (until they are superseded by another command), and each apply to a singleDoF of the robot.
 %These properties allow complex behaviors to be created through composition operations.
-\TODO{Talk about the reason we are using SPAG's rather than something
-else.}
 
  The fundamental atoms of the language are called actions.  An \textit{action} is a tuple \(
 (J, X, \xi, T)\), where \(J\) identifies a single DoF of a configuration, \(X\) is a
@@ -865,7 +863,7 @@ Verification of behavior design can also aid the user to create valid and safe r
 In the past, designing configurations and behaviors to address new tasks has required
 time on the order of one to dozens of hours \cite{sastra2011using}.  To evaluate the rapid creation of solutions for robotic tasks using modular robot systems, we can look to the modular robot competitions held at large conferences IROS 2003, ICRA 2008, ICRA 2010, ICRA 2011 and ICRA 2012. In each case participants used modular robot systems to solve problems with little a priori knowledge of the task (except that the task would likely require remote operation/manipulation of objects).
 
-In the case of IROS 2003, the task was to create a robot that could �gamble� by placing plastic tokens into a toy slot machine, pulling a lever and catching the chips as they popped out.  One team created a solution with PolyBot G1V4 system with 14 modules (14 DoF). Participants
+In the case of IROS 2003, the task was to create a robot that could ``gamble'' by placing plastic tokens into a toy slot machine, pulling a lever and catching the chips as they popped out.  One team created a solution with PolyBot G1V4 system with 14 modules (14 DoF). Participants
 had one day to create primitive configurations and behaviors (snake-like mobility, and arm like structures) and
  6 hours on the following day to solve the task. No teams completed the task, though
 some came close. 
