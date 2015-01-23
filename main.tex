@@ -40,7 +40,7 @@
 \title{Computer-aided Compositional Design and Verification for Modular Robots}
 
 % You will get a Paper-ID when submitting a pdf file to the conference system
-\author{Author Names Omitted for Anonymous Review. Paper-ID [add your ID here]}
+\author{Author Names Omitted for Anonymous Review. Paper-ID [168]}
 
 \maketitle
 
@@ -244,7 +244,7 @@ connection.
 
 In this paper, we consider only configurations without cycles. While this is a constraint,
 the set of functionalities provided by acyclic designs is very rich, so we feel that
-it does not unreasonably limit the utility of our framework. Accomodating designs
+it does not unreasonably limit the utility of our framework. Accommodating designs
 with cycles is left to future work.
 
 Assuming acyclic configurations, we can compute forward kinematics for the entire
@@ -324,10 +324,11 @@ The three major components of our framework are configuration composition, behav
 composition, and verification of configurations and behaviors. 
 \subsection{Configuration Composition} \label{sec:conf_composition}
 
-
+Before discussing about configuration composition, we will first define a set of connections $E_C$ between configurations in a given set $C$ as $(\mathcal{C}_i.\mathcal{M}_i.a_i, \mathcal{C}_j.\mathcal{M}_j.a_j) \in E_C$, where $\mathcal{C}_{i},\mathcal{C}_j\in C$, $\mathcal{M}_i \in \gamma(\mathcal{C}_i), \mathcal{M}_j \in \gamma(\mathcal{C}_j)$, and $a_i\in \mathcal{M}_i.A$, $a_j\in \mathcal{M}_j.A$. Similar to the assumption about connections in a configuration, we assume that we form an
+acyclic graph with configurations in $C$ as nodes and connections in $E_C$ as edges.
 \begin{definition}[Configuration Composition]
 Given a set of configurations $C$ %, a base configuration $\mathcal{C}_b\in C$, 
-and a set \ $E_C$ of connections between them, configuration composition
+and a set $E_C$ of connections between them, configuration composition
 combines all configurations in $C$ to a single configuration $\mathcal{C}^*$
 that
 %has the following guarantees: i) $\mathcal{C}^*$ 
@@ -340,8 +341,7 @@ connections from $C$ and $E_C$.% (section~\ref{sec:update_connection})
 \end{definition}
 %\subsubsection{Update Modules and Connections} \label{sec:update_connection}
 %Before presenting the procedure to update modules and configurations in $\mathcal{C}^*$, we will first discuss some assumptions about the set of connections $E_C$.
-The set of connections $E_C$ between configurations in $C$ is defined as $(\mathcal{C}_i.\mathcal{M}_i.a_i, \mathcal{C}_j.\mathcal{M}_j.a_j) \in E_C$, where $\mathcal{C}_{i,j}\in C$, $\mathcal{M}_i \in \gamma(\mathcal{C}_i), \mathcal{M}_j \in \gamma(\mathcal{C}_j)$, and $a_i\in \mathcal{M}_i.a$, $a_j\in \mathcal{M}_j.A$. Similar to the assumption about connections in a configuration, we assume that if we form an
-acyclic graph with configurations in $C$ as nodes and connections in $E_C$ as edges.
+
 
 Given a set of configurations $C$ %, a base configuration $\mathcal{C}_b\in C$, 
 and a set of connections $E_C$, we define the composed configuration to be $\mathcal{C}^*=(C^*, \gamma, M, E, \delta,
@@ -351,7 +351,7 @@ X, B)$, where
 \item $M=\bigcup_{\mathcal{C}\in C^*}{\gamma(\mathcal{C})}$.
 %\item $\mathcal{M}_b\in M$ is the base module of the base configuration $\mathcal{C}_b$.
 \item $E= (\bigcup_{(\mathcal{C}_i.\mathcal{M}_i.n_i, \mathcal{C}_j.\mathcal{M}_j.n_j)\in E_C}{\{(\mathcal{M}_i.n_i, \mathcal{M}_j.n_j)}\})$ $\cup$ $(\bigcup_{\mathcal{C}_i \in C^*}{E_{i}})$
-\item \(B = \bigcup_{\mathcal{C}_i \in C} B_i\)
+\item \(B = \bigcup_{\mathcal{C}_i \in C} \mathcal{C}_i.B\)
 \end{itemize}
 The definitions of $\gamma$, \(X\), and $\delta$ are the same as the ones in Definition~\ref{def:configuration}.
 % \subsubsection{Update Positions of all Modules} \label{sec:update_position}
@@ -579,7 +579,7 @@ The action completes when both wheels actually reach their commanded angles of \
 
 \subsection{ Verification of Configuration and Behavior}
 
-\subsubsection{Verification of Configurations}\label{sec:verify_conf} In section~\ref{sec:conf_composition}, we introduced algorithms to compose a set of configurations into a single configuration. However, it might not be possible  or safe to form the structure represented by the composed configuration with the actual module. Consider the configuration shown in Figure~\ref{fig:smores_conf_collision}. It is easy to tell that such configuration is not ideal for any task. Thus it is important to verify whether the configuration is valid or not for a given modular robot system.
+\subsubsection{Verification of Configurations}\label{sec:verify_conf} In section~\ref{sec:conf_composition}, we introduced the definition on composing a set of configurations into a single configuration. However, it might not be possible or safe to form the structure represented by the composed configuration with the actual module. Consider the configuration shown in Figure~\ref{fig:smores_conf_collision}. It is easy to tell that such configuration is not ideal for any task, because the self-collision may damage those modules and result in instability of the system. Thus it is important to verify whether the configuration is valid or not for a given modular robot system.
 
 \begin{figure}
 \begin{center}
@@ -589,22 +589,22 @@ The action completes when both wheels actually reach their commanded angles of \
 \label{fig:smores_conf_collision}
 \end{figure}
 
-\begin{definition}[Verification on Configuration]
+\begin{definition}[Configuration Verification]
 Given a configuration $\mathcal{C}$ and state \(X_0\), we say $\mathcal{C}$ is valid in
 state \(X_0\) if it satisfied the following set of properties:
 \begin{itemize}
 \item There is no collision between modules in the configuration.
 \item The configuration is gravitationally stable.
 \end{itemize}
-Notice that in order to verify the validity of the configuration, one needs to know some properties of all modules for the given modular robot system, e.g. the geometry information, the mass of each module.
+Notice that in order to verify the validity of the configuration, one needs to know some properties of all modules for the given modular robot system, e.g. the geometry information, and the mass of each module.
 \end{definition}
 
 \paragraph{Collision Checking} 
 We obtain the positions and orientation of all modules through forward kinematics.
 Using the known model geometry, we  check whether any two modules occupy the same space. If so, there exists a self-collision in the configuration.
 Our implementation checks self-collision by approximating modules as spheres, and checking
-the intersection of all pairs. More sophisticated techniques are available which
-produce exact results \cite{pan2012fcl}.
+the distance (radius) between all pairs. More sophisticated techniques are available which
+efficiently produce exact results \cite{pan2012fcl}.
 \paragraph{Stability Checking}
  Gravitational stability is checked by computing the location of the center of mass of the configuration. For the given configuration $\mathcal{C}$
 and state \(X_0\), the position of the center of mass is
@@ -616,36 +616,36 @@ is a function returning the position coordinates of \(\mathcal{M}\) in the world
 
 We find the set of modules $M_c$ that have minimal position in the $z$ direction and consider them to
 be the contact points between the ground plane and the configuration. We treat the
-set \( \sigma = P(\mathcal{M})_i \forall \mathcal{M}_i \in M_c \ \) as an approximate set of contact points.
+set \( \sigma = P(\mathcal{M}), \forall \mathcal{M} \in M_c \ \) as an approximate set of contact points.
 %A set of points in the $x$-$y$ plane can be extracted from $M_c$ as $\sigma=\{(\mathcal{M}.P.x, \mathcal{M}.P.y)\mid \mathcal{M} \in M_c\}$.
-If projection of \(P_c\) onto the ground plane lies within the convex hull of \(\sigma\),
+If the projection of \(P_c\) onto the ground plane lies within the convex hull form by the set of points in \(\sigma\),
  configuration $\mathcal{C}$ is considered statically stable in state \(X_0\).
 
 \subsubsection{Verification of Behavior}
 In section~\ref{sec:behavior-representation}, we introduced a novel motion description language for modular robots. Actions defined by the language can be combined to produce more complex behaviors. Similar to configuration composition, we want to make sure the composed behaviors are valid and safe to execute. For example, a behavior that results in two modules colliding during the execution should be considered unsafe.
 
-\begin{definition}[Verification on Behavior]
+\begin{definition}[Behavior Verification]
 A behavior is valid if it satisfies the following set of properties when controlling a configuration of a given modular robot system
 \begin{itemize}
-\item There is no collision between modules at all time during the execution of the controller.
-\item There is no behavior conflict at all time during the execution.
+\item There are no collisions between modules at all times during the execution of the controller.
+\item There are no behavior conflicts at all times during the execution.
 \item The configuration is gravitationally stable at the end of the execution.
-\item The maximum duration when the configuration is not gravitationally stable during the execution is less than a time bound $t_{max}$.
+\item The maximum duration for which the configuration is not gravitationally stable during the execution is less than a time bound $t_{max}$.
 \end{itemize}
 \end{definition}
 % State is the right term, so I deleted the TODO.
-For a behavior with duration time $T_B$, we can check the state of the configuration with sampling time $t_B<t_{max}$. For each sample, we first detect behavior conflict by checking if different commands are given to the same joint of a module. If there is no behavior conflict, we can update the positions and orientations of all modules in the configuration based on behavior commands. Then we can check collision and gravitational stability of each configuration as we discussed in section~\ref{sec:verify_conf}. We argue that this behavior is not safe, if i) there are $n$ consecutive samples when the configuration is not gravitationally stable and $n\cdot t_B > t$; or ii) the configuration at time $T_B$ is not gravitationally stable.
+For a behavior with duration time $T_B$, we check the state of the configuration with sampling time $t_B<t_{max}$. For each sample, we first detect behavior conflict by checking if different commands are given to the same joint of a module simultaneously. If there is no behavior conflict, we update the positions and orientations of all modules in the configuration based on behavior commands. Then we check collision and gravitational stability of each configuration as discussed in section~\ref{sec:verify_conf}. We argue that this behavior is not safe, if i) there are $n$ consecutive samples when the configuration is not gravitationally stable and $n\cdot t_B > t_{max}$; or ii) the configuration at time $T_B$ is not gravitationally stable.
 %\subsection{Complexity}
 %\TODO{Discuss the complexity of the algorithm with respect to the number of modules and size of gait tables.}
 
 \section{Implementation }
 \label{sec:implementation}
-We implement a program to aid users to design and verify complex configurations and behaviors from a set of basic configurations and associated behaviors. We separated the program into two main parts, a configuration builder and a behavior builder.
+We implement a design interface to aid users to design and verify complex configurations and behaviors from a set of basic configurations and associated behaviors. We separated the program into two main parts, a configuration builder and a behavior builder.
 Our implementation is built for the SMORES modular robot, but could easily be adapted
 to other modular robot systems. \subsection{SMORES robot}
 We have developed our system for the SMORES modular robot, developed at the
 University of Pennsylvania \cite{Davey2012}. Each SMORES modules has four DoF
-- three continuously rotating faces we call {\em turntables} and one
+- three continuously rotating faces called {\em turntables} and one
 central hinge with a 180\textdegree\ range of motion (Figure~\ref{fig:SmoresRobot}). The
 DoF marked 1, 2, and 4 have rotational axes that are parallel and coincident.
 Each SMORES module can drive around as a two-wheel differential
@@ -667,11 +667,11 @@ Formally, we denote the state of a SMORES module as \(X=\lbrace \theta_L, \theta
 \end{figure}
 
 \subsection{Configuration Builder}
-Given a set of basic configurations, the configuration builder allows users to combine basic configurations by choosing connection node on each configuration, as demonstrated by green nodes in Figure~\ref{fig:gui_conf}. In addition, the configuration builder will warn users when the composed configuration is not valid without the usage of a physical simulator, e.g. Gazebo
+Given a set of basic configurations which could be just single modules, the configuration builder allows users to combine basic configurations by choosing connection node on each configuration, as demonstrated by green nodes in Figure~\ref{fig:gui_conf}. In addition, the configuration builder will warn users when the composed configuration is not valid without the usage of a physical simulator, e.g. Gazebo
 \cite{koenig2004design}.
 
 \subsection{Behavior Builder}
-Given a composed configuration from the configuration builder, the behavior builder aids users in designing behaviors for the composed configuration by arranging a set of basic behaviors in parallel or in series. Figure~\ref{fig:gui_gait} illustrates a new behavior is composed by putting four basic behaviors in parallel. Similar to the configuration builder, the behavior builder will also warn users if there is self-collision in the configuration during the execution of composed behaviors without simulations in a physical engine.
+Given a composed configuration, the behavior builder aids users in designing behaviors for the composed configuration by arranging a set of basic behaviors in parallel or in series. Figure~\ref{fig:gui_gait} illustrates a new behavior is composed by putting four basic behaviors in parallel. Similar to the configuration builder, the behavior builder will also warn users if there are self-collisions in the configuration during the execution of composed behaviors without simulations in a physical engine.
 
 
 \begin{figure}
@@ -704,7 +704,7 @@ Given a composed configuration from the configuration builder, the behavior buil
 
 \section{Examples}
 \label{sec:examples}
-Here we present some examples to illustrate important features of our framework.
+Here we present a few examples to illustrate important features of our framework.
 \subsection{Toward a Standard Library}
 Our eventual intention is to develop a large library of configurations and associated
 behaviors which are available to all users of our framework, analogous to the standard
@@ -759,7 +759,7 @@ evaluate the quality of such a library is an interesting opportunity for future 
 % \end{table*}
 
 \subsection{The User Perspective}
-Figure~\ref{fig:design} demonstrates the design flow when a user is designing a configuration an its behaviors. We present the start-to-end user perspective in designing a complicated configuration called Walkbot. Consider a basic configuration ``CHAIN3'' as shown in Table~\ref{Order-1-configurations}. We can form a ``CHAIN6'' configuration, as a body, by connecting two of the basic configurations as demonstrated in Figure~\ref{fig:walkbot1}. With four more basic configurations and attach sides of those basic configurations to sides of the ``CHAIN6'' configuration with certain angle offset, we can build a complex configuration, Walkbot, with four legs, as shown in Figure~\ref{fig:walkbot2}. Notice that by connecting multiple  basic configurations together, we can design a complex configuration without building with individual modules.
+Figure~\ref{fig:design} demonstrates the design flow when a user is designing a configuration an its behaviors. We present the start-to-end user perspective in designing a complicated configuration called Walkbot. Consider a basic configuration ``CHAIN3'' as shown in Table~\ref{Order-1-configurations}. We can form a ``CHAIN6'' configuration, as a body, by connecting two of the basic configurations as demonstrated in Figure~\ref{fig:walkbot1}. With four more basic configurations attaching to sides of the ``CHAIN6'' configuration with certain angle offset, we can build a complex configuration, Walkbot, with four legs, as shown in Figure~\ref{fig:walkbot2}. Notice that by connecting multiple  basic configurations together, we can design a complex configuration more easily than creating with individual modules.
 
 \begin{figure}
 \begin{center}
@@ -787,7 +787,7 @@ Figure~\ref{fig:design} demonstrates the design flow when a user is designing a 
 \label{fig:walkbot}
 \end{figure}
 
-\subsection{Easy scale-up through composition}
+\subsection{Scale-up through composition}
 Our framework allows users to quickly create and program large configurations. The
 first-order CHAIN3 configuration (Figure \ref{fig:chain3}) can use a \(sineGait\)
 behavior to locomote like a snake. Defining \(sineGait\)  as the series composition
@@ -865,7 +865,7 @@ Verification of behavior design can also aid the user to create valid and safe r
 In the past, designing configurations and behaviors to address new tasks has required
 time on the order of one to dozens of hours \cite{sastra2011using}.  To evaluate the rapid creation of solutions for robotic tasks using modular robot systems, we can look to the modular robot competitions held at large conferences IROS 2003, ICRA 2008, ICRA 2010, ICRA 2011 and ICRA 2012. In each case participants used modular robot systems to solve problems with little a priori knowledge of the task (except that the task would likely require remote operation/manipulation of objects).
 
-In the case of IROS 2003, the task was to create a robot that could “gamble” by placing plastic tokens into a toy slot machine, pulling a lever and catching the chips as they popped out.  One team created a solution with PolyBot G1V4 system with 14 modules (14 DoF). Participants
+In the case of IROS 2003, the task was to create a robot that could ï¿½gambleï¿½ by placing plastic tokens into a toy slot machine, pulling a lever and catching the chips as they popped out.  One team created a solution with PolyBot G1V4 system with 14 modules (14 DoF). Participants
 had one day to create primitive configurations and behaviors (snake-like mobility, and arm like structures) and
  6 hours on the following day to solve the task. No teams completed the task, though
 some came close. 
