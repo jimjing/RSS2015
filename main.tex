@@ -722,7 +722,7 @@ For the library to be most effective, the set of configurations and behaviors av
  at each level (and especially at the lowest levels) should provide a rich set of
  functionalities without presenting the user with an overwhelming number of options. 
  Considering the small library in Tables \ref{Order-1-configurations} and \ref{Order-2-configurations},
- it is interested to note that a large  and diverse set of second- and third-order configurations can
+ it is interested to note that a diverse set of second- and third-order configurations can
 be constructed from only one zero- and one first-order configuration. Developing metrics to
 evaluate the quality of such a library is an interesting opportunity for future work. 
 
@@ -739,18 +739,22 @@ evaluate the quality of such a library is an interesting opportunity for future 
 \end{table*}
 \begin{table*}
     \begin{center}
-        \includegraphics[width=\textwidth]{images/library/tier2.pdf}
-        \caption{Order-2 configurations}
+        \begin{tabular}{c c}
+        \includegraphics[scale=0.9]{images/library/tier2.pdf} &
+        \includegraphics[scale=1]{images/library/tier3.pdf} \\
+        \textbf{Order-2} & \textbf{Order-3}
+        \end{tabular}
+        \caption{Order-2 and Order-3 configurations}
         \label{Order-2-configurations}
     \end{center}
 \end{table*}
-\begin{table*}
-    \begin{center}
-        \includegraphics[scale=1]{images/library/tier3.pdf}
-        \caption{Order-3 configurations}
-        \label{Order-3-configurations}
-    \end{center}
-\end{table*}
+% \begin{table*}
+%     \begin{center}
+%         \includegraphics[scale=1]{images/library/tier3.pdf}
+%         \caption{Order-3 configuration}
+%         \label{Order-3-configurations}
+%     \end{center}
+% \end{table*}
 
 \subsection{The User Perspective}
 Figure~\ref{fig:design} demonstrates the design flow when a user is designing a configuration an its behaviors. We present the start-to-end user perspective in designing a complicated configuration called Walkbot. Consider a basic configuration formed by three modules in a line. We can form a ``body'' configuration by connecting two of the basic configurations as shown in Figure~\ref{fig:walkbot1}. With four more basic configurations and attach sides of those basic configurations to sides of the ``body'' configuration with certain angle offset, we can build a complex configuration, Walkbot, with four legs, as shown in Figure~\ref{fig:walkbot2}. Notice that by connecting multiple  basic configurations together, we can design a complex configuration without building with individual modules.
