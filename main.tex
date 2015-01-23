@@ -50,7 +50,7 @@ modular robot configurations and behaviors. Designs are constructed
 hierarchically by composing elements from a library, allowing users to easily
 create complex designs.  Likewise, complex behaviors are constructed by
 composing controllers from a library in a nested series/parallel structure. The
-system is integrated with a full dynamic simulator, and provides tools to \abj{automatically}
+system is integrated with a full dynamic simulator, and provides tools to automatically
 identify common problems with behaviors, specifically self-collision and loss
 of gravitational stability.
 
@@ -58,18 +58,18 @@ of gravitational stability.
 
 \section{Introduction}
 Modular reconfigurable robot systems have been studied extensively for several
-decades \TODO{citations}.  These systems distinguish themselves \abj{from conventional robotic systems} in their
+decades \TODO{citations}.  These systems distinguish themselves from conventional robotic systems in their
 ability to transform into different shapes to address a wide variety of tasks. \abt{They
 promise to be versatile, robust, and low cost \cite{yim2000polybot}. Dozens of groups
 have different kinds of reconfigurable robots \cite{fukuda1990cellular, lipson2000towards}, and introduced approaches
 for programming them \cite{salemi2001hormone, walter2002choosing, melek2003neurofuzzy}.  Over 800 papers, a book \cite{stoy2010book}, and a survey \cite{yim2007modular}
 have been written on the subject. }
 
-This \dbj{additional }versatility places an additional burden on the user, because
+This versatility places an additional burden on the user, because
 solving problems with modular robots involves not only designing  programs,
 but also the best physical form for the task at hand. If this
 complexity is not appropriately managed, it will present a significant barrier to
-using modular robots to address practical tasks \cite{yim2000modular}. If the user is free to create any new design \dbj{he/she pleases }to
+using modular robots to address practical tasks \cite{yim2000modular}. If the user is free to create any new design to
 solve a new task, but must program the design from scratch every time, creating
 new designs will be a huge amount of effort, and the advantage of versatile modular
 hardware will be defeated. \TODO{Add examples from challenges}
@@ -82,7 +82,7 @@ sharing robotics software between researchers
 and hardware platforms, most notably
 ROS \cite{Quigley2009} which provides inter-process communication and standard libraries for common robot tasks. 
 
-The challenges of \cbj{software design}{designing controls} are different in modular robotics than
+The challenges of designing behaviors are different in modular robotics than
 in typical robotics, because the hardware itself is modular. Porting software
 from one robot platform to a completely different robot platform takes a
 considerable amount of time, and needs to be facilitated by a large framework
@@ -90,17 +90,17 @@ such as ROS, in which fundamental software libraries are almost totally decouple
 specific hardware. In modular robotics, the emphasis needs to be on speed of
 design, because the major advantage of a modular robot system is that new
 designs can be made for each task. We need to  very quickly develop simple kinematic
-behaviors (\cbj{\textit{i.e.}}{\textit{e.g.}} take a step with a leg) with new morphologies that share some of the
+behaviors (\textit{e.g.} take a step with a leg) with new morphologies that share some of the
 structure of old morphologies.
 
-Our solution to this problem is to let the modularity of our hardware \cbj{determine}{guide} the
-modularity of our \cbj{software}{designs of control}. We create new modular robot designs by combining existing sub-designs,
+Our solution to this problem is to let the modularity of our hardware guide the
+modularity of our behaviors. We create new modular robot designs by combining existing sub-designs,
 for example combining four legs with a body to create a walking robot.
 We provide a GUI tool that allows users to do this easily. Designs have
-associated libraries of \dbj{software }behaviors, so that when new designs are created
+associated libraries of behaviors, so that when new designs are created
 by composing existing sub-designs, new behaviors for that design can be quickly
 and easily created by composing the behaviors associate with its component
-sub-designs. We introduce \abj{a} new \cbj{scripting language}{control composition formalism} with a series-parallel
+sub-designs. We introduce a new behavior composition formalism with a series-parallel
 execution structure that allows old behaviors to be easily and clearly combined
 into new behaviors.
 
@@ -138,18 +138,18 @@ capable designs.
 \label{sec:related-work}
 In some respect\abj{s}, our work parallels the efforts of Mehta \cite{mehta2014design}
 and Bezzo \cite{bezzo2014demo}, who aim to create and program printable robots from
-\cbj{design specification by a novice user}{novice users' design specifications}.  Users create new designs by composing
+novice users' design specifications.  Users create new designs by composing
 existing elements from a design library, and appropriate circuitry and
 control software are automatically generated as physical designs are assembled. The framework we present is
 intended specifically for modular robots, and consequently the workflow and design considerations are fundamentally different
 from that presented by Mehta and Bezzo.  In
 traditional robot design (or printable robot design), hardware and software are somewhat
 decoupled - hardware is
-designed and built once, and then programmed many times.  In the case of a \cbj{MRS}{modular robot system}, the system can be reconfigured to meet new tasks,
+designed and built once, and then programmed many times.  In the case of a modular robot system, the system can be reconfigured to meet new tasks,
 so hardware configuration and behavior programming go hand in hand.  We intend
 our system to be fast enough that the user could conceivably develop and program
 a new design for every new task - designs are built once, and programmed once.  Where Mehta et al. provide many facilities to generate and verify
-low-level behaviors (\cbj{i.e.}{e.g.} motor drivers appropriate for motors\abj{)}, we do so for
+low-level behaviors (\textit{e.g.} motor drivers appropriate for motors), we do so for
 high-level behaviors.
 
 A significant amount of work has been done in developing behaviors and software
@@ -231,7 +231,7 @@ smallest configuration.
 Formally, we define a configuration as $\mathcal{C}=(C_, \gamma, M, E, \delta,
 X, B)$, where:
 \begin{itemize}
-\item $C$ is a set of \abj{sub-}configurations, $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$.
+\item $C$ is a set of sub-configurations, $C=\{\mathcal{C}_{1}, \mathcal{C}_{2}, ..., \mathcal{C}_{q}\}$.
 \item $\gamma: C \rightarrow M$ is a function {mapping} a configuration \( \mathcal{C}
 \in C\) to its set
 of modules.
@@ -437,7 +437,7 @@ else.}
 
  The fundamental atoms of the language are called actions.  An \textit{action} is a tuple \(
 (J, X, \xi, T)\), where \(J\) identifies a single DoF of a configuration, \(X\) is a
-controller setpoint for that \cbj{degree of freedom}{DoF}, \(\xi\) specifies an interrupt
+controller setpoint for that DoF, \(\xi\) specifies an interrupt
 condition, and T specifies a timeout. When an action executes, the controller
 setpoint (position or velocity) for the specified DoF is changed to the specified
 value. The controller maintains this setpoint until receiving a new one from another
@@ -509,7 +509,7 @@ Pc \left( \begin{array}{cccc}
 \end{array} \right)\\
 \end{align*}
 
-Here, \(\theta_0\) denotes the currently-sensed value of \cbj{theta}{$\theta$} at the beginning of
+Here, \(\theta_0\) denotes the currently-sensed value of $\theta$ at the beginning of
 the TURN behavior.
 The action completes when both wheels actually reach their commanded angles of \(\theta_0\pm\pi\). To drive in a square, we compose DRIVE and TURN behaviors in series:
 
@@ -654,7 +654,7 @@ Our implementation is built for the SMORES modular robot, but could easily be ad
 to other modular robot systems. \subsection{SMORES robot}
 We have developed our system for the SMORES modular robot, developed at the
 University of Pennsylvania \cite{Davey2012}. Each SMORES modules has four DoF
-\dbj{(DoF) }- three continuously rotating faces we call {\em turntables} and one
+- three continuously rotating faces we call {\em turntables} and one
 central hinge with a 180\textdegree\ range of motion (Figure~\ref{fig:SmoresRobot}). The
 DoF marked 1, 2, and 4 have rotational axes that are parallel and coincident.
 Each SMORES module can drive around as a two-wheel differential
@@ -677,7 +677,7 @@ Formally, we denote the state of a SMORES module as \(X=\lbrace \theta_L, \theta
 
 \subsection{Configuration Builder}
 Given a set of basic configurations, the configuration builder allows users to combine basic configurations by choosing connection node on each configuration, as demonstrated by green nodes in Figure~\ref{fig:gui_conf}. In addition, the configuration builder will warn users when the composed configuration is not valid without the usage of a physical simulator, e.g. Gazebo
-\TODO{Cite Gazebo}.
+\cite{koenig2004design}.
 
 \subsection{Behavior Builder}
 Given a composed configuration from the configuration builder, the behavior builder aids users in designing behaviors for the composed configuration by arranging a set of basic behaviors in parallel or in series. Figure~\ref{fig:gui_gait} illustrates a new behavior is composed by putting four basic behaviors in parallel. Similar to the configuration builder, the behavior builder will also warn users if there is self-collision in the configuration during the execution of composed behaviors without simulations in a physical engine.
@@ -800,7 +800,7 @@ of two half-waves will allow us to re-use the gait with larger snakes:
 sineGait = Sc(~halfSine1,~halfSine2~)
 \end{displaymath}
 Arbitrarily long snake configurations can be created
-by composing CHAIN3\dbj{'s} end-to-end; Figure \ref{fig:snake18} shows one with 18 modules.
+by composing CHAIN3 configurations end-to-end; Figure \ref{fig:snake18} shows one with 18 modules.
 A gait for an arbitrarily long snake is created by composing sine wave
 gaits for each component in parallel, but with alternating phase:
 \begin{align*}
