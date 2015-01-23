@@ -862,9 +862,21 @@ Verification in behavior design can also aid the user to create valid and safe r
 \section{Results}
 In the past, designing configurations and behaviors to address new tasks has required
 time on the order of one to dozens of hours \cite{sastra2011using}.  To evaluate the rapid creation of solutions for robotic tasks using modular robot systems, we can look to the modular robot competitions held at large conferences IROS 2003, ICRA 2008, ICRA 2010, ICRA 2011 and ICRA 2012. In each case participants used modular robot systems to solve problems with little a priori knowledge of the task (except that the task would likely require remote operation/manipulation of objects).
-In the case of IROS 2003, which took place at a Las Vegas casino, the task was to create a robot that could “gamble” by placing plastic tokens into a toy slot machine, pulling a lever and catching the chips as they popped out.  One team was able to create a solution with PolyBot G1V4 system with 14 modules (14 DoF). The participants had 6 hours to build on design primitives they created the previous day (snake-like mobility, and arm like structures) that would solve the task - which they almost did - they did not catch any chips.
-Using our framework and library, complex designs (such as the Walkbot or 18-module snake) can be created and programmed in under an hour and just a few minutes if the primitives have already been created. These are of similar complexity to the IROS system except does not include the hardware component nor hardware debugging. The other competitions listed had similar tasks, time and modular robot resources.  While this is not an apples to apples comparison, having the ability to build and test configurations in simulation, in this case, would be orders of magnitude faster.
-
+In the case of IROS 2003, the task was to create a robot that could “gamble” by placing plastic tokens into a toy slot machine, pulling a lever and catching the chips as they popped out.  One team created a solution with PolyBot G1V4 system with 14 modules (14 DoF). Participants
+had one day to create primitive configurations and behaviors (snake-like mobility, and arm like structures) and
+ 6 hours on the following day to solve the task. No teams completed the task, though
+some came close. 
+At ICRA 2008, participants created designs to address a mock disaster scenario
+at a space station on Mars. Teams spent on average about 3 hours building configurations and
+3 hours programming them to address the task \cite{sastra2011using}.  
+  
+Using our framework and library, a single person has created and programmed   configurations of similar complexity to those used at
+the competitions (such as the Walkbot or 18-module snake)
+in under an hour,
+or in a few minutes if the right primitives already exist in the library. It would
+not be fair to compare these times to the competition times directly, since they do not include any
+hardware tests or hardware debugging. However, we think we can safely say that
+our framework is an improvement over past design practices.
 \section{Conclusions}
 We worked hard, and had fun.
 
@@ -883,3 +895,4 @@ We worked hard, and had fun.
 \bibliography{references}
 
 \end{document}
+ 
